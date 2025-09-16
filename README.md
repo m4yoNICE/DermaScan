@@ -20,3 +20,5 @@ And in frontend directory, run this command in the terminal:
 ```
 npx expo start
 ```
+Open the Expo Go app and scan the QR code in the terminal
+
