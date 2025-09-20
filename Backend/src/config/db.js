@@ -10,10 +10,14 @@ const pool = mysql.createPool({
 }).promise()
 
 
-pool.connect((err) => {
-  if (err) throw err;
-  console.log('Connected to the database!');
-});
-
+async function testConnection() {
+    try {
+        await pool.query("SELECT 1");
+        console.log("Connected to the database!");
+    } catch (err) {
+        console.error("DB connection failed:", err);
+    }
+}
+testConnection();
 
 export default pool;

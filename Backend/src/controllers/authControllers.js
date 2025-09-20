@@ -1,37 +1,40 @@
-import pool from "./config/db.js";
+import { findUserByEmail, createUser } from "../services/authServices.js";
 import bcrypt from "bcryptjs";
-
+import jwt from "jsonwebtoken";
+import {ENV} from "../config/env.js"
 
 export async function login(req, res){
-
     try{
-    const { email, password } = req.body; 
-    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
-    if(rows.length === 0){
-        return res.status(401).json({ error: "Invalid credentials" });
-    }
-    const user = rows[0];
-    const isValid = await bcrypt.compare(password, user.password);    
-    if (!isValid) {
+        const { email, password } = req.body; 
+        const user = await findUserByEmail(email);
+        if(!user){
+            return res.status(401).json({error: "Invalid Credentials"})
+        } 
+        const isValid = await bcrypt.compare(password, user.password);    
+        if (!isValid){
             return res.status(401).json({ error: "Invalid credentials" });
         }
-    
-    res.status(200).json({ message: "Login successful", user: { id: user.id, email: user.email } });
+        const payload = { id: user.id, email: user.email }; // keep it minimal
+        const token = jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "15m" });
+        res.status(200).json({ 
+            message: "Login successful", 
+            user: { id: user.id, email: user.email },
+            token
+        });
     }catch(err){
         console.log(err);
-        res.status(500).json({ error: "Server error" });
+        res.status(500).json({ error: "Server error" })
     }
 }
 
 export async function register(req, res){
     try{
     const { email, password } = req.body; 
-    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
-    if(rows.length > 0){
-        return res.status(400).json({ error: "Email already made!" });
-    }
-    const passwordhash = await bcrypt.hash(password, 10);
-    await pool.query("INSERT INTO users (email, password) VALUES (?, ?)",[email, hashedPassword]);
+    const existingUser = await findUserByEmail(email);
+    if(existingUser){
+            return res.status(400).json({error: "Email already registered"});
+        }
+    await createUser(email, password);
     res.status(201).json({ message: "User registered successfully" });
     }catch(err){
         console.log(err);

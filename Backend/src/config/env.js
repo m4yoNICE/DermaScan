@@ -6,6 +6,7 @@ export const ENV = {
     DATABASE: process.env.DB_DATABASE,
     DB_PORT: process.env.DB_PORT,
     USERNAME: process.env.DB_USERNAME,
-    PASSWORD: process.env.DB_PASSWORD
+    PASSWORD: process.env.DB_PASSWORD,
+    JWT_SECRET: process.env.JWT_SECRET
 };
 
