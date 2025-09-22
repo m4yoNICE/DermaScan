@@ -1,0 +1,9 @@
+# Backend (Node.js/Express)
+.env
+node_modules/
+dist/
+*.log
+
+# General
+.DS_Store
+.vscode/

@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Redirect } from "expo-router";
 
-const index = () => {
-  return <Redirect href="/auth/Login" />;
+const Register = () => {
+  return (
+    <View>
+      <Text>register</Text>
+    </View>
+  );
 };
 
-export default index;
+export default Register;
 
 const styles = StyleSheet.create({});
