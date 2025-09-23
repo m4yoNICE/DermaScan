@@ -4,13 +4,14 @@ import authRoutes from "./routes/authRoutes.js"
 import cors from "cors";
 
 const app = express();
-const PORT = ENV.PORT || 5001;
+const PORT = ENV.PORT || 6969;
 
 app.use(cors({
   origin: "http://localhost:3000", 
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 app.use(express.json());
 
 app.use("/auth", authRoutes);

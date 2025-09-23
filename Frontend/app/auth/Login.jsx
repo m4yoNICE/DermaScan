@@ -7,10 +7,26 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 
+import Api from "@/services/Api.js"
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const registerAccount = async (title) => {
+    const controller = new AbortController();
+    try{
+      const registerData = { email, password };
+      const res = await Api.registerAccountAPI(registerData, password);
+      console.log(res.data);
+    } catch(err){
+    if (axios.isCancel(err)) {
+      console.log('Request cancelled');
+    } else {
+      console.error('Actual error:', err);
+    }
+
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.card}>
