@@ -6,20 +6,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import Api from "@/services/Api.js";
+import Api from "src/services/Api.js";
 import { router } from "expo-router";
 
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const showError = (msg) => {
     setError(msg);
     setTimeout(() => setError(null), 10000);
   };
-  const LoginAccount = async () => {
-    if (!email || !password) {
+
+  const registerAccount = async () => {
+    if (!email || !password || !confirmPassword) {
       showError("All fields are required");
       return;
     }
@@ -28,18 +30,22 @@ const Login = () => {
       showError("Invalid email format");
       return;
     }
+    if (password !== confirmPassword) {
+      showError("Passwords do not match");
+      return;
+    }
     try {
-      const loginData = { email, password };
-      const res = await Api.loginAccountAPI(loginData);
-      console.log(res.data);
-
-      //JWT TOKEN TIME
-      const { token, user } = res.data;
-      await AsyncStorage.setItem("authToken", token);
-      await AsyncStorage.setItem("user", JSON.stringify(user));
+      if (password == confirmPassword) {
+        const registerData = { email, password };
+        const res = await Api.registerAccountAPI(registerData);
+        console.log(res.data);
+        router.push("/auth/Login");
+      }
     } catch (err) {
       if (err.response) {
-        showError("Login Failed! Try Again");
+        const message =
+          err.response.data?.error || "Registration failed. Try again.";
+        showError(message);
         console.log(err.response);
       } else if (err.request) {
         showError("No response from server. Check your internet");
@@ -50,14 +56,15 @@ const Login = () => {
       }
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Sign in</Text>
-
+        <Text style={styles.title}>Sign In</Text>
         <Text style={{ color: "red" }}>{error}</Text>
+
         <TextInput
-          style={[styles.input, { marginBottom: 20 }]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -73,43 +80,45 @@ const Login = () => {
           secureTextEntry={true}
         />
 
-        <TouchableOpacity style={styles.button} onPress={LoginAccount}>
-          <Text style={styles.buttonText}>Log In</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry={true}
+        />
+        <TouchableOpacity style={styles.button} onPress={registerAccount}>
+          <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
 
         {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-        <Text
-          style={styles.signUp}
-          onPress={() => router.push("/auth/Register")}
-        >
-          Don't have an account? Sign Up
-        </Text>
+        {/* <Text style={styles.signUp}>Don't have an account? Sign Up</Text> */}
       </View>
     </View>
   );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
+    backgroundColor: "#00ccaa",
   },
   title: {
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 70,
     color: "#00CC99",
   },
   card: {
     backgroundColor: "white",
     padding: 30,
-    borderRadius: 20,
-    elevation: 5,
+    borderRadius: 10,
+    elevation: 2,
     width: "90%",
     maxWidth: 400,
   },

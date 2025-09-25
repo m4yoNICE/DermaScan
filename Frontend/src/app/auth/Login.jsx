@@ -6,22 +6,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import Api from "@/services/Api.js";
+import Api from "src/services/Api.js";
 import { router } from "expo-router";
 
-const Register = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const showError = (msg) => {
     setError(msg);
     setTimeout(() => setError(null), 10000);
   };
-
-  const registerAccount = async () => {
-    if (!email || !password || !confirmPassword) {
+  const LoginAccount = async () => {
+    if (!email || !password) {
       showError("All fields are required");
       return;
     }
@@ -30,22 +28,18 @@ const Register = () => {
       showError("Invalid email format");
       return;
     }
-    if (password !== confirmPassword) {
-      showError("Passwords do not match");
-      return;
-    }
     try {
-      if (password == confirmPassword) {
-        const registerData = { email, password };
-        const res = await Api.registerAccountAPI(registerData);
-        console.log(res.data);
-        router.push("/auth/Login");
-      }
+      const loginData = { email, password };
+      const res = await Api.loginAccountAPI(loginData);
+      console.log(res.data);
+
+      //JWT TOKEN TIME
+      const { token, user } = res.data;
+      await AsyncStorage.setItem("authToken", token);
+      await AsyncStorage.setItem("user", JSON.stringify(user));
     } catch (err) {
       if (err.response) {
-        const message =
-          err.response.data?.error || "Registration failed. Try again.";
-        showError(message);
+        showError("Login Failed! Try Again");
         console.log(err.response);
       } else if (err.request) {
         showError("No response from server. Check your internet");
@@ -56,15 +50,14 @@ const Register = () => {
       }
     }
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Sign In</Text>
-        <Text style={{ color: "red" }}>{error}</Text>
+        <Text style={styles.title}>Sign in</Text>
 
+        <Text style={{ color: "red" }}>{error}</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { marginBottom: 20 }]}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -80,45 +73,43 @@ const Register = () => {
           secureTextEntry={true}
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity style={styles.button} onPress={registerAccount}>
-          <Text style={styles.buttonText}>Register</Text>
+        <TouchableOpacity style={styles.button} onPress={LoginAccount}>
+          <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
 
         {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-        {/* <Text style={styles.signUp}>Don't have an account? Sign Up</Text> */}
+        <Text
+          style={styles.signUp}
+          onPress={() => router.push("/auth/Register")}
+        >
+          Don't have an account? Sign Up
+        </Text>
       </View>
     </View>
   );
 };
 
-export default Register;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#00ccaa",
+    backgroundColor: "white",
   },
   title: {
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",
-    marginBottom: 70,
+    marginBottom: 10,
     color: "#00CC99",
   },
   card: {
     backgroundColor: "white",
     padding: 30,
-    borderRadius: 10,
-    elevation: 2,
+    borderRadius: 20,
+    elevation: 5,
     width: "90%",
     maxWidth: 400,
   },
