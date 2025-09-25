@@ -6,34 +6,58 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
+import Api from "@/services/Api.js";
+import { router } from "expo-router";
 
-import Api from "@/services/Api.js"
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const registerAccount = async (title) => {
-    const controller = new AbortController();
-    try{
-      const registerData = { email, password };
-      const res = await Api.registerAccountAPI(registerData, password);
+  const showError = (msg) => {
+    setError(msg);
+    setTimeout(() => setError(null), 10000);
+  };
+  const LoginAccount = async () => {
+    if (!email || !password) {
+      showError("All fields are required");
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError("Invalid email format");
+      return;
+    }
+    try {
+      const loginData = { email, password };
+      const res = await Api.loginAccountAPI(loginData);
       console.log(res.data);
-    } catch(err){
-    if (axios.isCancel(err)) {
-      console.log('Request cancelled');
-    } else {
-      console.error('Actual error:', err);
-    }
 
+      //JWT TOKEN TIME
+      const { token, user } = res.data;
+      await AsyncStorage.setItem("authToken", token);
+      await AsyncStorage.setItem("user", JSON.stringify(user));
+    } catch (err) {
+      if (err.response) {
+        showError("Login Failed! Try Again");
+        console.log(err.response);
+      } else if (err.request) {
+        showError("No response from server. Check your internet");
+        console.log(err.request);
+      } else {
+        showError("Unexpected Error Happened" + err.message);
+        console.log(err.message);
+      }
     }
-  }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>Sign in</Text>
 
+        <Text style={{ color: "red" }}>{error}</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { marginBottom: 20 }]}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -49,12 +73,17 @@ const Login = () => {
           secureTextEntry={true}
         />
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={LoginAccount}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
 
-        <Text style={styles.forgotPassword}>Forgot Password?</Text>
-        <Text style={styles.signUp}>Don't have an account? Sign Up</Text>
+        {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
+        <Text
+          style={styles.signUp}
+          onPress={() => router.push("/auth/Register")}
+        >
+          Don't have an account? Sign Up
+        </Text>
       </View>
     </View>
   );
@@ -71,16 +100,16 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "bold",
-    marginBottom: 30,
-    color: "#96634e",
+    marginBottom: 10,
+    color: "#00CC99",
   },
   card: {
     backgroundColor: "white",
     padding: 30,
-    borderRadius: 10,
-    elevation: 2,
+    borderRadius: 20,
+    elevation: 5,
     width: "90%",
     maxWidth: 400,
   },
@@ -93,12 +122,12 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   button: {
-    backgroundColor: "#96634e",
+    backgroundColor: "#00CC99",
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
@@ -108,7 +137,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     textAlign: "center",
     fontSize: 14,
-    color: "#d6aa8d",
+    color: "#00cccc",
     marginBottom: 10,
   },
   signUp: {
