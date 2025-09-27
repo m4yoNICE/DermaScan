@@ -1,19 +1,16 @@
-import mysql from "mysql2";
+import { Sequelize } from "sequelize";
 import { ENV } from "./env.js";
 
-const pool = mysql
-  .createPool({
-    host: ENV.HOST,
-    user: ENV.USERNAME,
-    password: ENV.PASSWORD,
-    database: ENV.DATABASE,
-    port: ENV.DB_PORT || 3306,
-  })
-  .promise();
+const sequelize = new Sequelize(ENV.DATABASE, ENV.USERNAME, ENV.PASSWORD, {
+  host: ENV.HOST,
+  port: ENV.DB_PORT || 3306,
+  dialect: "mysql",
+  logging: false,
+});
 
 async function testConnection() {
   try {
-    await pool.query("SELECT 1");
+    await sequelize.authenticate;
     console.log("Connected to the database!");
   } catch (err) {
     if (err.code === "ECONNREFUSED") {
@@ -29,5 +26,4 @@ async function testConnection() {
 }
 
 testConnection();
-
-export default pool;
+export default sequelize;

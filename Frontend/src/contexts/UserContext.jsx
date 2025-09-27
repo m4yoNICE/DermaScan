@@ -16,7 +16,15 @@ export function UserProvider({ children }) {
 
         if (storedToken && storedUser) {
           setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          const now = Date.now() / 1000;
+          if (decoded.exp && decoded.exp < now) {
+            // expired
+            await AsyncStorage.removeItem("authToken");
+            await AsyncStorage.removeItem("user");
+          } else if (storedUser) {
+            setToken(storedToken);
+            setUser(JSON.parse(storedUser));
+          }
         }
       } catch (err) {
         console.log("Auth load error:", err);
@@ -36,8 +44,6 @@ export function UserProvider({ children }) {
     await AsyncStorage.setItem("authToken", token);
     await AsyncStorage.setItem("user", JSON.stringify(user));
     console.log("Login complete - token set");
-
-    router.replace("/");
   };
   //clear everything here
   const logout = async () => {
