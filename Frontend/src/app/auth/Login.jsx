@@ -5,11 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
-import Api from "src/services/Api.js";
-import { router } from "expo-router";
+import React, { useContext, useState } from "react";
+import Api from "@/services/Api";
+import { Link, router } from "expo-router";
+import { UserContext } from "src/contexts/UserContext";
 
 const Login = () => {
+  const { login } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -29,14 +31,13 @@ const Login = () => {
       return;
     }
     try {
-      const loginData = { email, password };
+      const loginData = { email: email.trim(), password };
       const res = await Api.loginAccountAPI(loginData);
-      console.log(res.data);
+      console.log("Api: ", res.data);
 
       //JWT TOKEN TIME
-      const { token, user } = res.data;
-      await AsyncStorage.setItem("authToken", token);
-      await AsyncStorage.setItem("user", JSON.stringify(user));
+      await login(res.data);
+      router.replace("/");
     } catch (err) {
       if (err.response) {
         showError("Login Failed! Try Again");
@@ -45,7 +46,7 @@ const Login = () => {
         showError("No response from server. Check your internet");
         console.log(err.request);
       } else {
-        showError("Unexpected Error Happened" + err.message);
+        showError("Unexpected Error Happened: " + err.message);
         console.log(err.message);
       }
     }
@@ -78,11 +79,15 @@ const Login = () => {
         </TouchableOpacity>
 
         {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-        <Text
-          style={styles.signUp}
-          onPress={() => router.push("/auth/Register")}
-        >
-          Don't have an account? Sign Up
+
+        <Text style={styles.signUp}>
+          Don't have an account?{" "}
+          <Link
+            href="/auth/Register"
+            style={{ color: "#00CC99", fontWeight: "600" }}
+          >
+            Sign Up
+          </Link>
         </Text>
       </View>
     </View>

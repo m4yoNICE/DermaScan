@@ -1,11 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Redirect, router } from "expo-router";
-
+import { UserContext } from "src/contexts/UserContext";
 const index = () => {
-  return <Redirect href="/auth/Login" />;
-};
+  const { token, loading } = useContext(UserContext);
 
+  useEffect(() => {
+    console.log("Index re-render - token:", !!token, "loading:", loading);
+  }, [token, loading]);
+
+  if (loading) return <Text>Loading...</Text>;
+
+  if (token) {
+    return <Redirect href="/home/Home" />;
+  } else {
+    return <Redirect href="/auth/Login" />;
+  }
+};
 export default index;
 
 const styles = StyleSheet.create({});

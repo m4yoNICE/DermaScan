@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import Api from "src/services/Api.js";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -60,7 +60,10 @@ const Register = () => {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Sign In</Text>
+        <Link href="/auth/Login" style={{ fontSize: 14, color: "gray" }}>
+          Go back
+        </Link>
+        <Text style={styles.title}>Sign Up</Text>
         <Text style={{ color: "red" }}>{error}</Text>
 
         <TextInput
@@ -105,20 +108,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#00ccaa",
+    backgroundColor: "white",
   },
   title: {
     textAlign: "center",
     fontSize: 40,
     fontWeight: "bold",
-    marginBottom: 70,
+    marginBottom: 10,
     color: "#00CC99",
   },
   card: {
     backgroundColor: "white",
     padding: 30,
-    borderRadius: 10,
-    elevation: 2,
+    borderRadius: 20,
+    elevation: 5,
     width: "90%",
     maxWidth: 400,
   },

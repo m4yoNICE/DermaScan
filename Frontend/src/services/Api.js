@@ -4,8 +4,8 @@ const registerAccountAPI = (register) => {
   return Http.post("/auth/register", register);
 };
 
-const loginAccountAPI = (login) => {
-  return Http.post("/auth/login", login);
+const loginAccountAPI = (id) => {
+  return Http.post("/auth/login", id);
 };
 
 const Api = { registerAccountAPI, loginAccountAPI };
