@@ -9,6 +9,8 @@ import React, { useContext, useState } from "react";
 import Api from "@/services/Api";
 import { Link, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
+import Button from "@/components/Button";
+import Card from "@/components/Card";
 
 const Login = () => {
   const { login } = useContext(UserContext);
@@ -40,7 +42,7 @@ const Login = () => {
       router.replace("/");
     } catch (err) {
       if (err.response) {
-        showError("Login Failed! Try Again");
+        showError("Invalid Credentials!");
         console.log(err.response);
       } else if (err.request) {
         showError("No response from server. Check your internet");
@@ -53,7 +55,7 @@ const Login = () => {
   };
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
+      <Card>
         <Text style={styles.title}>Sign in</Text>
 
         <Text style={{ color: "red" }}>{error}</Text>
@@ -74,9 +76,7 @@ const Login = () => {
           secureTextEntry={true}
         />
 
-        <TouchableOpacity style={styles.button} onPress={LoginAccount}>
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
+        <Button title="Log In" onPress={LoginAccount} />
 
         {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
 
@@ -89,7 +89,7 @@ const Login = () => {
             Sign Up
           </Link>
         </Text>
-      </View>
+      </Card>
     </View>
   );
 };
@@ -110,14 +110,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#00CC99",
   },
-  card: {
-    backgroundColor: "white",
-    padding: 30,
-    borderRadius: 20,
-    elevation: 5,
-    width: "90%",
-    maxWidth: 400,
-  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -125,19 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderRadius: 8,
     marginBottom: 15,
-  },
-  button: {
-    backgroundColor: "#00CC99",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
   },
   forgotPassword: {
     textAlign: "center",

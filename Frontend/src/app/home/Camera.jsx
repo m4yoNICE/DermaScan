@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Button = () => {
+const Camera = () => {
   return (
     <View>
-      <Text>Button</Text>
+      <Text>Camera</Text>
     </View>
   )
 }
 
-export default Button
+export default Camera
 
 const styles = StyleSheet.create({})

@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useEffect, useState, useContext } from "react";
+import { jwtDecode } from "jwt-decode";
 
 export const UserContext = createContext();
 
@@ -14,11 +15,11 @@ export function UserProvider({ children }) {
         const storedToken = await AsyncStorage.getItem("authToken");
         const storedUser = await AsyncStorage.getItem("user");
 
-        if (storedToken && storedUser) {
-          setToken(storedToken);
+        if (storedToken) {
+          const decoded = jwtDecode(storedToken);
           const now = Date.now() / 1000;
           if (decoded.exp && decoded.exp < now) {
-            // expired
+            // if expired, clear storage
             await AsyncStorage.removeItem("authToken");
             await AsyncStorage.removeItem("user");
           } else if (storedUser) {

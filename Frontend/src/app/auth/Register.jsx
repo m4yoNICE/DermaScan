@@ -8,6 +8,8 @@ import {
 import React, { useState } from "react";
 import Api from "src/services/Api.js";
 import { Link, router } from "expo-router";
+import Button from "@/components/Button";
+import Card from "@/components/Card";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -59,7 +61,7 @@ const Register = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
+      <Card>
         <Link href="/auth/Login" style={{ fontSize: 14, color: "gray" }}>
           Go back
         </Link>
@@ -90,13 +92,8 @@ const Register = () => {
           onChangeText={setConfirmPassword}
           secureTextEntry={true}
         />
-        <TouchableOpacity style={styles.button} onPress={registerAccount}>
-          <Text style={styles.buttonText}>Register</Text>
-        </TouchableOpacity>
-
-        {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-        {/* <Text style={styles.signUp}>Don't have an account? Sign Up</Text> */}
-      </View>
+        <Button title="Register" onPress={registerAccount} />
+      </Card>
     </View>
   );
 };
@@ -133,19 +130,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
   },
-  button: {
-    backgroundColor: "#00CC99",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+
   forgotPassword: {
     textAlign: "center",
     fontSize: 14,
