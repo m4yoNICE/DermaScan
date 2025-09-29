@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 
 // Uncomment this line when setting up on a new device
-// await sequelize.sync({ alter: true });
+await sequelize.sync({ alter: true });
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

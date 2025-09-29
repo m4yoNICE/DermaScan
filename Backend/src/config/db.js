@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize";
 import { ENV } from "./env.js";
 
+console.log("DB_USER:", process.env.DB_USERNAME);
+console.log("DB_PASS:", process.env.DB_PASSWORD ? "set" : "NOT SET");
 const sequelize = new Sequelize(ENV.DATABASE, ENV.USERNAME, ENV.PASSWORD, {
   host: ENV.HOST,
   port: ENV.DB_PORT || 3306,
