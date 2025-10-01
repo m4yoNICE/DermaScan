@@ -12,9 +12,9 @@ const index = () => {
   if (loading) return <Text>Loading...</Text>;
 
   if (token) {
-    return <Redirect href="/home/Home" />;
+    return <Redirect href="/Home" />;
   } else {
-    return <Redirect href="/auth/Login" />;
+    return <Redirect href="/Login" />;
   }
 };
 export default index;

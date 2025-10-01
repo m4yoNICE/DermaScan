@@ -4,7 +4,7 @@ import { UserProvider } from "src/contexts/UserContext";
 const RootLayout = () => {
   return (
     <UserProvider>
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }} />
     </UserProvider>
   );
 };

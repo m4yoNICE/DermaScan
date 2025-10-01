@@ -5,25 +5,25 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useContext, useState } from "react";
-import Api from "@/services/Api";
+import React, { useState } from "react";
+import Api from "src/services/Api.js";
 import { Link, router } from "expo-router";
-import { UserContext } from "src/contexts/UserContext";
-import Button from "@/components/Button";
-import Card from "@/components/Card";
+import Button from "src/components/Button";
+import Card from "src/components/Card";
 
-const Login = () => {
-  const { login } = useContext(UserContext);
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const showError = (msg) => {
     setError(msg);
     setTimeout(() => setError(null), 10000);
   };
-  const LoginAccount = async () => {
-    if (!email || !password) {
+
+  const registerAccount = async () => {
+    if (!email || !password || !confirmPassword) {
       showError("All fields are required");
       return;
     }
@@ -32,35 +32,44 @@ const Login = () => {
       showError("Invalid email format");
       return;
     }
+    if (password !== confirmPassword) {
+      showError("Passwords do not match");
+      return;
+    }
     try {
-      const loginData = { email: email.trim(), password };
-      const res = await Api.loginAccountAPI(loginData);
-      console.log("Api: ", res.data);
-
-      //JWT TOKEN TIME
-      await login(res.data);
-      router.replace("/");
+      if (password == confirmPassword) {
+        const registerData = { email, password };
+        const res = await Api.registerAccountAPI(registerData);
+        console.log(res.data);
+        router.push("/auth/Login");
+      }
     } catch (err) {
       if (err.response) {
-        showError("Invalid Credentials!");
+        const message =
+          err.response.data?.error || "Registration failed. Try again.";
+        showError(message);
         console.log(err.response);
       } else if (err.request) {
         showError("No response from server. Check your internet");
         console.log(err.request);
       } else {
-        showError("Unexpected Error Happened: " + err.message);
+        showError("Unexpected Error Happened" + err.message);
         console.log(err.message);
       }
     }
   };
+
   return (
     <View style={styles.container}>
       <Card>
-        <Text style={styles.title}>Sign in</Text>
-
+        <Link href="/auth/Login" style={{ fontSize: 14, color: "gray" }}>
+          Go back
+        </Link>
+        <Text style={styles.title}>Sign Up</Text>
         <Text style={{ color: "red" }}>{error}</Text>
+
         <TextInput
-          style={[styles.input, { marginBottom: 20 }]}
+          style={styles.input}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -76,25 +85,20 @@ const Login = () => {
           secureTextEntry={true}
         />
 
-        <Button title="Log In" onPress={LoginAccount} />
-
-        {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-
-        <Text style={styles.signUp}>
-          Don't have an account?{" "}
-          <Link
-            href="/auth/Register"
-            style={{ color: "#00CC99", fontWeight: "600" }}
-          >
-            Sign Up
-          </Link>
-        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry={true}
+        />
+        <Button title="Register" onPress={registerAccount} />
       </Card>
     </View>
   );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {
@@ -110,6 +114,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#00CC99",
   },
+  card: {
+    backgroundColor: "white",
+    padding: 30,
+    borderRadius: 20,
+    elevation: 5,
+    width: "90%",
+    maxWidth: 400,
+  },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
@@ -118,6 +130,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 15,
   },
+
   forgotPassword: {
     textAlign: "center",
     fontSize: 14,
