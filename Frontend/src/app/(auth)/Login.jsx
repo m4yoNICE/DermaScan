@@ -83,7 +83,7 @@ const Login = () => {
         <Text style={styles.signUp}>
           Don't have an account?{" "}
           <Link
-            href="/auth/Register"
+            href="/Register"
             style={{ color: "#00CC99", fontWeight: "600" }}
           >
             Sign Up

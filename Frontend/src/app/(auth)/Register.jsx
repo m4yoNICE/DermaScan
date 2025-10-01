@@ -41,7 +41,7 @@ const Register = () => {
         const registerData = { email, password };
         const res = await Api.registerAccountAPI(registerData);
         console.log(res.data);
-        router.push("/auth/Login");
+        router.push("/Login");
       }
     } catch (err) {
       if (err.response) {
@@ -62,7 +62,7 @@ const Register = () => {
   return (
     <View style={styles.container}>
       <Card>
-        <Link href="/auth/Login" style={{ fontSize: 14, color: "gray" }}>
+        <Link href="/Login" style={{ fontSize: 14, color: "gray" }}>
           Go back
         </Link>
         <Text style={styles.title}>Sign Up</Text>

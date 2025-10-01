@@ -32,8 +32,11 @@ export const Drawerlayout = () => {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen name="(tabs)" options={{ title: "Home" }} />
-      <Drawer.Screen name="Logout" options={{ title: "Logout" }} />
       <Drawer.Screen name="Profile" options={{ title: "Settings" }} />
+      <Drawer.Screen
+        name="Logout"
+        options={{ title: "Logout", drawerLabelStyle: { color: "red" } }}
+      />
     </Drawer>
   );
 };

@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { useContext, useEffect } from "react";
+import { UserContext } from "src/contexts/UserContext";
+import { router } from "expo-router";
 
 const Logout = () => {
-  return (
-    <View>
-      <Text>Logout</Text>
-    </View>
-  );
+  const { logout } = useContext(UserContext);
+
+  useEffect(() => {
+    logout();
+    router.replace("/");
+  }, []);
+  return null;
 };
-
 export default Logout;
-
-const styles = StyleSheet.create({});
