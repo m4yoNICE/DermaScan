@@ -1,12 +1,29 @@
 import Http from "./Http";
 
-const registerAccountAPI = (register) => {
-  return Http.post("/auth/register", register);
+const registerAccountAPI = (data) => {
+  return Http.post("/auth/register", data);
 };
 
-const loginAccountAPI = (id) => {
-  return Http.post("/auth/login", id);
+const loginAccountAPI = (data) => {
+  return Http.post("/auth/login", data);
 };
 
-const Api = { registerAccountAPI, loginAccountAPI };
+const getUserbyTokenAPI = () => {
+  return Http.get("/users");
+};
+
+const editUserAPI = (data) => {
+  return Http.put("/users", data);
+};
+
+const deleteUserAPI = () => {
+  return Http.delete("/users");
+};
+const Api = {
+  registerAccountAPI,
+  loginAccountAPI,
+  getUserbyTokenAPI,
+  deleteUserAPI,
+  editUserAPI,
+};
 export default Api;

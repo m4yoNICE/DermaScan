@@ -1,6 +1,7 @@
 import express from "express";
 import { ENV } from "./config/env.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import cors from "cors";
 import sequelize from "./config/db.js";
 
@@ -17,6 +18,7 @@ app.use(
 app.use(express.json());
 
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 // Uncomment this line when setting up on a new device
 // await sequelize.sync({ alter: true });

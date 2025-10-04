@@ -11,12 +11,12 @@ import { Link, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
+import { ToastMessage } from "@/components/ToastMessage";
 
 const Login = () => {
   const { login } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
   const showError = (msg) => {
     setError(msg);
@@ -24,31 +24,46 @@ const Login = () => {
   };
   const LoginAccount = async () => {
     if (!email || !password) {
-      showError("All fields are required");
-      return;
+      return ToastMessage(
+        "error",
+        "Missing Fields",
+        "Please fill out all required fields"
+      );
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showError("Invalid email format");
-      return;
+      return ToastMessage(
+        "error",
+        "Invalid Email",
+        "Please enter a valid email address"
+      );
     }
     try {
       const loginData = { email: email.trim(), password };
       const res = await Api.loginAccountAPI(loginData);
-      console.log("Api: ", res.data);
 
       //JWT TOKEN TIME
       await login(res.data);
+      ToastMessage("success", "Login Successful", "Welcome back 👋");
       router.replace("/");
     } catch (err) {
+      console.log("Login error:", err);
+
       if (err.response) {
-        showError("Invalid Credentials!");
-        console.log(err.response);
+        ToastMessage(
+          "error",
+          "Invalid Credentials",
+          "Email or password is incorrect"
+        );
       } else if (err.request) {
-        showError("No response from server. Check your internet");
+        ToastMessage(
+          "error",
+          "Network Error",
+          "No response from server. Check your internet"
+        );
         console.log(err.request);
       } else {
-        showError("Unexpected Error Happened: " + err.message);
+        ToastMessage("error", "Unexpected Error", err.message);
         console.log(err.message);
       }
     }
@@ -58,7 +73,6 @@ const Login = () => {
       <Card>
         <Text style={styles.title}>Sign in</Text>
 
-        <Text style={{ color: "red" }}>{error}</Text>
         <TextInput
           style={[styles.input, { marginBottom: 20 }]}
           placeholder="Email"

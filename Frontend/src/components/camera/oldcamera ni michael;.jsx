@@ -13,7 +13,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
-const Camera = () => {
+const oldcamera = () => {
   const [permission, requestPermission] = useCameraPermissions();
 
   // Refs
@@ -201,7 +201,7 @@ const Camera = () => {
   );
 };
 
-export default Camera;
+export default oldmanager;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },

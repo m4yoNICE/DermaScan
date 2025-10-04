@@ -1,3 +1,4 @@
+//reactnative
 import {
   StyleSheet,
   Text,
@@ -6,54 +7,112 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import Api from "src/services/Api.js";
 import { Link, router } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
+//auth
+import { useContext } from "react";
+import { UserContext } from "src/contexts/UserContext";
+//user components
+import Api from "src/services/Api.js";
 import Button from "src/components/Button";
 import Card from "src/components/Card";
+import { ToastMessage } from "@/components/ToastMessage";
 
 const Register = () => {
+  const { login } = useContext(UserContext);
+  //usestate
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const [firstname, setfirstname] = useState("");
+  const [lastname, setlastname] = useState("");
+  //dob
+  const [dob, setdob] = useState(null);
+  const [showPicker, setShowPicker] = useState(false);
 
-  const showError = (msg) => {
-    setError(msg);
-    setTimeout(() => setError(null), 10000);
+  // helper function
+  const formatDate = (date) => {
+    if (!date) return "No date selected";
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return date.toLocaleDateString(undefined, options);
   };
 
   const registerAccount = async () => {
-    if (!email || !password || !confirmPassword) {
-      showError("All fields are required");
+    //========VALIDATIONS========================
+    if (
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !firstname ||
+      !lastname ||
+      !dob
+    ) {
+      ToastMessage(
+        "error",
+        "Missing Fields",
+        "Please fill out all required fields"
+      );
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      showError("Invalid email format");
+      ToastMessage(
+        "error",
+        "Invalid Email",
+        "Please enter a valid email address"
+      );
       return;
     }
+    if (dob > new Date()) {
+      return ToastMessage(
+        "error",
+        "Invalid Date",
+        "Date of birth cannot be in the future"
+      );
+    }
     if (password !== confirmPassword) {
-      showError("Passwords do not match");
-      return;
+      return ToastMessage(
+        "error",
+        "Password Mismatch",
+        "Passwords do not match"
+      );
     }
     try {
       if (password == confirmPassword) {
-        const registerData = { email, password };
+        const registerData = { email, firstname, lastname, password };
         const res = await Api.registerAccountAPI(registerData);
-        console.log(res.data);
-        router.push("/Login");
+        const { token, user } = res.data;
+        if (token && user) {
+          await login({ token, user });
+          ToastMessage(
+            "success",
+            "Registration Successful!",
+            "Welcome aboard 👋"
+          );
+          router.push("/");
+        } else {
+          ToastMessage(
+            "error",
+            "Missing Token",
+            "Server didn't return a token."
+          );
+        }
       }
     } catch (err) {
       if (err.response) {
         const message =
           err.response.data?.error || "Registration failed. Try again.";
-        showError(message);
+        ToastMessage("error", "Server Error", message);
         console.log(err.response);
       } else if (err.request) {
-        showError("No response from server. Check your internet");
+        ToastMessage(
+          "error",
+          "Network Error",
+          "No response from server. Check your internet connection."
+        );
         console.log(err.request);
       } else {
-        showError("Unexpected Error Happened" + err.message);
+        ToastMessage("error", "Unexpected Error", err.message);
         console.log(err.message);
       }
     }
@@ -66,7 +125,6 @@ const Register = () => {
           Go back
         </Link>
         <Text style={styles.title}>Sign Up</Text>
-        <Text style={{ color: "red" }}>{error}</Text>
 
         <TextInput
           style={styles.input}
@@ -76,6 +134,47 @@ const Register = () => {
           keyboardType="email-address"
           autoCapitalize="none"
         />
+
+        <TextInput
+          style={styles.input}
+          placeholder="First Name"
+          value={firstname}
+          onChangeText={setfirstname}
+          keyboardType="default"
+          autoCapitalize="words"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Last Name"
+          value={lastname}
+          onChangeText={setlastname}
+          keyboardType="default"
+          autoCapitalize="words"
+        />
+        <Text style={styles.dobText}>
+          {dob
+            ? `Date of Birth: ${formatDate(dob)}`
+            : "Select your Date of Birth"}
+        </Text>
+        <Button
+          title="Select Date of Birth"
+          onPress={() => setShowPicker(true)}
+          style={{ backgroundColor: "#f6f6f6", padding: 10, marginVertical: 3 }}
+          textStyle={{ color: "#333", fontSize: 12 }}
+        />
+
+        {showPicker && (
+          <DateTimePicker
+            value={dob || new Date()}
+            mode="date"
+            display="spinner"
+            onChange={(event, selectedDate) => {
+              setShowPicker(false);
+              if (selectedDate) setdob(selectedDate);
+            }}
+          />
+        )}
 
         <TextInput
           style={styles.input}

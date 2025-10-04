@@ -24,7 +24,7 @@ const HomeLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="Camera"
+        name="CameraPage"
         options={{
           title: () => null,
           tabBarIcon: ({ color }) => (
