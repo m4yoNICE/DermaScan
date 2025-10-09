@@ -5,10 +5,13 @@ export async function updateUser(
   userId,
   firstname,
   lastname,
-  email,
+  birthdate,
   currentPassword,
   newPassword
 ) {
+  if (!firstname && !lastname && !newPassword) {
+    return res.status(400).json({ error: "No fields provided" });
+  }
   const user = await User.findByPk(userId);
   if (!user) {
     return { success: false, message: "User not found" };
@@ -25,7 +28,7 @@ export async function updateUser(
   }
   if (firstname) user.first_name = firstname;
   if (lastname) user.last_name = lastname;
-  if (email) user.email = email;
+  if (birthdate) user.birthdate = birthdate;
   await user.save();
   return { success: true };
 }
@@ -36,4 +39,17 @@ export async function deleteUser(id) {
 
 export async function getUserId(id) {
   return await User.findByPk(id);
+}
+
+export async function updateSkinData(userId, skin_type, skin_sensitivity) {
+  console.log(
+    "updateSkinData called with:",
+    userId,
+    skin_type,
+    skin_sensitivity
+  );
+  return await User.update(
+    { skin_type, skin_sensitivity },
+    { where: { id: userId } }
+  );
 }

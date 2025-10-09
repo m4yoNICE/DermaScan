@@ -17,6 +17,7 @@ const Login = () => {
   const { login } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const showError = (msg) => {
     setError(msg);
@@ -24,19 +25,11 @@ const Login = () => {
   };
   const LoginAccount = async () => {
     if (!email || !password) {
-      return ToastMessage(
-        "error",
-        "Missing Fields",
-        "Please fill out all required fields"
-      );
+      return showError("Please fill out all required fields");
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return ToastMessage(
-        "error",
-        "Invalid Email",
-        "Please enter a valid email address"
-      );
+      return showError("Please enter a valid email address");
     }
     try {
       const loginData = { email: email.trim(), password };
@@ -50,20 +43,12 @@ const Login = () => {
       console.log("Login error:", err);
 
       if (err.response) {
-        ToastMessage(
-          "error",
-          "Invalid Credentials",
-          "Email or password is incorrect"
-        );
+        showError("Email or password is incorrect");
       } else if (err.request) {
-        ToastMessage(
-          "error",
-          "Network Error",
-          "No response from server. Check your internet"
-        );
+        showError("No response from server. Check your internet");
         console.log(err.request);
       } else {
-        ToastMessage("error", "Unexpected Error", err.message);
+        showError(err.message);
         console.log(err.message);
       }
     }
@@ -72,6 +57,12 @@ const Login = () => {
     <View style={styles.container}>
       <Card>
         <Text style={styles.title}>Sign in</Text>
+
+        {error && (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
         <TextInput
           style={[styles.input, { marginBottom: 20 }]}
@@ -142,5 +133,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     color: "gray",
+  },
+
+  errorBox: {
+    backgroundColor: "#ffe6e6",
+    padding: 10,
+    borderRadius: 6,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#ff9999",
+  },
+  errorText: {
+    color: "#cc0000",
+    fontSize: 14,
+    textAlign: "center",
   },
 });

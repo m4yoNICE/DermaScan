@@ -1,20 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   FlatList,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
 import dayjs from "dayjs";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
+import QuestModal from "@/components/modals/QuestModal";
+import Api from "@/services/Api";
 const Home = () => {
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
   const [currentMonth, setCurrentMonth] = useState(dayjs());
+  const [checkSkinType, setCheckSkinType] = useState(null);
+  const [checkSkinSensitive, setCheckSkinSensitive] = useState(null);
+  const [showQuestModal, setShowQuestModal] = useState(false);
 
+  //check for skintypes after registering
+  const checkSkinData = async () => {
+    try {
+      const res = await Api.getUserbyTokenAPI();
+      const user = res.data;
+
+      setCheckSkinType(user.skin_type);
+      setCheckSkinSensitive(user.skin_sensitivity);
+
+      // If user has no skin data, show modal
+      if (!user.skin_type || !user.skin_sensitivity) {
+        setShowQuestModal(true);
+      }
+    } catch (err) {
+      console.error("Error checking skin data:", err);
+    }
+  };
+  useEffect(() => {
+    checkSkinData();
+  }, []);
   // Replace this later with DB data
   const events = [];
 
@@ -31,6 +56,10 @@ const Home = () => {
   return (
     <View style={styles.container}>
       {/* Calendar */}
+      <QuestModal
+        visible={showQuestModal}
+        onClose={() => setShowQuestModal(false)}
+      />
       <Calendar
         current={dayjs().format("YYYY-MM-DD")}
         onDayPress={(day) => setSelected(day.dateString)}

@@ -12,8 +12,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 30,
     borderRadius: 20,
-    elevation: 5,
     width: "90%",
     maxWidth: 400,
+    elevation: 5,
+    //ios
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
   },
 });

@@ -19,11 +19,16 @@ const editUserAPI = (data) => {
 const deleteUserAPI = () => {
   return Http.delete("/users");
 };
+
+const updateSkinDataAPI = (data) => {
+  return Http.post("/users/skin", data);
+};
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
   getUserbyTokenAPI,
   deleteUserAPI,
   editUserAPI,
+  updateSkinDataAPI,
 };
 export default Api;

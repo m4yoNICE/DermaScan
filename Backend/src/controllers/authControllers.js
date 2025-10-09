@@ -1,7 +1,4 @@
-import {
-  findUserByEmail,
-  createUser,
-} from "../services/authServices.js";
+import { findUserByEmail, createUser } from "../services/authServices.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
@@ -32,12 +29,12 @@ export async function login(req, res) {
 
 export async function register(req, res) {
   try {
-    const { email, firstname, lastname, password } = req.body;
+    const { email, firstname, dob, lastname, password } = req.body;
     const existingUser = await findUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: "Email already registered" });
     }
-    const newUser = await createUser(email, firstname, lastname, password);
+    const newUser = await createUser(email, firstname, dob, lastname, password);
 
     // Immediately issue token (same as login)
     const payload = { id: newUser.id, email: newUser.email };
@@ -53,4 +50,3 @@ export async function register(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
-

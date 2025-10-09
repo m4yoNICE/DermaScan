@@ -29,7 +29,12 @@ const Register = () => {
   //dob
   const [dob, setdob] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [error, setError] = useState(null);
 
+  const showError = (msg) => {
+    setError(msg);
+    setTimeout(() => setError(null), 10000);
+  };
   // helper function
   const formatDate = (date) => {
     if (!date) return "No date selected";
@@ -79,7 +84,7 @@ const Register = () => {
     }
     try {
       if (password == confirmPassword) {
-        const registerData = { email, firstname, lastname, password };
+        const registerData = { email, firstname, dob, lastname, password };
         const res = await Api.registerAccountAPI(registerData);
         const { token, user } = res.data;
         if (token && user) {
@@ -152,24 +157,29 @@ const Register = () => {
           keyboardType="default"
           autoCapitalize="words"
         />
-        <Text style={styles.dobText}>
-          {dob
-            ? `Date of Birth: ${formatDate(dob)}`
-            : "Select your Date of Birth"}
-        </Text>
+
         <Button
-          title="Select Date of Birth"
+          title={dob ? formatDate(dob) : "Select Date of Birth"}
           onPress={() => setShowPicker(true)}
-          style={{ backgroundColor: "#f6f6f6", padding: 10, marginVertical: 3 }}
-          textStyle={{ color: "#333", fontSize: 12 }}
+          style={{
+            backgroundColor: "#f9f9f9",
+            padding: 20,
+            marginVertical: 3,
+            elevation: 5,
+            //ios
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+          }}
+          textStyle={{ color: "#1a1a1a" }}
         />
 
         {showPicker && (
           <DateTimePicker
             value={dob || new Date()}
             mode="date"
-            display="spinner"
-            onChange={(event, selectedDate) => {
+            display="default"
+            onChange={(_, selectedDate) => {
               setShowPicker(false);
               if (selectedDate) setdob(selectedDate);
             }}

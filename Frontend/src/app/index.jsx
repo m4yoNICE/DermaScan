@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useContext, useEffect } from "react";
 import { Redirect, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
+import QuestModal from "@/components/modals/QuestModal";
 const index = () => {
   const { token, loading } = useContext(UserContext);
 
@@ -15,6 +16,7 @@ const index = () => {
     return <Redirect href="/Home" />;
   } else {
     return <Redirect href="/Login" />;
+    // return <QuestModal />;
   }
 };
 export default index;

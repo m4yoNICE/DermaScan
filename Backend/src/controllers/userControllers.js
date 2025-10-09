@@ -1,4 +1,9 @@
-import { updateUser, deleteUser, getUserId } from "../services/userServices.js";
+import {
+  updateUser,
+  deleteUser,
+  getUserId,
+  updateSkinData,
+} from "../services/userServices.js";
 
 export async function getuserid(req, res) {
   try {
@@ -18,20 +23,21 @@ export async function getuserid(req, res) {
 export async function edituser(req, res) {
   try {
     const userId = req.user.id;
-    const { firstname, lastname, email, currentPassword, newPassword } =
+    const { firstname, lastname, birthdate, currentPassword, newPassword } =
       req.body;
 
     const result = await updateUser(
       userId,
       firstname,
       lastname,
-      email,
+      birthdate,
       currentPassword,
       newPassword
     );
 
-    if (!result.success) return res.status(400).json({ error: result.message });
-
+    if (!result) {
+      return res.status(400).json({ error: result });
+    }
     res.status(200).json({ message: "User updated successfully" });
   } catch (err) {
     console.error("Edit user error:", err);
@@ -47,6 +53,27 @@ export async function deleteuser(req, res) {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function updateskindata(req, res) {
+  try {
+    const { skin_type, skin_sensitivity } = req.body;
+    const userId = req.user.id;
+    console.log("BODY:", req.body);
+    console.log("USER ID:", userId);
+    if (!skin_type || skin_sensitivity === undefined) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    const added = await updateSkinData(userId, skin_type, skin_sensitivity);
+    if (result[0] === 0) {
+      return res
+        .status(404)
+        .json({ error: "User not found or no changes made" });
+    }
+    res.status(200).json({ message: "Skin data added successfully" });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }

@@ -28,6 +28,14 @@ const User = sequelize.define(
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
+    skin_type: {
+      type: DataTypes.ENUM("oily", "dry", "normal", "combination"),
+      allowNull: true,
+    },
+    skin_sensitivity: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
   },
   {
     tableName: "users",

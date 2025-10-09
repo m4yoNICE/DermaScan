@@ -1,6 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { triggerLogout } from "./AuthRef";
+import { ToastMessage } from "@/components/ToastMessage";
 const baseURL = "http://192.168.1.2:3000"; //ip address differ device to device, pls go to CMD and type "ipconfig" and copypaste the ipaddress
 // dont forget to put the port number, express for now is at :3000
 //                                         -jasperbayot
@@ -17,4 +18,23 @@ Http.interceptors.request.use(async (config) => {
   return config;
 });
 
+//para automatic logout if expired ang token
+Http.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const status = error.response?.status;
+
+    if (status === 403) {
+      console.warn("Session expired — clearing storage and redirecting.");
+
+      await AsyncStorage.removeItem("authToken");
+      await AsyncStorage.removeItem("user");
+
+      ToastMessage("error", "Session Expired", "Please log in again.");
+      triggerLogout();
+    }
+
+    return Promise.reject(error);
+  }
+);
 export default Http;

@@ -6,7 +6,6 @@ export const ToastMessage = (type, message, description) => {
     type,
     text1: message,
     text2: description,
-    position: "bottom",
     visibilityTime: 3000,
   });
 };

@@ -7,7 +7,6 @@ const Logout = () => {
 
   useEffect(() => {
     logout();
-    router.replace("/");
   }, []);
   return null;
 };
