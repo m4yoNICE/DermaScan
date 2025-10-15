@@ -113,7 +113,7 @@ const oldcamera = () => {
   return (
     <View style={styles.container}>
       {/* Instructions modal */}
-      <Modal visible={showInstructions} transparent animationType="slide">
+      {/* <Modal visible={showInstructions} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
             <ScrollView>
@@ -148,7 +148,7 @@ const oldcamera = () => {
             </ScrollView>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
       {/* Live camera or captured photo */}
       {!capturedPhoto ? (

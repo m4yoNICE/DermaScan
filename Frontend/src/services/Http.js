@@ -2,39 +2,43 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { triggerLogout } from "./AuthRef";
 import { ToastMessage } from "@/components/ToastMessage";
-const baseURL = "http://192.168.1.2:3000"; //ip address differ device to device, pls go to CMD and type "ipconfig" and copypaste the ipaddress
-// dont forget to put the port number, express for now is at :3000
-//                                         -jasperbayot
-const Http = axios.create({
+
+const baseURL = "http://192.168.1.2:3000";
+
+export const Http = axios.create({
   baseURL: baseURL,
   headers: { "Content-Type": "application/json" },
 });
 
-Http.interceptors.request.use(async (config) => {
+//ako kidungang ang http og ImageHttp
+const addAuthToken = async (config) => {
   const token = await AsyncStorage.getItem("authToken");
   if (token) {
+    config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // if (config.data instanceof FormData) {
+  //   config.headers["Content-Type"] = "multipart/form-data";
+  // }
   return config;
-});
+};
 
 //para automatic logout if expired ang token
-Http.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const status = error.response?.status;
+const handleExpiryToken = async (error) => {
+  const status = error.response?.status;
 
-    if (status === 403) {
-      console.warn("Session expired — clearing storage and redirecting.");
+  if (status === 403) {
+    console.warn("Session expired — clearing storage and redirecting.");
 
-      await AsyncStorage.removeItem("authToken");
-      await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("authToken");
+    await AsyncStorage.removeItem("user");
 
-      ToastMessage("error", "Session Expired", "Please log in again.");
-      triggerLogout();
-    }
-
-    return Promise.reject(error);
+    ToastMessage("error", "Session Expired", "Please log in again.");
+    triggerLogout();
   }
-);
-export default Http;
+
+  return Promise.reject(error);
+};
+
+Http.interceptors.request.use(addAuthToken);
+Http.interceptors.response.use((res) => res, handleExpiryToken);

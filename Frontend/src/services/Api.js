@@ -1,4 +1,4 @@
-import Http from "./Http";
+import { Http } from "./Http";
 
 const registerAccountAPI = (data) => {
   return Http.post("/auth/register", data);

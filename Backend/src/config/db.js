@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import { ENV } from "./env.js";
 
-const sequelize = new Sequelize(ENV.DATABASE, ENV.USERNAME, ENV.PASSWORD, {
+const db = new Sequelize(ENV.DATABASE, ENV.USERNAME, ENV.PASSWORD, {
   host: ENV.HOST,
   port: ENV.DB_PORT || 3306,
   dialect: "mysql",
@@ -10,7 +10,7 @@ const sequelize = new Sequelize(ENV.DATABASE, ENV.USERNAME, ENV.PASSWORD, {
 
 async function testConnection() {
   try {
-    await sequelize.authenticate();
+    await db.authenticate();
     console.log("Connected to the database!");
   } catch (err) {
     const code = err.original?.code || err.code; // prefer err.original.code for Sequelize
@@ -26,4 +26,4 @@ async function testConnection() {
   }
 }
 testConnection();
-export default sequelize;
+export default db;
