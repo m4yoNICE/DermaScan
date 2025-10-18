@@ -1,4 +1,5 @@
 import tensorflow as tf
+import os
 from huggingface_hub import snapshot_download
 from PIL import Image
 from io import BytesIO
@@ -13,8 +14,14 @@ infer = loaded_model.signatures["serving_default"]
 print("Model loaded successfully.")
 
 # === 2. Load your test image ===
-image_path = "../../skinUploads/Eczema.jpg"
-img = Image.open(image_path)
+image_path = "../../skinUploads"
+
+latest_file = max(
+    [os.path.join(image_path, f) for f in os.listdir(image_path)],
+    key=os.path.getmtime
+)
+
+img = Image.open(latest_file)
 buf = BytesIO()
 img.convert("RGB").save(buf, "PNG")
 image_bytes = buf.getvalue()
