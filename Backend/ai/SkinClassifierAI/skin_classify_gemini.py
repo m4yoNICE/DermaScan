@@ -10,14 +10,22 @@ genai.configure(api_key="AIzaSyCm6zU5e4mY-SOF61C75zU8Zno1uQTh9Ns")
 # --- Choose the Gemini model ---
 model = genai.GenerativeModel("models/gemini-2.5-pro")
 
-img_path = "../../skinUploads"
+# --- Load your test image ---
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(BASE_DIR, "../../skinUploads")
+image_path = os.path.abspath(image_path) 
+
+# Check if the directory exists
+if not os.path.exists(image_path):
+    print("Folder not found:", image_path)
+    exit()
 
 latest_file = max(
-    [os.path.join(img_path, f) for f in os.listdir(img_path)],
+    [os.path.join(image_path, f) for f in os.listdir(image_path)],
     key=os.path.getmtime
 )
 
-img = Image.open(img_path)
+img = Image.open(latest_file)
 
 prompt = """
 You are a dermatology assistant.

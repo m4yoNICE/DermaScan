@@ -14,7 +14,14 @@ infer = loaded_model.signatures["serving_default"]
 print("Model loaded successfully.")
 
 # === 2. Load your test image ===
-image_path = "../../skinUploads"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+image_path = os.path.join(BASE_DIR, "../../skinUploads")
+image_path = os.path.abspath(image_path) 
+
+# Check if the directory exists
+if not os.path.exists(image_path):
+    print("Folder not found:", image_path)
+    exit()
 
 latest_file = max(
     [os.path.join(image_path, f) for f in os.listdir(image_path)],
