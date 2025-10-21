@@ -3,6 +3,7 @@ import os
 from huggingface_hub import snapshot_download
 from PIL import Image
 from io import BytesIO
+import numpy as np
 
 # === 1. Download (or use cached) Derm Foundation model ===
 print("Loading Derm Foundation model (first time takes a while)...")
@@ -48,7 +49,11 @@ example = tf.train.Example(
 print("Running inference...")
 output = infer(inputs=tf.constant([example]))
 
+
 # === 5. Extract embedding ===
 embedding = output["embedding"].numpy().flatten()
 print("Embedding length:", len(embedding))
 print("First 10 values:", embedding[:10])
+
+# === 6. Check Ooutput ===
+print("Output type:", type(output))
