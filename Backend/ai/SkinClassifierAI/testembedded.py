@@ -79,3 +79,18 @@ with open("skin_condition_classifier.pkl", "wb") as f:
     pickle.dump(classifier, f)
 
 print("Classifier saved.")
+
+# Load your trained classifier
+with open("skin_condition_classifier.pkl", "rb") as f:
+    classifier = pickle.load(f)
+
+# Your existing code to get embedding
+output = infer(inputs=tf.constant([example]))
+embedding = output["embedding"].numpy().flatten()
+
+# NOW classify it
+prediction = classifier.predict([embedding])[0]
+probabilities = classifier.predict_proba([embedding])[0]
+
+print(f"Predicted condition: {prediction}")
+print(f"Confidence: {probabilities.max():.2%}")
