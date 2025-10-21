@@ -1,8 +1,5 @@
 import tensorflow as tf
 import numpy as np
-from huggingface_hub import snapshot_download
-from PIL import Image
-from io import BytesIO
 import os
 
 # For training classifier
