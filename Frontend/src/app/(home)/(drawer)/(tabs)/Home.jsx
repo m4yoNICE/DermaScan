@@ -1,35 +1,20 @@
-import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Modal,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import { ScrollView, StyleSheet, View, TextInput } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { Calendar } from "react-native-calendars";
 import dayjs from "dayjs";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import QuestModal from "@/components/modals/QuestModal";
 import Api from "@/services/Api";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 const Home = () => {
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
-  const [currentMonth, setCurrentMonth] = useState(dayjs());
-  const [checkSkinType, setCheckSkinType] = useState(null);
-  const [checkSkinSensitive, setCheckSkinSensitive] = useState(null);
   const [showQuestModal, setShowQuestModal] = useState(false);
-
-  //check for skintypes after registering
-  const checkSkinData = async () => {
+  const [text, setText] = useState("");
+  const sheetRef = useRef(null);
+  const handleCheckSkinData = async () => {
     try {
       const res = await Api.getUserbyTokenAPI();
       const user = res.data;
-
-      setCheckSkinType(user.skin_type);
-      setCheckSkinSensitive(user.skin_sensitivity);
-
-      // If user has no skin data, show modal
       if (!user.skin_type || !user.skin_sensitivity) {
         setShowQuestModal(true);
       }
@@ -37,32 +22,27 @@ const Home = () => {
       console.error("Error checking skin data:", err);
     }
   };
+
   useEffect(() => {
-    checkSkinData();
+    handleCheckSkinData();
   }, []);
-  // Replace this later with DB data
-  const events = [];
 
-  const filteredEvents = events.filter((e) => e.date.startsWith(selected));
-
-  const handlePrevMonth = () => {
-    setCurrentMonth(currentMonth.subtract(1, "month"));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(currentMonth.add(1, "month"));
-  };
+  const snapPoints = useMemo(() => ["25%", "50%"], []);
+  const handleOpenJournal = () => sheetRef.current?.expand();
+  const handleCloseJournal = () => sheetRef.current?.close();
 
   return (
     <View style={styles.container}>
-      {/* Calendar */}
       <QuestModal
         visible={showQuestModal}
         onClose={() => setShowQuestModal(false)}
       />
       <Calendar
-        current={dayjs().format("YYYY-MM-DD")}
-        onDayPress={(day) => setSelected(day.dateString)}
+        current={selected}
+        onDayPress={(day) => {
+          setSelected(day.dateString);
+          handleOpenJournal(); // call your bottom sheet open function
+        }}
         markedDates={{
           [selected]: { selected: true },
         }}
@@ -74,24 +54,28 @@ const Home = () => {
           )
         }
       />
-
-      {/* Event list */}
-      <FlatList
-        data={filteredEvents}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: "center", color: "gray", marginTop: 20 }}>
-            No events for this day
-          </Text>
-        }
-        renderItem={({ item }) => (
-          <View style={styles.eventCard}>
-            <Text style={styles.eventTitle}>{item.title}</Text>
-            <Text style={styles.eventDate}>{item.date}</Text>
-          </View>
-        )}
-      />
+      <BottomSheet
+        ref={sheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        onChange={(index) => {
+          if (index === -1) handleCloseJournal();
+        }}
+      >
+        <BottomSheetView style={styles.sheetContent}>
+          <ScrollView>
+            <TextInput
+              style={styles.input}
+              multiline={true}
+              onChangeText={setText}
+              value={text}
+              placeholder="Make your story about your day..."
+              placeholderTextColor="#999"
+            />
+          </ScrollView>
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 };
@@ -99,38 +83,20 @@ const Home = () => {
 export default Home;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  topBar: {
-    backgroundColor: "teal",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  topBarTitle: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
+  input: {
+    height: 150,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    textAlignVertical: "top",
   },
-  arrowContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  eventCard: {
-    backgroundColor: "#f9f9f9",
+  sheetContent: {
+    flex: 1,
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 2,
-  },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  eventDate: {
-    fontSize: 14,
-    color: "gray",
   },
 });

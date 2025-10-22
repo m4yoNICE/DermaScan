@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { UserProvider } from "src/contexts/UserContext";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 {
   /* ALERT CONFIG */
 }
@@ -37,10 +37,12 @@ const toastConfig = {
 
 const RootLayout = () => {
   return (
-    <UserProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-      <Toast config={toastConfig} />
-    </UserProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <UserProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+        <Toast config={toastConfig} />
+      </UserProvider>
+    </GestureHandlerRootView>
   );
 };
 

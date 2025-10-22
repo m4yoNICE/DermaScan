@@ -22,6 +22,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/images", imageRoutes);
+
 // Uncomment this line when setting up on a new device
 // await db.sync({ alter: true });
 
