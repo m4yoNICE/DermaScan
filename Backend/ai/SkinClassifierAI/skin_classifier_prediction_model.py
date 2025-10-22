@@ -60,32 +60,32 @@ def generate_embeddings_for_dataset(image_folder, infer):
     return np.array(embeddings), np.array(labels)
 
 # === STEP 3: Train classifier ===
-image_folder = "../data"  # replace with your actual folder
+script_dir = os.path.dirname(os.path.abspath(__file__))  # Script folder
+image_folder = os.path.join(script_dir, "../../data")       # one level up from script folder
+image_folder = os.path.abspath(image_folder)            # normalize
+contents = os.listdir(image_folder)
 
-print(os.path.abspath(image_folder))  # Shows the absolute path
-print(os.path.exists(image_folder))   # Should be True
-print(os.listdir(image_folder)) # Lists subdirectories
+print("Resolved path:", image_folder)
+print("Exists?", os.path.exists(image_folder))
+print("Contents:", contents)
 
+X, y = generate_embeddings_for_dataset(image_folder, infer)
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+classifier = LogisticRegression(max_iter=1000, multi_class="multinomial")
+classifier.fit(X_train, y_train)
 
-# X, y = generate_embeddings_for_dataset(image_folder, infer)
-
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# classifier = LogisticRegression(max_iter=1000, multi_class="multinomial")
-# classifier.fit(X_train, y_train)
-
-# accuracy = classifier.score(X_test, y_test)
-# print(f"✅ Classifier trained with test accuracy: {accuracy:.2%}")
+accuracy = classifier.score(X_test, y_test)
+print(f"✅ Classifier trained with test accuracy: {accuracy:.2%}")
 
 # === STEP 4: Save embeddings + classifier cache ===
-# cache = {
-#     "embeddings": X,
-#     "labels": y,
-#     "classifier": classifier
-# }
+cache = {
+    "embeddings": X,
+    "labels": y,
+    "classifier": classifier
+}
 
-# filename = f"skin_cache_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.pkl"
-# joblib.dump(cache, filename)
-# print(f"✅ Cache + classifier saved as {filename}")
+filename = f"skin_cache_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.pkl"
+joblib.dump(cache, filename)
+print(f"✅ Cache + classifier saved as {filename}")
