@@ -1,9 +1,8 @@
 import app from "express";
 import { createStoreImage } from "../services/imagesServices.js";
 
-export async function uploadSkinImage(req, res) {
+export async function uploadskinimage(req, res) {
   try {
-    console.log("heree is the controller");
     const userId = req.user.id;
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });

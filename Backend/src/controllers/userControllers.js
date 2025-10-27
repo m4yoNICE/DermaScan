@@ -60,14 +60,19 @@ export async function deleteuser(req, res) {
 
 export async function updateskindata(req, res) {
   try {
-    const { skin_type, skin_sensitivity } = req.body;
+    console.log(req.body);
+    const { skin_type, skin_sensitivity, pigmentation, aging } = req.body;
     const userId = req.user.id;
-    console.log("BODY:", req.body);
-    console.log("USER ID:", userId);
     if (!skin_type || skin_sensitivity === undefined) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    const added = await updateSkinData(userId, skin_type, skin_sensitivity);
+    const result = await updateSkinData(
+      userId,
+      skin_type,
+      skin_sensitivity,
+      pigmentation,
+      aging
+    );
     if (result[0] === 0) {
       return res
         .status(404)

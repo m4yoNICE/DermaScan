@@ -2,8 +2,8 @@ import { DataTypes } from "sequelize";
 import User from "./User.js";
 import db from "../config/db.js";
 
-const Stored_images = db.define(
-  "Stored_images",
+const StoredImage = db.define(
+  "StoredImage",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -23,9 +23,18 @@ const Stored_images = db.define(
     tableName: "stored_images",
     timestamps: true,
     createdAt: "created_at",
+    updatedAt: false,
   }
 );
-User.hasMany(Stored_images, { foreignKey: "user_id" });
-Stored_images.belongsTo(User, { foreignKey: "user_id" });
+User.hasMany(StoredImage, {
+  foreignKey: "user_id",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+StoredImage.belongsTo(User, {
+  foreignKey: "user_id",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
 
-export default Stored_images;
+export default StoredImage;

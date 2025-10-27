@@ -41,15 +41,23 @@ export async function getUserId(id) {
   return await User.findByPk(id);
 }
 
-export async function updateSkinData(userId, skin_type, skin_sensitivity) {
+export async function updateSkinData(
+  userId,
+  skin_type,
+  skin_sensitivity,
+  pigmentation,
+  aging
+) {
   console.log(
     "updateSkinData called with:",
     userId,
     skin_type,
-    skin_sensitivity
+    skin_sensitivity,
+    pigmentation,
+    aging
   );
   return await User.update(
-    { skin_type, skin_sensitivity },
+    { skin_type, skin_sensitivity, pigmentation, aging },
     { where: { id: userId } }
   );
 }

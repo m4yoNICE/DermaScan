@@ -28,11 +28,19 @@ const User = db.define(
       allowNull: true,
     },
     skin_type: {
-      type: DataTypes.ENUM("oily", "dry", "normal", "combination"),
+      type: DataTypes.ENUM("oily", "dry", "normal"),
       allowNull: true,
     },
     skin_sensitivity: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.ENUM("resistant", "sensitive"),
+      allowNull: true,
+    },
+    pigmentation: {
+      type: DataTypes.ENUM("pigmented", "non-pigmented"),
+      allowNull: true,
+    },
+    aging: {
+      type: DataTypes.ENUM("wrinkled", "tight"),
       allowNull: true,
     },
   },

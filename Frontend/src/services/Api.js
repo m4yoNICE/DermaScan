@@ -21,8 +21,28 @@ const deleteUserAPI = () => {
 };
 
 const updateSkinDataAPI = (data) => {
-  return Http.post("/users/skin", data);
+  return Http.put("/users/skin", data);
 };
+
+const getAllJournalAPI = () => {
+  return Http.get("/journals");
+};
+
+const getSingleJournalByDateAPI = (date) => {
+  return Http.get("/journals/date/" + date);
+};
+
+const createJournalAPI = (data) => {
+  return Http.post("/journals", data);
+};
+const updateJournalAPI = (data) => {
+  return Http.post("/journals", data);
+};
+
+const deleteJournalAPI = () => {
+  return Http.delete("/journals");
+};
+
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
@@ -30,5 +50,10 @@ const Api = {
   deleteUserAPI,
   editUserAPI,
   updateSkinDataAPI,
+  getAllJournalAPI,
+  createJournalAPI,
+  updateJournalAPI,
+  deleteJournalAPI,
+  getSingleJournalByDateAPI,
 };
 export default Api;

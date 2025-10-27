@@ -1,7 +1,7 @@
-import Stored_images from "../models/Stored_images.js";
+import StoredImage from "../models/StoredImage.js";
 
 export async function createStoreImage(userId, imageUrl) {
-  return await Stored_images.create({
+  return await StoredImage.create({
     photoUrl: imageUrl,
     user_id: userId,
   });

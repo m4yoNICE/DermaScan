@@ -2,7 +2,6 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useContext, useEffect } from "react";
 import { Redirect, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
-import QuestModal from "@/components/modals/QuestModal";
 const index = () => {
   const { token, loading } = useContext(UserContext);
 
