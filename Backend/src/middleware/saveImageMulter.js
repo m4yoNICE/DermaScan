@@ -3,7 +3,7 @@ import path from "path";
 
 const appRoot = process.cwd();
 
-export function uploadMiddleware() {
+export function saveImageMulter() {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(appRoot, "skinUploads"));

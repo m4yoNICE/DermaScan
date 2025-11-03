@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -7,15 +7,18 @@ import {
   TouchableOpacity,
   View,
   Image,
+  ActivityIndicator,
+  StatusBar,
 } from "react-native";
 import Card from "../Card";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import ImageApi from "@/services/ImageApi";
+import { SafeAreaView } from "react-native-safe-area-context";
 const Camera = () => {
   const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [capturePic, setCapturePic] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const cameraRef = useRef(null);
   if (!permission) {
     // Camera permissions are still loading.
@@ -40,8 +43,10 @@ const Camera = () => {
 
   const handleUsePhoto = async () => {
     try {
+      setIsLoading(true);
       console.log("✅ Image confirmed:", capturePic.uri);
       await ImageApi.uploadImageAPI(capturePic.uri);
+      setIsLoading(false);
     } catch (err) {
       console.log("error why: ", err);
     }
@@ -67,6 +72,12 @@ const Camera = () => {
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={"#00CC99"} />
+          <Text style={{ color: "#00CC99" }}>Skin Analysis Commencing...</Text>
+        </View>
+      )}
       {!capturePic ? (
         <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
       ) : (
@@ -159,5 +170,12 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-around",
     paddingHorizontal: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+    paddingTop: StatusBar.currentHeight,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
