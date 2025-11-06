@@ -1,15 +1,13 @@
 import smtplib
-from email.mime.text import MIMEText
 
-
-sender = 'dermascanteam@warmy.io'
+sender = 'test@example.com'
 receivers = ['jamesdavidguba2@gmail.com']
 
-msg = """   From: From Mailtrap Club 
+msg = """   From: {sender}
             To: To User 
             Subject: Test Mail from Mailtrap Club
     
-            This is a test email sent from Mailtrap Club using SMTP server.
+            This is a test email sent from {sender} using SMTP server.
     """
 
 host = 'live.smtp.mailtrap.io'
