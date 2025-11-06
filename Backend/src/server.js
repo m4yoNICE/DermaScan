@@ -8,6 +8,7 @@ import cors from "cors";
 import db from "./config/db.js";
 import "./models/StoredImage.js";
 import "./models/User.js";
+import "./models/Skin_Condition.js"
 const app = express();
 const PORT = ENV.PORT || 6969;
 

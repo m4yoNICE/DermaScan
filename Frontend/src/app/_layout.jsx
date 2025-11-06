@@ -2,9 +2,8 @@ import { Stack } from "expo-router";
 import { UserProvider } from "src/contexts/UserContext";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-{
-  /* ALERT CONFIG */
-}
+
+/* ALERT CONFIG */
 const toastConfig = {
   success: (props) => (
     <BaseToast

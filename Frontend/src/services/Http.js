@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { triggerLogout } from "./AuthRef";
 import { ToastMessage } from "@/components/ToastMessage";
 
-const baseURL = "http://192.168.1.2:3000";
+const baseURL = "http://192.168.1.11:3000";
 
 export const Http = axios.create({
   baseURL: baseURL,

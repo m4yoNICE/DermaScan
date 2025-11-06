@@ -108,6 +108,7 @@ const Register = () => {
         const message =
           err.response.data?.error || "Registration failed. Try again.";
         ToastMessage("error", "Server Error", message);
+        console.log("error response data:", err.response.data);
         console.log(err.response);
       } else if (err.request) {
         ToastMessage(
