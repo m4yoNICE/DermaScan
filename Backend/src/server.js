@@ -8,7 +8,8 @@ import cors from "cors";
 import db from "./config/db.js";
 import "./models/StoredImage.js";
 import "./models/User.js";
-import "./models/Skin_Condition.js"
+import "./models/SkinCondition.js";
+import "./models/SkinAnalysisTransaction.js";
 const app = express();
 const PORT = ENV.PORT || 6969;
 
@@ -26,7 +27,7 @@ app.use("/users", userRoutes);
 app.use("/images", imageRoutes);
 app.use("/journals", journalRoutes);
 // Uncomment this line when setting up on a new device
-await db.sync({ alter: true });
+await db.sync();
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
 });

@@ -1,17 +1,34 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Tabs } from "expo-router";
+import { Tabs, router, useNavigation } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
 import Fontisto from "@expo/vector-icons/Fontisto";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const HomeLayout = () => {
+  const navigation = useNavigation();
+
   return (
     <Tabs
       initialRouteName="Home"
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         tabBarActiveTintColor: "#4F46E5",
+        headerStyle: {
+          backgroundColor: "#00CC99",
+        },
+        headerTintColor: "fff",
+        headerTitle: () => null,
+        headerLeft: () => (
+          <Ionicons
+            name="menu"
+            size={28}
+            color="#fff"
+            style={{ marginLeft: 15 }}
+            onPress={() => navigation.openDrawer()} // Opens drawer
+          />
+        ),
       }}
     >
       <Tabs.Screen
@@ -26,7 +43,18 @@ const HomeLayout = () => {
       <Tabs.Screen
         name="CameraPage"
         options={{
+          headerShown: true,
           title: () => null,
+          tabBarStyle: { display: "none" },
+          headerLeft: () => (
+            <Ionicons
+              name="arrow-back-circle"
+              size={30}
+              color="white"
+              style={{ marginLeft: 15 }}
+              onPress={() => router.back()}
+            />
+          ),
           tabBarIcon: ({ color }) => (
             <View style={styles.cameraButton}>
               <Feather name="camera" size={28} color="white" />

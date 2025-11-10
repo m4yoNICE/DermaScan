@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useState, useEffect, useCallback } from "react";
-import Camera from "@/components/camera/Camera";
+import SkinCamera from "@/components/camera/SkinCamera";
 import DirectionCameraModal from "@/components/camera/DirectionCameraModal";
 export default function CameraPage() {
   const [isActive, setIsActive] = useState(false);
@@ -27,7 +27,7 @@ export default function CameraPage() {
       {!isActive ? null : showModal ? (
         <DirectionCameraModal visible={showModal} onClose={handleAgree} />
       ) : (
-        <Camera />
+        <SkinCamera />
       )}
     </View>
   );

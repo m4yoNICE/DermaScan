@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import db from "../config/db.js";
 
-const Skin_Condition = db.define(
-  "Skin_Condition",
+const SkinCondition = db.define(
+  "SkinCondition",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -24,10 +24,10 @@ const Skin_Condition = db.define(
   }
 );
 
-Skin_Condition.afterSync(async () => {
-  const count = await Skin_Condition.count();
+SkinCondition.afterSync(async () => {
+  const count = await SkinCondition.count();
   if (count === 0) {
-    await Skin_Condition.bulkCreate([
+    await SkinCondition.bulkCreate([
       { condition: "acne", can_recommend: "Yes" },
       { condition: "eczema", can_recommend: "No" },
       { condition: "psoriasis", can_recommend: "No" },
@@ -40,7 +40,7 @@ Skin_Condition.afterSync(async () => {
     console.log("Skin_Condition table seeded");
   } else {
     console.log("Skin_Condition table already seeded");
-  }   
+  }
 });
 
-export default Skin_Condition;
+export default SkinCondition;

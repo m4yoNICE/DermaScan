@@ -37,13 +37,17 @@ try:
     pred_label = le.inverse_transform(preds)[0]
     proba = clf.predict_proba(emb)[0]
 
-    # Step 7: Output JSON result
+    # Step 7: Get top 3 classes
+    top_idx = np.argsort(proba)[-3:][::-1]
+    top3 = [
+        {"label": le.classes_[i], "score": float(proba[i])}
+        for i in top_idx
+    ]
     result = {
-        "predicted_class": pred_label,
-        "scores": {label: float(score) for label, score in zip(le.classes_, proba)},
+        "primary_prediction": top3[0]["label"],
+        "top3": top3,
     }
     print(json.dumps(result))
-
 except Exception as e:
     print(json.dumps({"error": str(e)}))
     sys.exit(1)

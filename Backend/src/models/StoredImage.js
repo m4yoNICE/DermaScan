@@ -29,12 +29,12 @@ const StoredImage = db.define(
 User.hasMany(StoredImage, {
   foreignKey: "user_id",
   onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+  onUpdate: "RESTRICT",
 });
 StoredImage.belongsTo(User, {
   foreignKey: "user_id",
   onDelete: "CASCADE",
-  onUpdate: "CASCADE",
+  onUpdate: "RESTRICT",
 });
 
 export default StoredImage;
