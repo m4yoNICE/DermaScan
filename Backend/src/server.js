@@ -4,6 +4,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
+import adminUserManagementRoutes from "./admin/adminroutes/adminUserManagementRoute.js";
 import cors from "cors";
 import db from "./config/db.js";
 import "./models/StoredImage.js";
@@ -26,6 +27,8 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/images", imageRoutes);
 app.use("/journals", journalRoutes);
+//admin
+app.use("admin/users", adminUserManagementRoutes);
 // Uncomment this line when setting up on a new device
 await db.sync();
 app.listen(PORT, () => {

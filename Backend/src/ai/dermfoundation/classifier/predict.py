@@ -27,7 +27,6 @@ try:
 
     # Step 4: Preprocess
     image = image.resize((448, 448)).convert("RGB")
-    image_array = np.asarray(image, dtype=np.float32) / 255.0
 
     # Step 5: Generate embedding
     emb = get_embedding(image_data).reshape(1, -1)

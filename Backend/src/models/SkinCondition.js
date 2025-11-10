@@ -28,7 +28,8 @@ SkinCondition.afterSync(async () => {
   const count = await SkinCondition.count();
   if (count === 0) {
     await SkinCondition.bulkCreate([
-      { condition: "acne", can_recommend: "Yes" },
+      { condition: "mild-acne", can_recommend: "Yes" },
+      { condition: "severe-acne", can_recommend: "No" },
       { condition: "eczema", can_recommend: "No" },
       { condition: "psoriasis", can_recommend: "No" },
       { condition: "blackheads", can_recommend: "No" },
