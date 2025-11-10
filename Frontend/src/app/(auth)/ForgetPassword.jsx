@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
-import React from 'react'
 
 /**
  * 
