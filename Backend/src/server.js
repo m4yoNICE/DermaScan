@@ -22,8 +22,11 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/images", imageRoutes);
+//admin
+app.use("/admin/users", )
 // Uncomment this line when setting up on a new device
 await db.sync({ alter: true });
+
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
