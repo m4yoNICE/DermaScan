@@ -23,7 +23,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/images", imageRoutes);
 // Uncomment this line when setting up on a new device
-// await db.sync({ alter: true });
+await db.sync({ alter: true });
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
