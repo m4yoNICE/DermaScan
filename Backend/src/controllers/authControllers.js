@@ -50,3 +50,23 @@ export async function register(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
+export async function forgetpassword(req, res) {
+  try {
+    const { email } = req.body;
+    const existingUser = findUserByEmail(email);
+    if (!existingUser) {
+      return res.status(404).json({ error: "Email Not Found" });
+    }
+    if (!existingUser.verified) {
+      return res
+        .status(401)
+        .json({ error: "Email hasnt been verified, check your inbox" });
+    }
+
+    const otpDetails = {
+      email,
+      subject: "Password Reset",
+    };
+  } catch (error) {}
+}

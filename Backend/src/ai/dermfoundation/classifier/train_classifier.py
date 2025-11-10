@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 
 DATA_DIR = "../data"
 MODEL_PATH = "skin_classifier.pkl"
+TRAINING_DATA_PATH = "training_data.pkl"
 
 X, y = [], []
 
@@ -24,38 +25,45 @@ for label in os.listdir(DATA_DIR):
         y.append(label)
         print(f"Processed {label}/{file}")
 
-X = np.array(X)
-y = np.array(y)
+X_new = np.array(X)
+y_new = np.array(y)
 
-# === 2. Check if model exists ===
-if os.path.exists(MODEL_PATH):
-    print("🔄 Existing model found — loading...")
+# === 2. Load existing model and training data ===
+if os.path.exists(MODEL_PATH) and os.path.exists(TRAINING_DATA_PATH):
+    print("🔄 Loading existing model and training data...")
     clf, le = joblib.load(MODEL_PATH)
-
-    # Check if there are new classes
+    X_old, y_old = joblib.load(TRAINING_DATA_PATH)
+    
+    # Merge old and new data
+    X = np.vstack([X_old, X_new])
+    y = np.hstack([y_old, y_new])
+    
+    # Update label encoder if new classes exist
     existing_classes = set(le.classes_)
-    new_classes = set(y) - existing_classes
-
+    all_classes_in_data = set(y)
+    new_classes = all_classes_in_data - existing_classes
+    
     if new_classes:
         print(f"⚠️ New classes detected: {', '.join(new_classes)}")
-        all_classes = np.array(sorted(existing_classes.union(new_classes)))
-        le.classes_ = all_classes
-    else:
-        print("✅ No new classes found.")
-
+        le = LabelEncoder()
+        le.fit(y)
+    
+    print(f"📊 Training on {len(X_old)} old + {len(X_new)} new samples = {len(X)} total")
 else:
-    print("🆕 No existing model found — training from scratch.")
+    print("🆕 No existing data found — training from scratch.")
+    X = X_new
+    y = y_new
     clf = LogisticRegression(max_iter=1000)
     le = LabelEncoder()
     le.fit(y)
 
-# === 3. Encode labels ===
+# === 3. Encode and train ===
 y_enc = le.transform(y)
-
-# === 4. Retrain classifier on full dataset ===
 print("🚀 Training classifier...")
 clf.fit(X, y_enc)
 
-# === 5. Save model ===
+# === 4. Save both model AND training data ===
 joblib.dump((clf, le), MODEL_PATH)
+joblib.dump((X, y), TRAINING_DATA_PATH)
 print(f"✅ Model saved to {MODEL_PATH}")
+print(f"✅ Training data saved to {TRAINING_DATA_PATH}")
