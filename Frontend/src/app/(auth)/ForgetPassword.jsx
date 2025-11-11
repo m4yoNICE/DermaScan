@@ -42,23 +42,28 @@ const ForgetPassword = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>ForgetPassword</Text>
+    <View style={styles.card}>
+      <Text style={styles.title}>Forgot Password</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Enter your email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
-        autoCapitalize="none"
       />
-      <TouchableOpacity style={styles.button} onPress={handleForgetPassword} disabled={loading}>
+
+      <TouchableOpacity style={styles.button} onPress={handleForgetPassword}>
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={{ color: '#fff', fontSize: 18 }}>Submit</Text>
+          <Text style={styles.buttonText}>Submit</Text>
         )}
       </TouchableOpacity>
+
+      {message ? <Text style={styles.message}>{message}</Text> : null}
     </View>
+  </View>
   )
 }
 
@@ -66,35 +71,56 @@ export default ForgetPassword
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#00cccc", // main background color
+  },
+  card: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
+    color: "#00cccc", // matches theme
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 8,
     paddingHorizontal: 10,
+    marginBottom: 20,
   },
   button: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#007BFF',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#00cccc",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   message: {
     marginTop: 20,
     fontSize: 16,
-    color: 'red',
-  }
+    color: "red",
+    textAlign: "center",
+  },
 })
