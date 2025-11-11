@@ -50,6 +50,7 @@ export async function register(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
 export async function forgetpassword(req, res) {
   try {
     const { email } = req.body;
