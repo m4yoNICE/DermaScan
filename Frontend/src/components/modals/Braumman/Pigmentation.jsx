@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Checkbox from "expo-checkbox";
 import React, { useEffect, useState } from "react";
 
@@ -16,26 +16,40 @@ const Pigmentation = ({ onChange }) => {
     if (pigmented > nonpigmented) onChange("pigmented");
     else if (nonpigmented > pigmented) onChange("non-pigmented");
   }, [one, two, three, four, five]);
+
   return (
     <View>
       <Text style={styles.subtitle}>
         Section 3: Pigmentation (Pigmented vs Non-Pigmented)
       </Text>
-      <View style={styles.section}>
+
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setOne(!one)}
+        activeOpacity={0.7}
+      >
         <Checkbox style={styles.checkbox} value={one} onValueChange={setOne} />
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I have freckles, dark spots, or uneven skin tone.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setTwo(!two)}
+        activeOpacity={0.7}
+      >
         <Checkbox style={styles.checkbox} value={two} onValueChange={setTwo} />
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My skin tans easily after sun exposure.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setThree(!three)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={three}
@@ -44,9 +58,13 @@ const Pigmentation = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I use sunscreen often because my skin darkens fast.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setFour(!four)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={four}
@@ -55,9 +73,13 @@ const Pigmentation = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My skin tone is even and rarely changes in color.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setFive(!five)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={five}
@@ -66,7 +88,7 @@ const Pigmentation = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I don’t notice any spots or discoloration.
         </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -80,12 +102,11 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   paragraph: {
-    fontSize: 16,
+    fontSize: 14,
     flexShrink: 1,
     flexWrap: "wrap",
     color: "#888",
   },
-
   checkbox: {
     marginRight: 10,
     marginTop: 3,

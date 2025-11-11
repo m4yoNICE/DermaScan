@@ -34,8 +34,25 @@ export async function register(req, res) {
     if (existingUser) {
       return res.status(400).json({ error: "Email already registered" });
     }
-    const newUser = await createUser(email, firstname, dob, lastname, password);
-    res.status(201).json({ message: "Registration successful" });
+    const role = "user";
+    const newUser = await createUser(
+      email,
+      firstname,
+      dob,
+      lastname,
+      password,
+      role
+    );
+
+    // Immediately issue token (same as login)
+    const payload = { id: newUser.id, email: newUser.email };
+    const token = jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "15m" });
+
+    res.status(201).json({
+      message: "Registration successful",
+      user: { id: newUser.id, email: newUser.email },
+      token,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Server error" });

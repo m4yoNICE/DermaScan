@@ -10,7 +10,8 @@ export async function createUser(
   first_name,
   birthdate,
   last_name,
-  password
+  password,
+  role
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
   return await User.create({
@@ -19,5 +20,6 @@ export async function createUser(
     last_name,
     birthdate,
     password: passwordHash,
+    role,
   });
 }

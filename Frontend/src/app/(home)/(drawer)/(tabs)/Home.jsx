@@ -10,7 +10,7 @@ import { useFocusEffect } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Calendar } from "react-native-calendars";
 import dayjs from "dayjs";
-import BraummanQuestionnaire from "@/components/modals/Braumman/BraummanQuestionnaire";
+import BraummanQuestionnaire from "@/app/(auth)/BraummanQuestionnaire";
 import Api from "@/services/Api";
 import BottomSheet, {
   BottomSheetView,
@@ -19,27 +19,6 @@ import BottomSheet, {
 import { ToastMessage } from "@/components/ToastMessage";
 import Button from "@/components/Button";
 const Home = () => {
-  //launches braummann skin type questionnaire if null
-  const [showQuestModal, setShowQuestModal] = useState(false);
-  const handleCheckSkinData = async () => {
-    try {
-      const res = await Api.getUserbyTokenAPI();
-      const user = res.data;
-      if (
-        !user.skin_type ||
-        !user.skin_sensitivity ||
-        !user.pigmentation ||
-        !user.aging
-      ) {
-        setShowQuestModal(true);
-      }
-    } catch (err) {
-      console.error("Error checking skin data:", err);
-    }
-  };
-  useEffect(() => {
-    handleCheckSkinData();
-  }, []);
   //home logic
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
   const [text, setText] = useState("");
@@ -165,10 +144,6 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <BraummanQuestionnaire
-        visible={showQuestModal}
-        onClose={() => setShowQuestModal(false)}
-      />
       <Calendar
         current={selected}
         onDayPress={(day) => {

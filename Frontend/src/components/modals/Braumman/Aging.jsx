@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Checkbox from "expo-checkbox";
 import React, { useEffect, useState } from "react";
 
@@ -15,25 +15,38 @@ const Aging = ({ onChange }) => {
 
     if (wrinkled > tight) onChange("wrinkled");
     else if (tight > wrinkled) onChange("tight");
+    else onChange(null);
   }, [one, two, three, four, five]);
   return (
     <View>
       <Text style={styles.subtitle}>Section 4: Aging (Wrinkled vs Tight)</Text>
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setOne(!one)}
+        activeOpacity={0.7}
+      >
         <Checkbox style={styles.checkbox} value={one} onValueChange={setOne} />
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I already see fine lines around my eyes or mouth.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setTwo(!two)}
+        activeOpacity={0.7}
+      >
         <Checkbox style={styles.checkbox} value={two} onValueChange={setTwo} />
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I stay up late or smoke, and I notice my skin looks tired.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setThree(!three)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={three}
@@ -42,9 +55,13 @@ const Aging = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My skin feels firm and bounces back when I touch it.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setFour(!four)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={four}
@@ -53,9 +70,13 @@ const Aging = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I don’t see wrinkles or sagging yet.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setFive(!five)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={five}
@@ -64,7 +85,7 @@ const Aging = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My skin looks dull or less elastic than before.
         </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -78,7 +99,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   paragraph: {
-    fontSize: 16,
+    fontSize: 14,
     flexShrink: 1,
     flexWrap: "wrap",
     color: "#888",

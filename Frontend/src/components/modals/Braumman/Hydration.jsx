@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Checkbox from "expo-checkbox";
 import React, { useEffect, useState } from "react";
 
@@ -17,24 +17,38 @@ const Hydration = ({ onChange }) => {
     else if (oilyCount > dryCount) onChange("oily");
     else onChange("normal");
   }, [one, two, three, four, five]);
+
   return (
     <View>
       <Text style={styles.subtitle}>Section 1: Hydration (Dry vs Oily)</Text>
-      <View style={styles.section}>
+
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setOne(!one)}
+        activeOpacity={0.7}
+      >
         <Checkbox style={styles.checkbox} value={one} onValueChange={setOne} />
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My skin feels tight or rough after washing.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setTwo(!two)}
+        activeOpacity={0.7}
+      >
         <Checkbox style={styles.checkbox} value={two} onValueChange={setTwo} />
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My face often looks shiny or greasy, even without lotion.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setThree(!three)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={three}
@@ -43,9 +57,13 @@ const Hydration = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I get flaky or peeling areas on my skin.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setFour(!four)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={four}
@@ -54,9 +72,13 @@ const Hydration = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           My makeup fades or slides off quickly.
         </Text>
-      </View>
+      </TouchableOpacity>
 
-      <View style={styles.section}>
+      <TouchableOpacity
+        style={styles.section}
+        onPress={() => setFive(!five)}
+        activeOpacity={0.7}
+      >
         <Checkbox
           style={styles.checkbox}
           value={five}
@@ -65,7 +87,7 @@ const Hydration = ({ onChange }) => {
         <Text style={[styles.paragraph, { flex: 1 }]}>
           I rarely need moisturizer.
         </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -79,12 +101,11 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   paragraph: {
-    fontSize: 16,
+    fontSize: 14,
     flexShrink: 1,
     flexWrap: "wrap",
     color: "#888",
   },
-
   checkbox: {
     marginRight: 10,
     marginTop: 3,

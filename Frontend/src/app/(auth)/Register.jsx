@@ -94,7 +94,7 @@ const Register = () => {
             "Registration Successful!",
             "Welcome aboard 👋"
           );
-          router.push("/");
+          router.push("/BraummanQuestionnaire");
         } else {
           ToastMessage(
             "error",

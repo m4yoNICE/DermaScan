@@ -1,11 +1,11 @@
 import express from "express";
 import {
-  loginAdmin,
-  registerAdmin,
-} from "../adminauth/adminUserManagementController.js";
+  getAllUsers,
+  getOneUser,
+} from "../admincontrollers/adminUserManagementController.js";
 const router = express.Router();
 
-router.get("/", getOneUsers);
+router.get("/:id", getOneUser);
 router.get("/", getAllUsers);
 
 export default router;
