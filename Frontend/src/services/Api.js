@@ -23,6 +23,15 @@ const deleteUserAPI = () => {
 const updateSkinDataAPI = (data) => {
   return Http.post("/users/skin", data);
 };
+
+const resetPasswordAPI = (data) => {
+  return Http.post("/auth/reset-password", data);
+};
+
+const forgetPasswordAPI = (data) => {
+  return Http.post("/auth/forget-password", data);
+}
+
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
@@ -30,5 +39,7 @@ const Api = {
   deleteUserAPI,
   editUserAPI,
   updateSkinDataAPI,
+  resetPasswordAPI,
+  forgetPasswordAPI
 };
 export default Api;
