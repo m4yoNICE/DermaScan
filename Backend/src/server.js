@@ -3,6 +3,7 @@ import { ENV } from "./config/env.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
+import adminUserManagementRoutes from "./AdminBE/adminroutes/adminUserManagementRoute.js";
 import cors from "cors";
 import db from "./config/db.js";
 import "./models/Stored_images.js";
@@ -23,7 +24,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/images", imageRoutes);
 //admin
-app.use("/admin/users", )
+app.use("/admin/users", adminUserManagementRoutes)
 // Uncomment this line when setting up on a new device
 await db.sync({ alter: true });
 
