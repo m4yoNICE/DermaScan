@@ -50,3 +50,17 @@ export async function register(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+export async function forgetpassword(req, res) {
+  try {
+    const { email } = req.body;
+    const user = await findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({ error: "Email not found" });
+    }
+    // Here you would typically generate a password reset token and send an email
+    res.status(200).json({ message: "Password reset link sent to email" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server error" });
+  }
+}

@@ -1,6 +1,6 @@
 import express from "express";
 import { checkAdmin } from "../middleware/checkAdmin.js";
-import { login, register } from "../controllers/authControllers.js";
+import { login, register, forgetpassword } from "../controllers/authControllers.js";
 const router = express.Router();
 
 router.post("/login", login);
