@@ -24,6 +24,10 @@ const updateSkinDataAPI = (data) => {
   return Http.put("/users/skin", data);
 };
 
+const resetSkinDataAPI = () => {
+  return Http.put("/users/skinreset");
+};
+
 const getAllJournalAPI = () => {
   return Http.get("/journals");
 };
@@ -50,6 +54,7 @@ const Api = {
   deleteUserAPI,
   editUserAPI,
   updateSkinDataAPI,
+  resetSkinDataAPI,
   getAllJournalAPI,
   createJournalAPI,
   updateJournalAPI,

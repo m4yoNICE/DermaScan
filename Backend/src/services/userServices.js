@@ -61,3 +61,15 @@ export async function updateSkinData(
     { where: { id: userId } }
   );
 }
+
+export async function deleteSkinData(userId) {
+  return await User.update(
+    {
+      skin_type: null,
+      skin_sensitivity: null,
+      pigmentation: null,
+      aging: null,
+    },
+    { where: { id: userId } }
+  );
+}

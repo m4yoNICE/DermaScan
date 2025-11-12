@@ -10,7 +10,7 @@ import Pigmentation from "@/components/modals/Braumman/Pigmentation";
 import Aging from "@/components/modals/Braumman/Aging";
 import { router } from "expo-router";
 
-const BraummanQuestionnaire = () => {
+const BaumannQuestionnaire = () => {
   const [oil, setOil] = useState(null);
   const [sensitive, setSkinSensitive] = useState(null);
   const [pigment, setPigment] = useState(null);
@@ -98,7 +98,7 @@ const BraummanQuestionnaire = () => {
   );
 };
 
-export default BraummanQuestionnaire;
+export default BaumannQuestionnaire;
 
 const styles = StyleSheet.create({
   container: {

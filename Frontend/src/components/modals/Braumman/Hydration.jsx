@@ -12,10 +12,13 @@ const Hydration = ({ onChange }) => {
   useEffect(() => {
     const dryCount = [one, three].filter(Boolean).length;
     const oilyCount = [two, four, five].filter(Boolean).length;
-
-    if (dryCount > oilyCount) onChange("dry");
-    else if (oilyCount > dryCount) onChange("oily");
-    else onChange("normal");
+    if (dryCount === oilyCount) {
+      onChange("combination");
+    } else if (dryCount > oilyCount) {
+      onChange("dry");
+    } else {
+      onChange("oily");
+    }
   }, [one, two, three, four, five]);
 
   return (

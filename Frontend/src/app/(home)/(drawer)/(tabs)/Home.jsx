@@ -10,7 +10,7 @@ import { useFocusEffect } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Calendar } from "react-native-calendars";
 import dayjs from "dayjs";
-import BraummanQuestionnaire from "@/app/(auth)/BraummanQuestionnaire";
+import BraummanQuestionnaire from "@/app/(auth)/BaumannQuestionnaire";
 import Api from "@/services/Api";
 import BottomSheet, {
   BottomSheetView,
