@@ -1,7 +1,14 @@
-import { findUserByEmail, createUser } from "../services/authServices.js";
+import {
+  findUserByEmail,
+  createUser,
+  saveOTP,
+  usedOTP,
+  findOTP,
+} from "../services/authServices.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
+import { transporter } from "../utils/sendOTP.js";
 
 export async function login(req, res) {
   try {
@@ -62,19 +69,69 @@ export async function register(req, res) {
 export async function forgetpassword(req, res) {
   try {
     const { email } = req.body;
-    const existingUser = findUserByEmail(email);
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+    const existingUser = await findUserByEmail(email);
     if (!existingUser) {
       return res.status(404).json({ error: "Email Not Found" });
     }
-    if (!existingUser.verified) {
-      return res
-        .status(401)
-        .json({ error: "Email hasnt been verified, check your inbox" });
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+    //save and update old otp to database
+    await usedOTP(existingUser.id);
+    await saveOTP(existingUser.id, otp, expiresAt);
+
+    //send otp to email
+    await transporter.sendMail({
+      from: '"DermaScan+" <noreply@dermascan.com>',
+      to: email,
+      subject: "Your DermaScan+ OTP Code",
+      text: `Your OTP is ${otp}`,
+      html: `<p>Your OTP code is <b>${otp}</b>. It expires in 5 minutes.</p>`,
+    });
+    return res.status(200).json({
+      message: "OTP sent to your email.",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function checkotp(req, res) {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and OTP are required" });
     }
 
-    const otpDetails = {
-      email,
-      subject: "Password Reset",
-    };
-  } catch (error) {}
+    const existingUser = await User.findOne({ where: { email } });
+
+    if (!existingUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    //checks if otp matched or used
+    const storedOTP = await findOTP(existingUser.id, otp);
+
+    if (!storedOTP) {
+      return res.status(400).json({ error: "Invalid OTP" });
+    }
+
+    // Check expiry safely
+    if (Date.now() > new Date(storedOTP.expiresAt).getTime()) {
+      return res.status(400).json({ error: "OTP has expired" });
+    }
+    //update OTP to used
+    storedOTP.isUsed = true;
+    await storedOTP.save();
+    return res.status(200).json({
+      message: "OTP verified successfully",
+      user_id: existingUser.id,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 }

@@ -8,6 +8,13 @@ const loginAccountAPI = (data) => {
   return Http.post("/auth/login", data);
 };
 
+const forgetPasswordAPI = (data) => {
+  return Http.post("/auth/forgetpassword", data);
+};
+
+const checkOtpAPI = (data) => {
+  return Http.post("/auth/checkOTP", data);
+};
 const getUserbyTokenAPI = () => {
   return Http.get("/users");
 };
@@ -50,6 +57,8 @@ const deleteJournalAPI = () => {
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
+  forgetPasswordAPI,
+  checkOtpAPI,
   getUserbyTokenAPI,
   deleteUserAPI,
   editUserAPI,

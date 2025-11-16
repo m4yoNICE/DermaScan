@@ -6,11 +6,15 @@ import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import adminUserManagementRoutes from "./admin/adminroutes/adminUserManagementRoute.js";
 import cors from "cors";
+
+//importing table models here
 import db from "./config/db.js";
 import "./models/StoredImage.js";
 import "./models/User.js";
 import "./models/SkinCondition.js";
 import "./models/SkinAnalysisTransaction.js";
+import "./models/SkinData.js";
+import "./models/OTP.js";
 const app = express();
 const PORT = ENV.PORT || 6969;
 
@@ -30,6 +34,7 @@ app.use("/journals", journalRoutes);
 //admin
 app.use("admin/users", adminUserManagementRoutes);
 // Uncomment this line when setting up on a new device
+await db.sync();
 await db.sync();
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

@@ -19,33 +19,18 @@ const User = db.define(
     email: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
     role: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.ENUM("user", "admin"),
       allowNull: false,
     },
     birthdate: {
       type: DataTypes.DATEONLY,
-      allowNull: true,
-    },
-    skin_type: {
-      type: DataTypes.ENUM("oily", "dry", "normal"),
-      allowNull: true,
-    },
-    skin_sensitivity: {
-      type: DataTypes.ENUM("resistant", "sensitive"),
-      allowNull: true,
-    },
-    pigmentation: {
-      type: DataTypes.ENUM("pigmented", "non-pigmented"),
-      allowNull: true,
-    },
-    aging: {
-      type: DataTypes.ENUM("wrinkled", "tight"),
       allowNull: true,
     },
   },
@@ -56,7 +41,6 @@ const User = db.define(
     updatedAt: "updated_at",
   }
 );
-
 User.afterSync(async () => {
   const count = await User.count();
   if (count === 0) {

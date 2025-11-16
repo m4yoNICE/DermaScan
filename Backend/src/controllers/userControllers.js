@@ -2,7 +2,7 @@ import {
   updateUser,
   deleteUser,
   getUserId,
-  updateSkinData,
+  createSkinData,
   deleteSkinData,
 } from "../services/userServices.js";
 
@@ -76,7 +76,7 @@ export async function deleteskindata(req, res) {
   }
 }
 
-export async function updateskindata(req, res) {
+export async function createskindata(req, res) {
   try {
     console.log(req.body);
     const { skin_type, skin_sensitivity, pigmentation, aging } = req.body;
@@ -84,7 +84,7 @@ export async function updateskindata(req, res) {
     if (!skin_type || skin_sensitivity === undefined) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    const result = await updateSkinData(
+    const result = await createSkinData(
       userId,
       skin_type,
       skin_sensitivity,

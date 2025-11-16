@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import SkinData from "../models/SkinData.js";
 import bcrypt from "bcryptjs";
 
 export async function updateUser(
@@ -10,7 +11,7 @@ export async function updateUser(
   newPassword
 ) {
   if (!firstname && !lastname && !newPassword) {
-    return res.status(400).json({ error: "No fields provided" });
+    return { success: false, message: "No fields provided" };
   }
   const user = await User.findByPk(userId);
   if (!user) {
@@ -41,7 +42,7 @@ export async function getUserId(id) {
   return await User.findByPk(id);
 }
 
-export async function updateSkinData(
+export async function createSkinData(
   userId,
   skin_type,
   skin_sensitivity,
@@ -49,27 +50,22 @@ export async function updateSkinData(
   aging
 ) {
   console.log(
-    "updateSkinData called with:",
+    "createSkinData called with:",
     userId,
     skin_type,
     skin_sensitivity,
     pigmentation,
     aging
   );
-  return await User.update(
-    { skin_type, skin_sensitivity, pigmentation, aging },
-    { where: { id: userId } }
-  );
+  return await SkinData.create({
+    user_id: userId,
+    skin_type,
+    skin_sensitivity,
+    pigmentation,
+    aging,
+  });
 }
 
 export async function deleteSkinData(userId) {
-  return await User.update(
-    {
-      skin_type: null,
-      skin_sensitivity: null,
-      pigmentation: null,
-      aging: null,
-    },
-    { where: { id: userId } }
-  );
+  return await SkinData.destroy({ where: { user_id: userId } });
 }
