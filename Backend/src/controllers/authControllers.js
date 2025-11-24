@@ -8,7 +8,7 @@ import {
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
-import { transporter } from "../utils/sendOTP.js";
+import { sendEmail } from "../utils/sendOTP.js";
 
 export async function login(req, res) {
   try {
@@ -83,13 +83,11 @@ export async function forgetpassword(req, res) {
     await saveOTP(existingUser.id, otp, expiresAt);
 
     //send otp to email
-    await transporter.sendMail({
-      from: '"DermaScan+" <noreply@dermascan.com>',
-      to: email,
-      subject: "Your DermaScan+ OTP Code",
-      text: `Your OTP is ${otp}`,
-      html: `<p>Your OTP code is <b>${otp}</b>. It expires in 5 minutes.</p>`,
-    });
+    const sendemail = sendEmail(email, otp);
+    console.log(sendemail);
+    if (!sendemail) {
+      return res.status(404).json({ error: "Error in Sending Email" });
+    }
     return res.status(200).json({
       message: "OTP sent to your email.",
     });
@@ -102,13 +100,12 @@ export async function forgetpassword(req, res) {
 export async function checkotp(req, res) {
   try {
     const { email, otp } = req.body;
-
+    console.log("email and otp:", email, otp);
     if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required" });
     }
-
-    const existingUser = await User.findOne({ where: { email } });
-
+    //find email
+    const existingUser = await findUserByEmail(email);
     if (!existingUser) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -134,4 +131,19 @@ export async function checkotp(req, res) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
+}
+
+export async function resetpassword(req, res) {
+  try {
+    const { email, newPassword } = req.body;
+
+    const user = findUserByEmail(email);
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      return res.status(400).json({
+        error: "New password cannot be the same as the old password.",
+      });
+    }
+    
+  } catch (error) {}
 }

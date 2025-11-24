@@ -46,24 +46,29 @@ export function skinAnalyze(imageBuffer) {
   });
 }
 
-export async function mapSkinResultToCatalog(user_id, image_id, skinResult) {
+export async function mapSkinResultToCatalog(user_id, skinResult) {
   if (!skinResult || !skinResult.top3) return null;
-  const results = [];
-  for (let i = 0; i < skinResult.top3.length; i++) {
-    const item = skinResult.top3[i];
-    const condition = await SkinCondition.findOne({
-      where: { condition: item.label },
-    });
-    if (!condition) {
-      continue;
-    }
-    const transact = await SkinAnalysisTransaction.create({
-      image_id,
-      user_id,
-      condition_id: condition.id,
-      confidence_scores: item.score,
-    });
-    results.push(transact);
+
+  const top1 = skinResult.top3[0];
+  const condition = await SkinCondition.findOne({
+    where: { condition: top1.label },
+  });
+  if (!condition) {
+    return null;
   }
-  return results;
+  const status = checkResults(top1, condition);
+  return await SkinAnalysisTransaction.create({
+    user_id,
+    image_id: null,
+    condition_id: condition.id,
+    confidence_scores: top1.score,
+    status,
+  });
+}
+
+function checkResults(top1, condition) {
+  if (condition.can_recommend.toLowerCase() === "no") return "flagged";
+  if (top1.score < 0.07) return "out of scope";
+
+  return "success";
 }

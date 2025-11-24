@@ -6,7 +6,7 @@ import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import adminUserManagementRoutes from "./admin/adminroutes/adminUserManagementRoute.js";
 import cors from "cors";
-
+import path from "path";
 //importing table models here
 import db from "./config/db.js";
 import "./models/StoredImage.js";
@@ -29,12 +29,12 @@ app.use(express.json());
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
-app.use("/images", imageRoutes);
 app.use("/journals", journalRoutes);
+app.use("/images", imageRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
 //admin
 app.use("admin/users", adminUserManagementRoutes);
 // Uncomment this line when setting up on a new device
-await db.sync();
 await db.sync();
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

@@ -45,3 +45,11 @@ export async function findOTP(user_id, otp) {
     order: [["created_at", "DESC"]],
   });
 }
+
+export async function resetPasword(email, password) {
+  const hashed = await bcrypt.hash(password, 10);
+  return await User.update(
+    { password: hashed }, 
+    { where: { email: email } }
+  );
+}

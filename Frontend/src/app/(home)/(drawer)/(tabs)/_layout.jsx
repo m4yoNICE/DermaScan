@@ -18,6 +18,20 @@ const HomeLayout = () => {
         headerStyle: {
           backgroundColor: "#00CC99",
         },
+        tabBarStyle: {
+          height: 100,
+          paddingBottom: 10,
+          paddingTop: 10,
+        },
+        tabBarLabelStyle: {
+          fontSize: 14,
+        },
+        tabBarIconStyle: {
+          marginTop: 7,
+        },
+        headerStyle: {
+          backgroundColor: "#00CC99",
+        },
         headerTintColor: "fff",
         headerTitle: () => null,
         headerLeft: () => (
@@ -57,7 +71,7 @@ const HomeLayout = () => {
           ),
           tabBarIcon: ({ color }) => (
             <View style={styles.cameraButton}>
-              <Feather name="camera" size={28} color="white" />
+              <Feather name="camera" size={40} color="white" />
             </View>
           ),
         }}
@@ -79,17 +93,12 @@ export default HomeLayout;
 
 const styles = StyleSheet.create({
   cameraButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: "#00CC99",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20, // pushes it upward (so it "floats")
-    shadowColor: "#000",
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 4,
-    elevation: 5, // Android shadow
   },
 });

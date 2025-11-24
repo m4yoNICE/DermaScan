@@ -1,109 +1,154 @@
+import Button from "@/components/Button";
+import Landing4 from "@/components/landing/Landing4";
+import { ToastMessage } from "@/components/ToastMessage";
+import Api from "@/services/Api";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { Link, router } from "expo-router";
+import { useContext, useState } from "react";
 import {
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
-import React, { useContext, useState } from "react";
-import Api from "@/services/Api";
-import { Link, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
-import Button from "src/components/Button";
-import Card from "src/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
 
 const Login = () => {
   const { login } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(null);
 
   const showError = (msg) => {
     setError(msg);
-    setTimeout(() => setError(null), 10000);
+    setTimeout(() => setError(null), 7000);
   };
+
   const LoginAccount = async () => {
-    if (!email || !password) {
+    if (!email || !password)
       return showError("Please fill out all required fields");
-    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(email))
       return showError("Please enter a valid email address");
-    }
+
     try {
       const loginData = { email: email.trim(), password };
       const res = await Api.loginAccountAPI(loginData);
 
-      //JWT TOKEN TIME
       await login(res.data);
       ToastMessage("success", "Login Successful", "Welcome back 👋");
+
       router.replace("/");
     } catch (err) {
       console.log("Login error:", err);
-
-      if (err.response) {
-        showError("Email or password is incorrect");
-      } else if (err.request) {
-        showError("No response from server. Check your internet");
-        console.log(err.request);
-      } else {
-        showError(err.message);
-        console.log(err.message);
-      }
+      showError("Email or password is incorrect");
     }
   };
+
   return (
-    <View style={styles.container}>
-      <Card>
-        <Text style={styles.title}>Sign in</Text>
+    <View style={styles.root}>
+      <View style={styles.backgroundWrapper}>
+        <View style={styles.landingScale}>
+          <Landing4 />
+        </View>
+      </View>
+      <BottomSheet
+        index={0}
+        snapPoints={["60%"]}
+        enablePanDownToClose={false}
+        handleComponent={null}
+        enableContentPanningGesture={false}
+        backgroundStyle={{
+          backgroundColor: "white",
+          borderRadius: 40,
+        }}
+      >
+        <BottomSheetView style={styles.sheetContent}>
+          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.subtitle}>Good to see you again.</Text>
 
-        {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>{error}</Text>
+          {error && (
+            <View style={styles.errorBox}>
+              <Ionicons
+                name="warning-outline"
+                color="#cc0000"
+                size={18}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
+
+          {/* EMAIL */}
+          <View style={styles.inputGroup}>
+            <Feather
+              name="mail"
+              size={20}
+              color="#999"
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Email address"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
           </View>
-        )}
 
-        <TextInput
-          style={[styles.input, { marginBottom: 20 }]}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+          {/* PASSWORD */}
+          <View style={styles.inputGroup}>
+            <Feather
+              name="lock"
+              size={20}
+              color="#999"
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPass}
+            />
+            <TouchableOpacity onPress={() => setShowPass(!showPass)}>
+              <Feather
+                name={showPass ? "eye-off" : "eye"}
+                size={20}
+                color="#999"
+                style={{ paddingHorizontal: 4 }}
+              />
+            </TouchableOpacity>
+          </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
+          {/* LOGIN BUTTON */}
+          <Button
+            title="Log In"
+            onPress={LoginAccount}
+            icon={<Feather name="log-in" size={18} color="white" />}
+            style={styles.loginBtn}
+          />
 
-        <Button title="Log In" onPress={LoginAccount} />
-
-        {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-
-        <Text style={styles.signUp}>
-          Don't have an account?{" "}
-          <Link
-            href="/Register"
-            style={{ color: "#00CC99", fontWeight: "600" }}
+          <Text style={styles.signUp}>
+            Don’t have an account?{" "}
+            <Link href="/Register" style={styles.signUpLink}>
+              Sign Up
+            </Link>
+          </Text>
+          <View
+            style={{ width: "100%", alignItems: "center", marginBottom: 10 }}
           >
-            Sign Up
-          </Link>
-        </Text>
-        <Text style={styles.forgotPassword}>
-          Forgot your password?{" "}
-          <Link
-            href="/ForgetPassword"
-            style={{ color: "#00CC99", fontWeight: "600" }}
-          >
-            Reset here
-          </Link>
-        </Text>
-      </Card>
+            <Link href="/ForgetPassword" style={{ color: "#00CC99" }}>
+              Forgot Password?
+            </Link>
+          </View>
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 };
@@ -111,50 +156,91 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    alignItems: "center",
+    backgroundColor: "#05d6b2",
+  },
+  landingScale: {
+    transform: [{ scale: 0.9 }], // make smaller
+  },
+  backgroundWrapper: {
+    height: "70%",
     justifyContent: "center",
-    backgroundColor: "white",
+    alignItems: "center",
   },
-  title: {
-    textAlign: "center",
-    fontSize: 40,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#00CC99",
+
+  sheetContent: {
+    paddingHorizontal: 30,
+    paddingTop: 20,
+    paddingBottom: 50,
   },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    padding: 15,
-    fontSize: 16,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  forgotPassword: {
+  subtitle: {
     textAlign: "center",
     fontSize: 14,
-    color: "#00cccc",
-    marginBottom: 10,
+    color: "#868585ff",
+    marginBottom: 20,
   },
+
+  title: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: "700",
+    marginBottom: 5,
+    color: "#00CC99",
+  },
+
+  inputGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+    marginBottom: 20,
+  },
+
+  inputIcon: {
+    marginRight: 10,
+  },
+
+  input: {
+    flex: 1,
+    fontSize: 16,
+  },
+
   signUp: {
     textAlign: "center",
     fontSize: 14,
     color: "gray",
+    marginTop: 2,
+  },
+
+  signUpLink: {
+    color: "#00CC99",
+    fontWeight: "700",
   },
 
   errorBox: {
+    flexDirection: "row",
     backgroundColor: "#ffe6e6",
+    borderColor: "#ff9999",
     padding: 10,
     borderRadius: 6,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: "#ff9999",
+    alignItems: "center",
   },
+
   errorText: {
     color: "#cc0000",
     fontSize: 14,
-    textAlign: "center",
+    flex: 1,
+    paddingRight: 5,
+  },
+
+  loginBtn: {
+    width: "100%",
+    height: 55,
+    backgroundColor: "#00CC99",
+    borderRadius: 12,
   },
 });

@@ -1,190 +1,192 @@
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { router } from "expo-router";
-import { Dimensions } from "react-native";
-import * as ImageManipulator from "expo-image-manipulator";
+import { CameraView } from "expo-camera";
+import { useCameraPermissions } from "expo-camera";
 import { useState, useRef } from "react";
 import {
-  Button,
-  StyleSheet,
+  View,
   Text,
   TouchableOpacity,
-  View,
-  Image,
-  ActivityIndicator,
   Modal,
+  ActivityIndicator,
+  StyleSheet,
+  Image,
+  Animated,
 } from "react-native";
-import CircularButton from "../CircularButton";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import ImageApi from "@/services/ImageApi";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import CircularButton from "../CircularButton";
+import { router } from "expo-router";
+import ImageApi from "@/services/ImageApi";
 
 const SkinCamera = () => {
-  const [facing, setFacing] = useState("back");
+  const [failMessage, setFailMessage] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState("back");
+  const [enableTorch, setEnableTorch] = useState(false);
   const [capturePic, setCapturePic] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [enableTorch, setEnableTorch] = useState(false);
-  const [cameraLayout, setCameraLayout] = useState({ width: 0, height: 0 });
-  const [analysisResult, setAnalysisResult] = useState(null);
   const cameraRef = useRef(null);
 
-  if (!permission) {
-    return <View />;
-  }
+  const shutterAnim = useRef(new Animated.Value(1)).current;
+
+  if (!permission) return <View />;
 
   if (!permission.granted) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
+      <View style={styles.centered}>
+        <Text style={styles.permissionText}>
+          Camera access is required for skin scanning.
         </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <TouchableOpacity
+          style={styles.permissionBtn}
+          onPress={requestPermission}
+        >
+          <Text style={styles.permissionBtnText}>Grant Permission</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  const handleRetake = () => {
-    setCapturePic(null);
+  const animateShutter = () => {
+    Animated.sequence([
+      Animated.timing(shutterAnim, {
+        toValue: 0.85,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shutterAnim, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handleCapture = async () => {
+    try {
+      animateShutter();
+
+      const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
+      setCapturePic(photo);
+    } catch (err) {
+      console.log("Capture error:", err);
+    }
   };
 
   const handleUsePhoto = async () => {
     if (!capturePic) return;
     setIsLoading(true);
-    try {
-      console.log("✅ Image confirmed:", capturePic.uri);
-      const response = await ImageApi.uploadImageAPI(capturePic.uri);
-      console.log("✅ Backend response:", response.data);
 
+    try {
+      const res = await ImageApi.uploadImageAPI(capturePic.uri);
+      const { result, message, data } = res.data;
+      if (result === "failed") {
+        // Show alarm modal
+        setFailMessage(res.data.message);
+        setIsLoading(false);
+        return;
+      }
       router.push({
         pathname: "/Results",
-        params: { data: JSON.stringify(response.data) },
+        params: {
+          data: JSON.stringify(res.data),
+        },
       });
-      setCapturePic(null);
     } catch (err) {
-      console.log("Upload failed:", err.message || err);
+      console.log("UPLOAD FAILED →", err?.message || err);
     } finally {
       setIsLoading(false);
     }
   };
-  const toggleCameraFacing = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  };
 
-  const toggleFlash = () => {
-    setEnableTorch((prev) => !prev);
-  };
-
-  const cropToFrame = async (photo) => {
-    const { width: previewWidth, height: previewHeight } = cameraLayout;
-    if (!previewWidth || !previewHeight) return photo;
-
-    const frameSize = 250;
-    const frameWidthRatio = frameSize / previewWidth;
-    const frameHeightRatio = frameSize / previewHeight;
-    const cropWidth = photo.width * frameWidthRatio;
-    const cropHeight = photo.height * frameHeightRatio;
-    const cropX = (photo.width - cropWidth) / 2;
-    const cropY = (photo.height - cropHeight) / 2;
-    const cropRect = {
-      originX: Math.round(cropX),
-      originY: Math.round(cropY),
-      width: Math.round(cropWidth),
-      height: Math.round(cropHeight),
-    };
-    const result = await ImageManipulator.manipulateAsync(
-      photo.uri,
-      [{ crop: cropRect }],
-      { compress: 1, format: ImageManipulator.SaveFormat.PNG }
-    );
-    return result;
-  };
-
-  const handleCapturePic = async () => {
-    try {
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 1,
-        base64: false,
-      });
-      const croppedPhoto = await cropToFrame(photo);
-      setCapturePic(croppedPhoto);
-    } catch (err) {
-      console.log("error capturing image....", err);
-    }
-  };
+  const handleRetake = () => setCapturePic(null);
 
   return (
     <View style={styles.container}>
-      {!capturePic && (
-        <>
+      {/* CAMERA MASK */}
+      <View style={styles.cameraMask}>
+        {!capturePic && !failMessage && (
           <CameraView
             ref={cameraRef}
-            style={{ flex: 1 }}
+            style={styles.cameraBox}
             facing={facing}
             enableTorch={enableTorch}
-            onLayout={(e) => setCameraLayout(e.nativeEvent.layout)}
           />
+        )}
+      </View>
 
-          <View style={styles.overlay}>
-            <View style={styles.frame} />
-          </View>
+      {/* FRAME OUTLINE */}
+      <View pointerEvents="none" style={styles.frameOutline} />
 
-          <View style={styles.shutterContainer}>
-            <CircularButton size={70} onPress={toggleFlash}>
-              <MaterialCommunityIcons
-                name="flashlight"
-                size={24}
-                color="#fff"
-              />
-            </CircularButton>
-            <CircularButton size={100} onPress={handleCapturePic}>
-              <FontAwesome6 name="camera" size={28} color="#fff" />
-            </CircularButton>
-            <CircularButton size={70} onPress={toggleCameraFacing}>
-              <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
-            </CircularButton>
-          </View>
-        </>
-      )}
+      {/* CONTROLS */}
+      <View style={styles.controls}>
+        <CircularButton size={65} onPress={() => setEnableTorch(!enableTorch)}>
+          <MaterialCommunityIcons name="flashlight" size={28} color="#fff" />
+        </CircularButton>
 
-      <Modal
-        visible={capturePic !== null}
-        transparent={true}
-        animationType="fade"
-      >
+        <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
+          <CircularButton size={95} onPress={handleCapture}>
+            <FontAwesome6 name="camera" size={30} color="#fff" />
+          </CircularButton>
+        </Animated.View>
+
+        <CircularButton
+          size={65}
+          onPress={() => setFacing(facing === "back" ? "front" : "back")}
+        >
+          <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
+        </CircularButton>
+      </View>
+
+      {/* PREVIEW MODAL */}
+      <Modal visible={!!capturePic} transparent animationType="fade">
         <View style={styles.modalContainer}>
           {isLoading ? (
             <View style={styles.loadingCard}>
               <ActivityIndicator size="large" color="#00CC99" />
-              <Text style={styles.loadingText}>
-                Skin Analysis Commencing...
-              </Text>
+              <Text style={styles.loadingText}>Analyzing skin...</Text>
             </View>
           ) : (
             <View style={styles.previewCard}>
               <Image
-                source={
-                  capturePic && capturePic.uri
-                    ? { uri: capturePic.uri }
-                    : undefined
-                }
-                style={styles.previewImage}
+                source={{ uri: capturePic?.uri }}
+                style={styles.previewImg}
               />
-              <View style={styles.modalActions}>
+
+              <Text style={styles.previewTitle}>Use this image?</Text>
+
+              <View style={styles.actionRow}>
                 <TouchableOpacity
-                  style={styles.modalBtn}
+                  style={styles.cancelBtn}
                   onPress={handleRetake}
                 >
-                  <Text style={styles.btnText}>Retake</Text>
+                  <Text style={styles.cancelText}>Cancel</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
-                  style={styles.modalBtn}
+                  style={styles.okayBtn}
                   onPress={handleUsePhoto}
                 >
-                  <Text style={styles.btnText}>Use Photo</Text>
+                  <Text style={styles.okayText}>Okay</Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
+        </View>
+      </Modal>
+      {/* PREVIEW MODAL */}
+      <Modal visible={!!failMessage} transparent animationType="fade">
+        <View style={styles.failOverlay}>
+          <View style={styles.failCard}>
+            <Text style={styles.failTitle}>Alert</Text>
+            <Text style={styles.failMsg}>{failMessage}</Text>
+
+            <TouchableOpacity
+              style={styles.failBtn}
+              onPress={() => setFailMessage(null)}
+            >
+              <Text style={styles.failBtnText}>Okay</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </View>
@@ -193,80 +195,159 @@ const SkinCamera = () => {
 
 export default SkinCamera;
 
+const FRAME_SIZE = 280;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: "#0F0F0F",
   },
-  message: {
-    textAlign: "center",
-    paddingBottom: 10,
+
+  // Camera masking area
+  cameraMask: {
+    marginTop: 90,
+    width: FRAME_SIZE,
+    height: FRAME_SIZE,
+    alignSelf: "center",
+    borderRadius: FRAME_SIZE / 2,
+    overflow: "hidden",
+    backgroundColor: "#000",
+    elevation: 10,
   },
-  shutterContainer: {
+
+  cameraBox: {
+    width: "100%",
+    height: "100%",
+  },
+
+  // Teal circle frame
+  frameOutline: {
     position: "absolute",
-    bottom: 40,
+    top: 90,
+    alignSelf: "center",
+    width: FRAME_SIZE,
+    height: FRAME_SIZE,
+    borderRadius: FRAME_SIZE / 2,
+    borderWidth: 4,
+    borderColor: "#00CC99",
+  },
+
+  // Controls at bottom
+  controls: {
+    position: "absolute",
+    bottom: 45,
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-around",
     paddingHorizontal: 40,
   },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  frame: {
-    width: 250,
-    height: 250,
-    borderColor: "#00CC99",
-    borderWidth: 3,
-    backgroundColor: "transparent",
-  },
+
+  // Modal overlay
   modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.8)",
+    backgroundColor: "rgba(0,0,0,0.7)",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
   },
+
   previewCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    width: "90%",
-    maxWidth: 400,
-  },
-  previewImage: {
-    width: "100%",
-    height: 300,
-    borderRadius: 8,
-  },
-  modalActions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 20,
-  },
-  modalBtn: {
-    backgroundColor: "#00CC99",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-  },
-  btnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  loadingCard: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 40,
+    width: "88%",
+    borderRadius: 18,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    padding: 25,
     alignItems: "center",
   },
-  loadingText: {
-    marginTop: 16,
-    color: "#00CC99",
+
+  previewImg: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    marginBottom: 20,
+  },
+
+  previewTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginTop: 10,
+    color: "#222",
+  },
+
+  actionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 25,
+  },
+
+  cancelBtn: {
+    flex: 1,
+    borderRadius: 10,
+    paddingVertical: 12,
+    borderWidth: 1.5,
+    borderColor: "#000",
+    marginRight: 10,
+  },
+
+  cancelText: {
+    textAlign: "center",
     fontSize: 16,
+    fontWeight: "600",
+    color: "#000",
+  },
+
+  okayBtn: {
+    flex: 1,
+    borderRadius: 10,
+    paddingVertical: 12,
+    backgroundColor: "#000",
+    marginLeft: 10,
+  },
+
+  okayText: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#fff",
+  },
+
+  loadingCard: {
+    backgroundColor: "#fff",
+    padding: 40,
+    borderRadius: 16,
+    alignItems: "center",
+  },
+
+  loadingText: {
+    marginTop: 18,
+    fontSize: 16,
+    color: "#00CC99",
+  },
+
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+
+  permissionText: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+
+  permissionBtn: {
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: "#00CC99",
+  },
+
+  permissionBtnText: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "600",
   },
 });

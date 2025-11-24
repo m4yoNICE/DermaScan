@@ -9,6 +9,6 @@ export const ENV = {
   PASSWORD: process.env.DB_PASSWORD,
   JWT_SECRET: process.env.JWT_SECRET,
   //otp
-  OTP_MAILTRAP_USER: process.env.OTP_MAILTRAP_USER,
-  OTP_MAILTRAP_PASSWORD: process.env.OTP_MAILTRAP_PASSWORD,
+  OTP_USER: process.env.OTP_USER,
+  OTP_PASSWORD_OTP: process.env.OTP_PASSWORD_OTP,
 };

@@ -54,6 +54,9 @@ const deleteJournalAPI = () => {
   return Http.delete("/journals");
 };
 
+const getUploadedAPI = (data) => {
+  return Http.get("/uploads", data);
+};
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
@@ -69,5 +72,6 @@ const Api = {
   updateJournalAPI,
   deleteJournalAPI,
   getSingleJournalByDateAPI,
+  getUploadedAPI,
 };
 export default Api;
