@@ -1,5 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { createContext, useState, useEffect, useContext } from "react";
 
 export const AdminContext = createContext();
 
@@ -9,50 +8,46 @@ export function AdminProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadDefaultAdmin = async () => {
-      try {
-        // Try to load from storage first
-        const storedAdmin = await AsyncStorage.getItem("admin");
-        const storedToken = await AsyncStorage.getItem("adminToken");
+    const storedAdmin = localStorage.getItem("admin");
+    const storedToken = localStorage.getItem("adminToken");
 
-        if (storedAdmin && storedToken) {
-          setAdmin(JSON.parse(storedAdmin));
-          setToken(storedToken);
-        } else {
-          // Default admin
-          const defaultAdmin = { username: "admin", role: "admin" };
-          const defaultToken = "default-token";
+    if (storedAdmin && storedToken) {
+      setAdmin(JSON.parse(storedAdmin));
+      setToken(storedToken);
+    } else {
+      // default admin for now
+      const defaultAdmin = { username: "admin", role: "admin" };
+      const defaultToken = "default-token";
 
-          setAdmin(defaultAdmin);
-          setToken(defaultToken);
+      setAdmin(defaultAdmin);
+      setToken(defaultToken);
 
-          await AsyncStorage.setItem("admin", JSON.stringify(defaultAdmin));
-          await AsyncStorage.setItem("adminToken", defaultToken);
-        }
-      } catch (err) {
-        console.log("AdminContext error:", err);
-      }
-      setLoading(false);
-    };
-
-    loadDefaultAdmin();
+      localStorage.setItem("admin", JSON.stringify(defaultAdmin));
+      localStorage.setItem("adminToken", defaultToken);
+    }
+    setLoading(false);
   }, []);
 
-  // Logout (clears default admin if needed)
-  const logout = async () => {
+  const login = ({ admin: newAdmin, token: newToken }) => {
+    setAdmin(newAdmin);
+    setToken(newToken);
+    localStorage.setItem("admin", JSON.stringify(newAdmin));
+    localStorage.setItem("adminToken", newToken);
+  };
+
+  const logout = () => {
     setAdmin(null);
     setToken(null);
-    await AsyncStorage.removeItem("admin");
-    await AsyncStorage.removeItem("adminToken");
-    console.log("Admin logged out (default admin cleared)");
+    localStorage.removeItem("admin");
+    localStorage.removeItem("adminToken");
   };
 
   return (
-    <AdminContext.Provider value={{ admin, token, loading, logout }}>
+    <AdminContext.Provider value={{ admin, token, loading, login, logout }}>
       {children}
     </AdminContext.Provider>
   );
 }
 
-// Hook for easy use
+// hook for convenience
 export const useAdmin = () => useContext(AdminContext);

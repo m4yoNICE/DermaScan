@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
+import { AdminProvider } from './context/AdminContext'; // make sure path matches filename exactly
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AdminProvider>
+        <App />
+      </AdminProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
-

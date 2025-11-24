@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link, Routes, Route } from 'react-router-dom';
-import LoginAdmin from './LoginAdmin';
 import UserPage from './UserPage';
+import header from '../components/header';
+import analytics from './analytics';
 
 const AdminDashboard = () => {
   return (
@@ -22,18 +23,18 @@ const AdminDashboard = () => {
           >
             Users
           </Link>
+          <Link
+          to="/"
+          className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-red-500 hover:text-white transition-colors"
+        >
+          Logout
+        </Link>
         </nav>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 p-6 relative">
-        {/* Logout button */}
-        <Link
-          to="/"
-          className="absolute top-6 right-6 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
-        >
-          Logout
-        </Link>
+        
 
         {/* Nested Routes */}
         <Routes>
@@ -41,8 +42,9 @@ const AdminDashboard = () => {
             path=""
             element={
               <div>
-                <h1 className="text-2xl font-bold">Welcome to Admin Dashboard</h1>
-                <p className="text-gray-500 mt-2">This is your main dashboard.</p>
+                {header()}
+                <h1 className="text-3xl font-bold mb-4">Welcome to the Admin Dashboard</h1>
+                {}{analytics()}
               </div>
             }
           />
