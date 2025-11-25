@@ -1,5 +1,3 @@
-import { adminFetchUsers } from "../adminservices/adminUserManagement";
-
 export async function getAllUsers(req, res) {
   try {
     const userId = req.user.id;

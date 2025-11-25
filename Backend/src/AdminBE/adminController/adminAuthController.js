@@ -1,9 +1,9 @@
-import { findUserByEmail, createUser } from "../../src/services/authServices.js";
+import { findUserByEmail, createUser } from "../../services/authServices.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { ENV } from "../../src/config/env.js";
+import { ENV } from "../../config/env.js";
 
-export async function login(req, res) {
+export default async function AuthLogin(req, res) {
   try {
     const { email, password } = req.body;
     const user = await findUserByEmail(email);
