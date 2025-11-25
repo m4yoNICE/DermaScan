@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { use } from 'react'
 import { Line, Pie, Bar } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 
 import {
   Chart as ChartJS,
@@ -24,7 +25,56 @@ ChartJS.register(
   Tooltip
 );
 
-export default function analytics() {
+
+
+export default function Analytics() {
+
+  const [Oily, setOily] = useState(0);
+const [Dry, setDry] = useState(0);
+const [Combination, setCombination] = useState(0);
+const [Normal, setNormal] = useState(0);
+  useEffect(() => {
+  
+  const fetchSkinTypeData = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/users");
+      const data = await response.json();
+
+      let oilyCount = 0;
+      let dryCount = 0;
+      let combinationCount = 0;
+      let normalCount = 0;
+
+      data.forEach(user => {
+        switch(user.skinType) {
+          case 'Oily':
+            oilyCount++;
+            break;
+          case 'Dry':
+            dryCount++;
+            break;
+          case 'Combination':
+            combinationCount++;
+            break;
+          case 'Normal':
+            normalCount++;
+            break;
+        }
+      });
+
+      setOily(oilyCount);
+      setDry(dryCount);
+      setCombination(combinationCount);
+      setNormal(normalCount);
+
+    } catch (error) {
+      console.error("Error fetching skin type data:", error);
+    }
+
+  };
+  fetchSkinTypeData();
+}, []);
+
   return (
       <div className="bg-white p-6 rounded-xl shadow">
       <h3 className="text-xl font-bold mb-4">Daily Scan Activity</h3>
@@ -55,7 +105,7 @@ export default function analytics() {
         labels: ["Oily", "Dry", "Combination", "Normal"],
         datasets: [
           {
-            data: [40, 20, 25, 15],
+            data: [Oily, Dry, Combination, Normal],
           },
         ],
       }}

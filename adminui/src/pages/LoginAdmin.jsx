@@ -1,23 +1,40 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { ServerRouter, useNavigate } from "react-router-dom";
 import { useAdmin } from "../context/AdminContext";
+import { Http } from "../services/Http";
 
 const LoginAdmin = () => {
   const navigate = useNavigate();
   const { login } = useAdmin();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@test.com");
+  const [password, setPassword] = useState("admin12345");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Accept any credentials for now
-    const defaultAdmin = { username: "admin", role: "admin", email };
-    const defaultToken = "default-token";
+    try {
+      const response = await fetch("http://localhost:6969/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-    login({ admin: defaultAdmin, token: defaultToken });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Login failed");
+    }
+
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    login({admin: {...data.user, role: 'admin'}, token: data.token});
     navigate("/dashboard");
+
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Server Error");
+    }
   };
 
   return (
