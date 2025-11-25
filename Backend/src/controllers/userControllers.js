@@ -2,7 +2,8 @@ import {
   updateUser,
   deleteUser,
   getUserId,
-  updateSkinData,
+  createSkinData,
+  deleteSkinData,
 } from "../services/userServices.js";
 
 export async function getuserid(req, res) {
@@ -57,17 +58,39 @@ export async function deleteuser(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
-
-export async function updateskindata(req, res) {
+export async function deleteskindata(req, res) {
   try {
-    const { skin_type, skin_sensitivity } = req.body;
     const userId = req.user.id;
-    console.log("BODY:", req.body);
-    console.log("USER ID:", userId);
+    const [updatedRows] = await deleteSkinData(userId);
+
+    if (updatedRows === 0) {
+      return res
+        .status(404)
+        .json({ error: "User not found or no data updated" });
+    }
+
+    res.status(200).json({ message: "Skin data cleared successfully" });
+  } catch (err) {
+    console.error("Error deleting skin data:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function createskindata(req, res) {
+  try {
+    console.log(req.body);
+    const { skin_type, skin_sensitivity, pigmentation, aging } = req.body;
+    const userId = req.user.id;
     if (!skin_type || skin_sensitivity === undefined) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    const added = await updateSkinData(userId, skin_type, skin_sensitivity);
+    const result = await createSkinData(
+      userId,
+      skin_type,
+      skin_sensitivity,
+      pigmentation,
+      aging
+    );
     if (result[0] === 0) {
       return res
         .status(404)

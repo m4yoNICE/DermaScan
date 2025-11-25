@@ -1,21 +1,99 @@
-import app from "express";
-import { createStoreImage } from "../services/imagesServices.js";
-
-export async function uploadSkinImage(req, res) {
+import {
+  mapSkinResultToCatalog,
+  skinAnalyze,
+} from "../services/skinAnalysisServices.js";
+import { saveBufferImage } from "../utils/saveBufferImage.js";
+import { createStoredImage } from "../services/imagesServices.js";
+import { checkImageQuality } from "../utils/checkImageQuality.js";
+import SkinAnalysisTransaction from "../models/SkinAnalysisTransaction.js";
+//THE MAIN IMAGE PROCESSING LOGIC
+export async function uploadskinimage(req, res) {
   try {
-    console.log("heree is the controller");
     const userId = req.user.id;
+
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
-    const imageUrl = req.file.filename;
-    const result = await createStoreImage(userId, imageUrl);
-    if (!result) {
-      return res.status(400).json({ error: result });
+
+    //Saves the image in the memory first and saves it if it is actually completed
+    console.log("image recieved: commencing analysing");
+    const imageBuffer = req.file.buffer;
+
+    //CHECK IMAGE QUALITY
+    const imageQuality = await checkImageQuality(imageBuffer);
+    console.log(imageQuality);
+    if (!imageQuality.ok) {
+      return res.status(200).json({
+        result: "failed",
+        message:
+          "The photo is unclear. Please retake the picture in good lighting and ensure the skin is in focus.",
+      });
     }
-    res.status(200).json({ message: "Image Successfully Stored" });
+    //This is where the image processing goes..
+    const skinResult = await skinAnalyze(imageBuffer);
+    console.log(skinResult);
+
+    //save to skin analysis transaction
+    const transaction = await mapSkinResultToCatalog(userId, skinResult);
+    if (!transaction) {
+      return res
+        .status(404)
+        .json({ error: "Failed to save data to skin analysis transaction" });
+    }
+    const status = transaction.status.toLowerCase();
+    if (status == "flagged") {
+      const savedImage = await saveImageLogic(userId, imageBuffer);
+      await transaction.update({ image_id: savedImage.id });
+      return res.status(200).json({
+        result: "failed",
+        message:
+          "This concern may require professional consultation. Please see a dermatologist for proper care.",
+      });
+    }
+    if (status == "out of scope") {
+      return res.status(200).json({
+        result: "failed",
+        message: "The image does not contain skin or a valid skin region.",
+      });
+    }
+    if (status === "valid") {
+      const savedImage = await saveImageLogic(userId, imageBuffer);
+      await transaction.update({ image_id: savedImage.id });
+    }
+    const updatedTransaction = await SkinAnalysisTransaction.findByPk(
+      transaction.id
+    );
+    res.status(200).json({
+      result: "success",
+      message: "Analysis complete",
+      data: updatedTransaction,
+    });
   } catch (err) {
-    console.error("Error storing imageUrl in database:", err);
+    console.error("Error in uploadskinimage:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+//reusing this to "success" and "flagged"
+async function saveImageLogic(userId, imageBuffer) {
+  //save image to local storage
+  const savedPath = await saveBufferImage(imageBuffer);
+  //save to storedImages table
+  const imageSaveResult = await createStoredImage(userId, savedPath);
+  return imageSaveResult;
+}
+
+export async function getImage(req, res) {
+  try {
+    const userId = req.user.id;
+    const imageId = req.body.image_id;
+    const image = await getImageById(imageId, userId);
+    if (!image) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+    return res.status(200).json(image.photoUrl);
+  } catch (err) {
+    console.error("Error fetching image by ID:", err);
     res.status(500).json({ error: "Server error" });
   }
 }

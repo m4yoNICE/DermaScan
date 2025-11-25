@@ -21,6 +21,7 @@ export const Drawerlayout = () => {
     <Drawer
       initialRouteName="(tabs)"
       screenOptions={{
+        headerShown: false,
         headerStyle: {
           backgroundColor: "#00CC99",
         },
@@ -31,8 +32,14 @@ export const Drawerlayout = () => {
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="(tabs)" options={{ title: "Home" }} />
-      <Drawer.Screen name="Profile" options={{ title: "Settings" }} />
+      <Drawer.Screen
+        name="(tabs)"
+        options={{ title: "Home", headerShown: false }}
+      />
+      <Drawer.Screen
+        name="Profile"
+        options={{ title: "Settings", headerShown: true }}
+      />
       <Drawer.Screen
         name="Logout"
         options={{ title: "Logout", drawerLabelStyle: { color: "red" } }}

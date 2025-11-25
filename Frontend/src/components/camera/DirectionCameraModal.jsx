@@ -6,38 +6,53 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState, useRef } from "react";
+import React from "react";
+import { AntDesign } from "@expo/vector-icons";
 
 const DirectionCameraModal = ({ visible, onClose }) => {
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalBox}>
-          <ScrollView>
-            <Text style={styles.modalTitle}>Camera Instructions</Text>
-            <Text style={styles.instruction}>
-              1. <Text style={styles.bold}>Clean, Clear & Steady:</Text> No
-              makeup, fresh skin.
-            </Text>
-            <Text style={styles.instruction}>
-              2. <Text style={styles.bold}>Good Lighting:</Text> Use natural or
-              well-lit space.
-            </Text>
-            <Text style={styles.instruction}>
-              3. <Text style={styles.bold}>Focus:</Text> Keep your face in
-              frame.
-            </Text>
-            <Text style={styles.instruction}>
-              4. <Text style={styles.bold}>Close-up:</Text> Ensure skin details
-              are visible.
-            </Text>
-            <Text style={styles.instruction}>
-              5. <Text style={styles.bold}>Stay Still:</Text> Hold steady for
-              clarity.
+    <Modal visible={visible} transparent animationType="fade">
+      <View style={styles.overlay}>
+        <View style={styles.box}>
+          {/* Close Button */}
+          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+            <AntDesign name="close" size={22} color="#444" />
+          </TouchableOpacity>
+
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {/* Title */}
+            <Text style={styles.title}>Camera</Text>
+
+            {/* Instructions */}
+            <Text style={styles.text}>
+              To help us analyze your skin, please follow these simple steps:
             </Text>
 
+            <Text style={styles.text}>
+              1. <Text style={styles.bold}>Clean, Clear & Steady:</Text> Make
+              sure your face is clean and there’s no makeup on.
+            </Text>
+
+            <Text style={styles.text}>
+              2. <Text style={styles.bold}>Good Lighting:</Text> Stand in
+              natural light or use a well-lit space. Avoid shadows and harsh
+              light.
+            </Text>
+
+            <Text style={styles.text}>
+              3. <Text style={styles.bold}>Close-up Shot:</Text> Take a close-up
+              picture of your face, ensuring we can clearly see your skin
+              texture and any areas of concern.
+            </Text>
+
+            <Text style={styles.text}>
+              4. <Text style={styles.bold}>Stay Still:</Text> Hold your phone
+              steady for a clear, focused image.
+            </Text>
+
+            {/* Agree Button */}
             <TouchableOpacity style={styles.agreeButton} onPress={onClose}>
-              <Text style={styles.agreeText}>I Agree</Text>
+              <Text style={styles.agreeText}>I agree</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -49,33 +64,65 @@ const DirectionCameraModal = ({ visible, onClose }) => {
 export default DirectionCameraModal;
 
 const styles = StyleSheet.create({
-  modalOverlay: {
+  overlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
-  modalBox: {
-    width: "85%",
-    backgroundColor: "teal",
-    padding: 20,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "white",
-  },
-  instruction: { fontSize: 16, marginBottom: 10, color: "white" },
-  bold: { fontWeight: "bold", color: "white" },
-  agreeButton: {
-    marginTop: 20,
+  box: {
+    width: "90%",
     backgroundColor: "white",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
+    borderRadius: 16,
+    padding: 20,
+    paddingTop: 30,
+    maxHeight: "90%",
   },
-  agreeText: { color: "teal", fontWeight: "bold", fontSize: 16 },
+  closeBtn: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    zIndex: 10,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#111",
+    marginBottom: 15,
+  },
+  text: {
+    fontSize: 16,
+    color: "#333",
+    marginBottom: 12,
+    lineHeight: 22,
+  },
+  bold: {
+    fontWeight: "700",
+  },
+  warningBox: {
+    marginTop: 15,
+    padding: 12,
+    backgroundColor: "#ffe5e5",
+    borderWidth: 1,
+    borderColor: "#ff9999",
+    borderRadius: 6,
+  },
+  warningText: {
+    color: "#a10000",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  agreeButton: {
+    backgroundColor: "#1e7d64",
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 25,
+    marginBottom: 10,
+  },
+  agreeText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });

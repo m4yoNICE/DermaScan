@@ -1,11 +1,15 @@
 import express from "express";
-import { checkAdmin } from "../middleware/checkAdmin.js";
-import { login, register, forgetpassword } from "../controllers/authControllers.js";
+import {
+  login,
+  register,
+  forgetpassword,
+  checkotp,
+} from "../controllers/authControllers.js";
 const router = express.Router();
 
 router.post("/login", login);
-router.post("/admin/login", checkAdmin, login);
 router.post("/register", register);
-router.post("/forget", forgetpassword);
+router.post("/forgetpassword", forgetpassword);
+router.post("/checkOTP", checkotp);
 
 export default router;

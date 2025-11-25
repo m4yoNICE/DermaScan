@@ -5,9 +5,10 @@ import {
   ScrollView,
   TextInput,
   Modal,
+  Alert,
 } from "react-native";
 import React, { useContext, useState, useCallback } from "react";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
 import Button from "src/components/Button";
 import { ToastMessage } from "@/components/ToastMessage";
@@ -162,7 +163,38 @@ const Profile = () => {
       ToastMessage("error", "Delete Failed", error.message);
     }
   };
-
+  //SKIN RESET
+  const handleResetSkinType = () => {
+    Alert.alert(
+      "Reset Skin Type",
+      "Are you sure you want to reset your skin type data? This will remove your current skin analysis results.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Reset",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await Api.resetSkinDataAPI();
+              ToastMessage(
+                "success",
+                "Skin Data Cleared",
+                "Your skin type has been reset."
+              );
+              router.push("/BaumannQuestionnaire");
+            } catch (error) {
+              console.error("Reset error:", error);
+              ToastMessage(
+                "error",
+                "Failed",
+                "Unable to reset your skin data."
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
   return (
     <ScrollView
       style={styles.container}
@@ -221,63 +253,6 @@ const Profile = () => {
         />
       )}
 
-      {/* ====== Copied from QuestModal: Skin Type / Sensitivity ====== */}
-      <Text style={styles.text}>Skin Type</Text>
-      <View style={styles.buttonRow}>
-        {["Oily", "Dry", "Normal", "Combination"].map((type) => {
-          const isSelected = skinType === type.toLowerCase();
-          return (
-            <Button
-              key={type}
-              title={type}
-              onPress={() => setSkinType(type.toLowerCase())}
-              style={{
-                width: "45%",
-                marginVertical: 5,
-                borderWidth: 1,
-                borderColor: isSelected ? "#00CC99" : "#ddd",
-                backgroundColor: isSelected ? "#00CC99" : "#f9f9f9",
-              }}
-              textStyle={{
-                fontSize: 12,
-                fontWeight: "500",
-                color: isSelected ? "#fff" : "#1a1a1a",
-              }}
-            />
-          );
-        })}
-      </View>
-
-      <Text style={styles.text}>Is your skin sensitive?</Text>
-      <View style={styles.buttonRow}>
-        {[
-          { label: "Yes", value: true },
-          { label: "No", value: false },
-        ].map((opt) => {
-          const isSelected = skinSensitive === opt.value;
-          return (
-            <Button
-              key={opt.label}
-              title={opt.label}
-              onPress={() => setSkinSensitive(opt.value)}
-              style={{
-                width: "45%",
-                marginVertical: 5,
-                borderWidth: 1,
-                borderColor: isSelected ? "#00CC99" : "#ddd",
-                backgroundColor: isSelected ? "#00CC99" : "#f9f9f9",
-              }}
-              textStyle={{
-                fontSize: 16,
-                fontWeight: "500",
-                color: isSelected ? "#fff" : "#1a1a1a",
-              }}
-            />
-          );
-        })}
-      </View>
-      {/* ====== End copied section ====== */}
-
       <Text style={styles.text}>Current Password</Text>
       <TextInput
         style={styles.input}
@@ -307,6 +282,17 @@ const Profile = () => {
 
       <Button title="Save Changes" onPress={handleUpdate} />
 
+      <Button
+        title="Reset Skin Type"
+        onPress={handleResetSkinType}
+        style={{
+          backgroundColor: "#f9f9f9",
+          borderWidth: 1,
+          borderColor: "#ddd",
+          marginBottom: 10,
+        }}
+        textStyle={{ color: "#00CC99" }}
+      />
       <Button
         title="Delete Account"
         onPress={handleDelete}

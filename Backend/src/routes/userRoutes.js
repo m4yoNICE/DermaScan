@@ -3,12 +3,14 @@ import {
   edituser,
   deleteuser,
   getuserid,
-  updateskindata,
+  createskindata,
+  deleteskindata,
 } from "../controllers/userControllers.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 const router = express.Router();
 
-router.put("/skin", verifyToken, updateskindata);
+router.put("/skin", verifyToken, createskindata);
+router.put("/skinreset", verifyToken, deleteskindata);
 router.get("/", verifyToken, getuserid);
 router.put("/", verifyToken, edituser);
 router.delete("/", verifyToken, deleteuser);

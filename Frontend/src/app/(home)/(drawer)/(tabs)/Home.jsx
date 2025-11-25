@@ -1,71 +1,156 @@
-import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Modal,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
+import { ScrollView, StyleSheet, View, TextInput } from "react-native";
+import { useFocusEffect } from "expo-router";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { Calendar } from "react-native-calendars";
 import dayjs from "dayjs";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import QuestModal from "@/components/modals/QuestModal";
 import Api from "@/services/Api";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
+import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/Button";
 const Home = () => {
+  //home logic
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
-  const [currentMonth, setCurrentMonth] = useState(dayjs());
-  const [checkSkinType, setCheckSkinType] = useState(null);
-  const [checkSkinSensitive, setCheckSkinSensitive] = useState(null);
-  const [showQuestModal, setShowQuestModal] = useState(false);
+  const [text, setText] = useState("");
+  const [journals, setJournals] = useState([]);
+  const sheetRef = useRef(null);
 
-  //check for skintypes after registering
-  const checkSkinData = async () => {
+  useFocusEffect(
+    useCallback(() => {
+      getAllJournal();
+    }, [])
+  );
+  //note UI
+  const snapPoints = useMemo(() => ["25%", "50%"], []);
+  const handleOpenJournal = () => sheetRef.current?.expand();
+  const handleCloseJournal = () => sheetRef.current?.close();
+  const getAllJournal = async () => {
     try {
-      const res = await Api.getUserbyTokenAPI();
-      const user = res.data;
-
-      setCheckSkinType(user.skin_type);
-      setCheckSkinSensitive(user.skin_sensitivity);
-
-      // If user has no skin data, show modal
-      if (!user.skin_type || !user.skin_sensitivity) {
-        setShowQuestModal(true);
-      }
-    } catch (err) {
-      console.error("Error checking skin data:", err);
+      const res = await Api.getAllJournalAPI();
+      setJournals(res.data);
+    } catch (error) {
+      console.log(error);
+      ToastMessage(
+        "error",
+        "Unexpected Error",
+        error.message || "Unknown error"
+      );
     }
   };
-  useEffect(() => {
-    checkSkinData();
-  }, []);
-  // Replace this later with DB data
-  const events = [];
 
-  const filteredEvents = events.filter((e) => e.date.startsWith(selected));
-
-  const handlePrevMonth = () => {
-    setCurrentMonth(currentMonth.subtract(1, "month"));
+  const getSingleJournalByDate = (targetDate) => {
+    const journal = journals.find((j) => j.journal_date === targetDate);
+    setText(journal?.journal_text || "");
   };
 
-  const handleNextMonth = () => {
-    setCurrentMonth(currentMonth.add(1, "month"));
+  const renderBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={1}
+        appearsOnIndex={2}
+      />
+    ),
+    []
+  );
+  const handleJournalAction = async () => {
+    try {
+      const existing = await Api.getSingleJournalByDateAPI(selected);
+      const existingJournal = existing.data;
+      const journalData = { date: selected, journal_text: text.trim() };
+
+      // Delete if no text
+      if (!journalData.journal_text) {
+        if (existingJournal) {
+          await Api.deleteJournalAPI(existingJournal.id);
+          ToastMessage("success", "Deleted", "Journal deleted successfully.");
+          setText("");
+          await getAllJournal();
+        }
+        return;
+      }
+
+      // Update if exists, create if not
+      if (existingJournal) {
+        await Api.updateJournalAPI(journalData);
+        ToastMessage("success", "Updated", "Journal updated successfully.");
+      } else {
+        await Api.createJournalAPI(journalData);
+        ToastMessage("success", "Created", "Journal saved successfully.");
+      }
+
+      await getAllJournal();
+    } catch (error) {
+      console.error("Action Error:", error);
+      if (error.response) {
+        ToastMessage(
+          "error",
+          "Server Error",
+          error.response.data?.error || "Something went wrong."
+        );
+      } else if (error.request) {
+        ToastMessage("error", "Network Error", "Unable to reach the server.");
+      } else {
+        ToastMessage("error", "Unexpected Error", error.message);
+      }
+    }
   };
+  const buttonLabel = useMemo(() => {
+    const existingJournal = journals.find((j) => j.journal_date === selected);
+
+    if (existingJournal && text.trim() === "") {
+      return "Delete";
+    }
+    if (existingJournal && text.trim() !== "") {
+      return "Update";
+    }
+    return "Save";
+  }, [journals, selected, text]);
+
+  //display the date when theres a note occupied
+  const markedDates = useMemo(() => {
+    const dates = {};
+
+    for (let i = 0; i < journals.length; i++) {
+      const date = journals[i].journal_date;
+      if (date) {
+        dates[date] = {
+          marked: true,
+          dotColor: "#4F46E5",
+        };
+      }
+    }
+
+    if (selected) {
+      dates[selected] = {
+        ...(dates[selected] || {}),
+        selected: true,
+        selectedColor: "#00CC99",
+      };
+    }
+
+    return dates;
+  }, [journals, selected]);
 
   return (
     <View style={styles.container}>
-      {/* Calendar */}
-      <QuestModal
-        visible={showQuestModal}
-        onClose={() => setShowQuestModal(false)}
-      />
       <Calendar
-        current={dayjs().format("YYYY-MM-DD")}
-        onDayPress={(day) => setSelected(day.dateString)}
-        markedDates={{
-          [selected]: { selected: true },
+        current={selected}
+        onDayPress={(day) => {
+          setSelected(day.dateString);
+          getSingleJournalByDate(day.dateString);
+          handleOpenJournal();
         }}
+        markedDates={markedDates}
         renderArrow={(direction) =>
           direction === "left" ? (
             <AntDesign name="arrow-left" size={24} color="black" />
@@ -74,24 +159,30 @@ const Home = () => {
           )
         }
       />
-
-      {/* Event list */}
-      <FlatList
-        data={filteredEvents}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: "center", color: "gray", marginTop: 20 }}>
-            No events for this day
-          </Text>
-        }
-        renderItem={({ item }) => (
-          <View style={styles.eventCard}>
-            <Text style={styles.eventTitle}>{item.title}</Text>
-            <Text style={styles.eventDate}>{item.date}</Text>
-          </View>
-        )}
-      />
+      <BottomSheet
+        ref={sheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        onChange={(index) => {
+          if (index === -1) handleCloseJournal();
+        }}
+      >
+        <BottomSheetView style={styles.sheetContent}>
+          <ScrollView>
+            <TextInput
+              style={styles.input}
+              multiline={true}
+              onChangeText={setText}
+              value={text}
+              placeholder="How's Your Day..."
+              placeholderTextColor="#999"
+            />
+          </ScrollView>
+          <Button title={buttonLabel} onPress={handleJournalAction} />
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 };
@@ -99,38 +190,20 @@ const Home = () => {
 export default Home;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  topBar: {
-    backgroundColor: "teal",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  topBarTitle: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
+  input: {
+    height: 150,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    textAlignVertical: "top",
   },
-  arrowContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  eventCard: {
-    backgroundColor: "#f9f9f9",
+  sheetContent: {
+    flex: 1,
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 2,
-  },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  eventDate: {
-    fontSize: 14,
-    color: "gray",
   },
 });
