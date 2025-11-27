@@ -34,3 +34,21 @@ export default async function AuthLogin(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
+export async function getAdminData(req, res){
+  try {
+    const admin = await findUserById(req.user.id);
+    if (!admin){
+      return res.status(404).json({ error: "Admin not found" });
+    }
+
+    res.status(200).json({
+      id: admin.id,
+      email: admin.email,
+      role: admin.isAdmin ? "admin" : "user"
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
