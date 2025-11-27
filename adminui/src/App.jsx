@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import LoginAdmin from './pages/LoginAdmin';
+import LoginAdmin from './pages/auth/LoginAdmin.jsx';
 import AdminDashboard from './pages/AdminDashboard';
 import UsersPage from './pages/UserPage';
 import Analytics from './pages/analytics';

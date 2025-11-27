@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
+import Api from "../services/Api";
 
 export const AdminContext = createContext();
 
@@ -10,29 +11,44 @@ export function AdminProvider({ children }) {
   useEffect(() => {
     const storedAdmin = localStorage.getItem("admin");
     const storedToken = localStorage.getItem("adminToken");
+    
 
     if (storedAdmin && storedToken) {
       setAdmin(JSON.parse(storedAdmin));
       setToken(storedToken);
-    } else {
-      // default admin for now
-      const defaultAdmin = { username: "admin", role: "admin" };
-      const defaultToken = "default-token";
+    } 
+    // else {
+    //   // default admin for now
+    //   const defaultAdmin = { username: "admin", role: "admin" };
+    //   const defaultToken = "default-token";
 
-      setAdmin(defaultAdmin);
-      setToken(defaultToken);
+    //   setAdmin(defaultAdmin);
+    //   setToken(defaultToken);
 
-      localStorage.setItem("admin", JSON.stringify(defaultAdmin));
-      localStorage.setItem("adminToken", defaultToken);
-    }
+    //   localStorage.setItem("admin", JSON.stringify(defaultAdmin));
+    //   localStorage.setItem("adminToken", defaultToken);
+    // }
     setLoading(false);
   }, []);
 
-  const login = ({ admin: newAdmin, token: newToken }) => {
-    setAdmin(newAdmin);
-    setToken(newToken);
-    localStorage.setItem("admin", JSON.stringify(newAdmin));
-    localStorage.setItem("adminToken", newToken);
+  const login = async (email, password) => {
+    try {
+      const loginData = { email: email.trim(), password };
+      const res = await Api.loginAccountAPI(loginData);
+
+      const adminData = res.data?.admin || res.data?.user || res.user;
+      const tokenData = res.data?.token || res.token;
+
+      if (!adminData || !tokenData) {
+        throw new Error("Invalid login response");
+      }
+
+      setAdmin(res.data.admin);
+      setToken(res.data.token);
+    } catch (error) {
+      console.error("Admin login error:", error?.response?.data || error.message || error);
+      throw new Error("Login failed");
+    }
   };
 
   const logout = () => {

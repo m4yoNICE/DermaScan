@@ -134,33 +134,6 @@ const Login = () => {
             style={styles.loginBtn}
           />
 
-<<<<<<< HEAD
-        <Button title="Log In" onPress={LoginAccount} />
-
-        {/* Disregard this for now */}
-        {/* <Text style={styles.forgotPassword}>Forgot Password?</Text> */}
-
-        <Text style={styles.signUp}>
-          Don't have an account?{" "}
-          <Link
-            href="/Register"
-            style={{ color: "#00CC99", fontWeight: "600" }}
-          >
-            Sign Up
-          </Link>
-        </Text>
-
-        <Text style={styles.forgotPassword}>
-          Forgot your password?{" "}
-            <Link
-              href="/ForgetPassword"
-              style={{ color: "#00CC99", fontWeight: "600" }}
-            >
-              Reset here
-            </Link>
-          </Text>
-      </Card>
-=======
           <Text style={styles.signUp}>
             Don’t have an account?{" "}
             <Link href="/Register" style={styles.signUpLink}>
@@ -176,7 +149,6 @@ const Login = () => {
           </View>
         </BottomSheetView>
       </BottomSheet>
->>>>>>> origin/main
     </View>
   );
 };

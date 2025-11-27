@@ -62,9 +62,9 @@ const resetPasswordAPI = (data) => {
   return Http.post("/auth/reset-password", data);
 };
 
-const forgetPasswordAPI = (data) => {
-  return Http.post("/auth/forget-password", data);
-}
+// const forgetPasswordAPI = (data) => {
+//   return Http.post("/auth/forget-password", data);
+// }
 
 const Api = {
   registerAccountAPI,
@@ -75,10 +75,6 @@ const Api = {
   deleteUserAPI,
   editUserAPI,
   updateSkinDataAPI,
-<<<<<<< HEAD
-  resetPasswordAPI,
-  forgetPasswordAPI
-=======
   resetSkinDataAPI,
   getAllJournalAPI,
   createJournalAPI,
@@ -86,6 +82,5 @@ const Api = {
   deleteJournalAPI,
   getSingleJournalByDateAPI,
   getUploadedAPI,
->>>>>>> origin/main
 };
 export default Api;

@@ -65,3 +65,7 @@ export async function forgetpassword(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
+export async function checkotp(req, res){
+  // Implementation for OTP checking would go here
+}

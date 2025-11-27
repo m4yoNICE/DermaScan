@@ -27,7 +27,7 @@ ChartJS.register(
 
 
 
-export default function Analytics() {
+export default function analytics() {
 
   const [Oily, setOily] = useState(0);
 const [Dry, setDry] = useState(0);
@@ -37,7 +37,6 @@ const [Normal, setNormal] = useState(0);
   
   const fetchSkinTypeData = async () => {
     try {
-      const response = await fetch("http://localhost:3000/users");
       const data = await response.json();
 
       let oilyCount = 0;

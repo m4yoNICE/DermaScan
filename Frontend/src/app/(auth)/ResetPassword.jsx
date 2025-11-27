@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-const ResetPassword = () => {
-  return (
-    <div>ResetPassword</div>
-  )
-}
-
-export default ResetPassword
-
-const styles = StyleSheet.create({
-  // styles go here
-});
-=======
 import React from "react";
 import { StyleSheet, Text } from "react-native";
 const ResetPassword = () => {
@@ -22,4 +7,3 @@ const ResetPassword = () => {
 export default ResetPassword;
 
 const styles = StyleSheet.create({});
->>>>>>> origin/main
