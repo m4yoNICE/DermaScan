@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^7.0.1",
     "@techstark/opencv-js": "^4.12.0-release.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -26,5 +27,8 @@
     "resend": "^6.5.2",
     "sequelize": "^6.37.7",
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.3"
   }
 }

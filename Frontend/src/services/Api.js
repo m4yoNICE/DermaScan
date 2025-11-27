@@ -57,6 +57,11 @@ const deleteJournalAPI = () => {
 const getUploadedAPI = (data) => {
   return Http.get("/uploads", data);
 };
+
+const getConditionById = (id) => {
+  return Http.get(`/condition/${id}`);
+};
+
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
@@ -73,5 +78,6 @@ const Api = {
   deleteJournalAPI,
   getSingleJournalByDateAPI,
   getUploadedAPI,
+  getConditionById,
 };
 export default Api;

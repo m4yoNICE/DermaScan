@@ -12,6 +12,11 @@ const deleteUserAPI = (id) => {
 const editUserAPI = (id) => {
   Http.put("/admin/users/", id);
 };
-const Api = { loginAccountAPI, fetchUsersAPI, deleteUserAPI, editUserAPI };
+const Api = { 
+  loginAccountAPI, 
+  fetchUsersAPI, 
+  deleteUserAPI, 
+  editUserAPI 
+};
 
 export default Api;

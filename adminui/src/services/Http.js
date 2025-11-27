@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const getAuthToken = () => localStorage.getItem("authToken");
-const baseURL = "localhost:3000";
+const baseURL = "http://localhost:3000";
 
 export const Http = axios.create({
   baseURL,

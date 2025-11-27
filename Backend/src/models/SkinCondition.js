@@ -24,24 +24,4 @@ const SkinCondition = db.define(
   }
 );
 
-SkinCondition.afterSync(async () => {
-  const count = await SkinCondition.count();
-  if (count === 0) {
-    await SkinCondition.bulkCreate([
-      { condition: "mild-acne", can_recommend: "Yes" },
-      { condition: "severe-acne", can_recommend: "No" },
-      { condition: "eczema", can_recommend: "No" },
-      { condition: "psoriasis", can_recommend: "No" },
-      { condition: "blackheads", can_recommend: "No" },
-      { condition: "darkspots", can_recommend: "Yes" },
-      { condition: "milia", can_recommend: "Yes" },
-      { condition: "pores", can_recommend: "Yes" },
-      { condition: "wrinkles", can_recommend: "Yes" },
-    ]);
-    console.log("Skin_Condition table seeded");
-  } else {
-    console.log("Skin_Condition table already seeded");
-  }
-});
-
 export default SkinCondition;
