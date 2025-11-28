@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import db from "../config/db.js";
 import bcrypt from "bcryptjs";
+import Role from "./Role.js"; // Import Role model
 
 const User = db.define(
   "User",
@@ -25,9 +26,13 @@ const User = db.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    role: {
-      type: DataTypes.ENUM("user", "admin"),
+    role_id: {
+      type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "role",
+        key: "id",
+      },
     },
     birthdate: {
       type: DataTypes.DATEONLY,
@@ -41,5 +46,9 @@ const User = db.define(
     updatedAt: "updated_at",
   }
 );
+
+// Define association
+User.belongsTo(Role, { foreignKey: "role_id", as: "userRole" });
+Role.hasMany(User, { foreignKey: "role_id" });
 
 export default User;
