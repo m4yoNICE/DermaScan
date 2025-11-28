@@ -48,7 +48,7 @@ const User = db.define(
 );
 
 // Define association
-User.belongsTo(Role, { foreignKey: "role_id", as: "userRole" });
+User.belongsTo(Role, { foreignKey: "role_id" });
 Role.hasMany(User, { foreignKey: "role_id" });
 
 export default User;
