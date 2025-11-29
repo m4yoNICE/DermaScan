@@ -60,6 +60,15 @@ export async function updateSkinData(userId, skin_type, skin_sensitivity) {
   );
 }
 
+export async function findUserById  (userId) {
+  try {
+    const user = await User.findByPk(userId);
+    return user;
+  } catch (error) {
+    console.error("Error finding user by ID:", error);
+    throw error;
+  }
+}
 
 
 export default router;

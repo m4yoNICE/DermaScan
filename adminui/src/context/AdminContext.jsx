@@ -43,8 +43,8 @@ export function AdminProvider({ children }) {
         throw new Error("Invalid login response");
       }
 
-      setAdmin(res.data.admin);
-      setToken(res.data.token);
+      localStorage.setItem("admin", JSON.stringify(adminData));
+      localStorage.setItem("authToken", tokenData);
     } catch (error) {
       console.error("Admin login error:", error?.response?.data || error.message || error);
       throw new Error("Login failed");
