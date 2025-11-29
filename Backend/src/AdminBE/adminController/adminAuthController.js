@@ -1,41 +1,59 @@
-import { findUserByEmail, createUser } from "../../services/authServices.js";
+import { findAdminByEmail, createUser } from "../../services/authServices.js";
 import  findUserById  from "../adminservices/adminUserManagement.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../../config/env.js";
+import User from "../../models/User.js";
+import Role from "../../models/Role.js";
 
 export default async function AuthLogin(req, res) {
   try {
     const { email, password } = req.body;
-    const user = await findUserByEmail(email);
+
+    // Fetch user + role
+    const user = await findAdminByEmail(email);
+
     if (!user) {
-      return res.status(401).json({ error: "Invalid Credentials" });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
+
+    // Validate password
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-    if (user.role !== "admin") {
-      return res.status(403).json({ error: "Access denied" });
+
+    // Check if user is actually an admin (role_id == 1)
+    if (user.role_id !== 1) { 
+      console.log("Non-admin user attempted admin login:", user.role_id);
+      return res.status(403).json({ error: "Admins only" });
     }
-    const payload = { 
-      id: user.id, 
+
+    // JWT Payload
+    const payload = {
+      id: user.id,
       email: user.email,
-      role: user.role
+      role: {
+        id: user.Role.id,
+        role_name: user.Role.role_name
+      }
     };
+
     const token = jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "6h" });
+
+    // Success response
     res.status(200).json({
-    message: "Login successful",
-    user: { 
-        id: user.id, 
+      message: "Login successful",
+      user: {
+        id: user.id,
         email: user.email,
-        role: user.role
-     },
-    token,
+        role: payload.role
+      },
+      token
     });
 
   } catch (err) {
-    console.log(err);
+    console.error("AuthLogin Error:", err);
     res.status(500).json({ error: "Server error" });
   }
 }

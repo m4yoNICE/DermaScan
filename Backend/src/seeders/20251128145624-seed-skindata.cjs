@@ -10,9 +10,12 @@ module.exports = {
         skin_sensitivity: "resistant",
         pigmentation: "pigmented",
         aging: "tight",
+        created_at: new Date(),
+        updated_at: new Date()
       },
     ]);
   },
+
 
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete("Skin_data", null, {});

@@ -1,15 +1,19 @@
-
+import User from "../../models/User.js";
+import Role from "../../models/Role.js";
 
 export async function getAllUsers(req, res) {
   try {
-    const userId = req.user.id;
-    const fetchedUsers = await adminFetchUsers();
-    if (!fetchedUsers || fetchedUsers.length === 0) {
-      return res.status(404).json({ error: "Users cannot be fetched" });
-    }
-    return res.status(200).json(fetchedUsers);
-  } catch (err) {
-    console.error("Error fetching all journal:", err);
-    res.status(500).json({ error: "Server error" });
+   const users = await User.findAll({
+    include : [{ 
+      model: Role, 
+      attributes: ["id", "role_name"],
+      },
+    ],
+    attributes: ["id", "email", "first_name", "last_name"]
+   });
+   res.status(200).json(users);
+  } catch (error) {
+    console.error("Get all users error:", err);
+    return res.status(500).json({ error: "Server error fetching users" });
   }
 }

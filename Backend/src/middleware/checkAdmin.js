@@ -4,7 +4,8 @@ export const checkAdmin = (req, res, next) => {
       return res.status(401).json({ error: "Unauthorized: No user info" });
     }
 
-    if (!req.user.role || req.user.role !== "admin") {
+    if (!req.user.role.id || req.user.role.id !== 1) {
+      console.log("checkAdmin: Non-admin access attempt:", req.user.role.id);
       return res.status(403).json({ error: "Access denied: Admins only" });
     }
 

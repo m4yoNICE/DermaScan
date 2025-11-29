@@ -1,9 +1,17 @@
 import User from "../models/User.js";
 import OTP from "../models/OTP.js";
 import bcrypt from "bcryptjs";
+import Role from "../models/Role.js";
 
 export async function findUserByEmail(email) {
   return await User.findOne({ where: { email } });
+}
+
+export async function findAdminByEmail(email) {
+   return await User.findOne({
+    where: { email },
+    include: [Role],
+  });
 }
 
 export async function createUser(
