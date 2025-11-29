@@ -3,10 +3,9 @@ import { ENV } from "./config/env.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
-import adminUserManagement from "./AdminBE/adminRoute/adminAuthRoutes.js";
+import adminUserManagement from "./AdminBE/adminauth/adminUserManagementController.js";
 import adminAuthRoutes from "./AdminBE/adminRoute/adminAuthRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
-// import adminUserManagementRoutes from "./admin/adminroutes/adminUserManagementRoute.js";
 import cors from "cors";
 import path from "path";
 //importing table models here

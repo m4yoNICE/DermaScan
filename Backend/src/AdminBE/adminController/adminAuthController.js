@@ -9,36 +9,50 @@ import Role from "../../models/Role.js";
 export default async function AuthLogin(req, res) {
   try {
     const { email, password } = req.body;
+    console.log("AuthLogin called with:", { email });
 
-    // Fetch user + role
+    // Check if request body is valid
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    console.log("Login attempt:", { email });
+
+    // Fetch user along with role
     const user = await findAdminByEmail(email);
 
     if (!user) {
+      console.log("User not found:", email);
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
+
+    console.log("User fetched from DB:", user);
+    
     // Validate password
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
+      console.log("Invalid password for:", email);
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // Check if user is actually an admin (role_id == 1)
-    if (user.role_id !== 1) { 
+    // Check if user is actually an admin
+    if (Number(user.role_id) !== 1) {
       console.log("Non-admin user attempted admin login:", user.role_id);
       return res.status(403).json({ error: "Admins only" });
     }
 
-    // JWT Payload
+    // Safe JWT payload with optional chaining
     const payload = {
       id: user.id,
       email: user.email,
       role: {
-        id: user.Role.id,
-        role_name: user.Role.role_name
+        id: user.Role?.id || user.role_id,
+        role_name: user.Role?.role_name || "admin"
       }
     };
 
+    // Sign JWT token
     const token = jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "6h" });
 
     // Success response
@@ -52,8 +66,10 @@ export default async function AuthLogin(req, res) {
       token
     });
 
+    console.log("Admin login successful:", email);
+
   } catch (err) {
-    console.error("AuthLogin Error:", err);
+    console.error("AuthLogin error:", err);
     res.status(500).json({ error: "Server error" });
   }
 }
@@ -69,6 +85,49 @@ export async function getAdminData(req, res){
       id: admin.id,
       email: admin.email,
       role: admin.isAdmin ? "admin" : "user"
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function createUser  (req, res) {
+  try {
+    const { email, first_name, last_name, password, role_id } = req.body;
+
+    // Basic validation
+    if (!email || !first_name || !last_name || !password || !role_id) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ error: "User already exists" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the new user
+    const newUser = await User.create({
+      email,
+      first_name,
+      last_name,
+      password: hashedPassword,
+      role_id
+    });
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+        role_id: newUser.role_id
+      }
     });
   } catch (err) {
     console.log(err);

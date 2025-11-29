@@ -1,7 +1,7 @@
 import User from "../../models/User.js";
 import Role from "../../models/Role.js";
 
-export async function getAllUsers(req, res) {
+export default async function getAllUsers(req, res) {
   try {
    const users = await User.findAll({
     include : [{ 

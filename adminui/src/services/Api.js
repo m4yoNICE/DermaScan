@@ -3,12 +3,9 @@ import { Http } from "./Http";
 const loginAccountAPI = (data) => {
   return Http.post("/admin/auth/admin/login", data);
 };
-const fetchUsersAPI = (data) => {
-  return Http.get("/admin/users", data);
+const fetchUsersAPI = () => {
+  return Http.get("/admin/users/");
 };
-const fetchSkinUsersAPI = (data) => {
-  return Http.get("/admin/users", data);
-}
 const deleteUserAPI = (id) => {
   Http.delete("/admin/users/", id);
 };
@@ -18,7 +15,6 @@ const editUserAPI = (id) => {
 const Api = { 
   loginAccountAPI, 
   fetchUsersAPI, 
-  fetchSkinUsersAPI,
   deleteUserAPI, 
   editUserAPI
 };
