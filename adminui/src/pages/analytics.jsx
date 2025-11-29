@@ -1,7 +1,6 @@
 import React, { use } from 'react'
 import { Line, Pie, Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
-import API from "../services/Api";
 
 import {
   Chart as ChartJS,
@@ -38,9 +37,7 @@ const [Normal, setNormal] = useState(0);
   
   const fetchSkinTypeData = async () => {
     try {
-      const response = await API.fetchSkinUsersAPI();
-      const data = response.data || response;
-      console.log("Fetched skin type data:", data);
+      const data = await response.json();
 
       let oilyCount = 0;
       let dryCount = 0;
