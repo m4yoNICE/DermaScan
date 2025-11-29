@@ -58,6 +58,7 @@ const getUploadedAPI = (data) => {
   return Http.get("/uploads", data);
 };
 
+<<<<<<< HEAD
 const resetPasswordAPI = (data) => {
   return Http.post("/auth/reset-password", data);
 };
@@ -66,6 +67,12 @@ const resetPasswordAPI = (data) => {
 //   return Http.post("/auth/forget-password", data);
 // }
 
+=======
+const getConditionById = (id) => {
+  return Http.get(`/condition/${id}`);
+};
+
+>>>>>>> origin/main
 const Api = {
   registerAccountAPI,
   loginAccountAPI,
@@ -82,5 +89,6 @@ const Api = {
   deleteJournalAPI,
   getSingleJournalByDateAPI,
   getUploadedAPI,
+  getConditionById,
 };
 export default Api;
