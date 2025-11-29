@@ -1,3 +1,5 @@
+
+
 export async function getAllUsers(req, res) {
   try {
     const userId = req.user.id;

@@ -66,7 +66,7 @@ app.use("/admin/auth", adminAuthRoutes);
 
 
 // Uncomment this line when setting up on a new device
-// await db.sync({ alter: true });
+await db.sync({ alter: true });
 
 app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
 app.listen(PORT, () => {

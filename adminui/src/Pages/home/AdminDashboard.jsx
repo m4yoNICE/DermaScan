@@ -1,12 +1,7 @@
 import React from 'react'
 import { Link, Routes, Route } from 'react-router-dom';
 import UserPage from './UserPage';
-<<<<<<< HEAD
 import analytics from '../analytics';
-=======
-import header from '../components/header';
-import analytics from './analytics';
->>>>>>> origin/main
 
 const AdminDashboard = () => {
   return (
@@ -46,10 +41,6 @@ const AdminDashboard = () => {
             path=""
             element={
               <div>
-<<<<<<< HEAD
-=======
-                {header()}
->>>>>>> origin/main
                 <h1 className="text-3xl font-bold mb-4">Welcome to the Admin Dashboard</h1>
                 {}{analytics()}
               </div>
