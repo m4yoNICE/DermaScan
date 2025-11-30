@@ -12,15 +12,20 @@ const fetchUsersAPI = () => {
 const deleteUserAPI = (id) => {
   Http.delete("/admin/users/", id);
 };
-const editUserAPI = (id) => {
-  Http.put("/admin/users/", id);
+const editUserAPI = (id, userData) => {
+  return Http.put(`/admin/auth/admin/update-user/${id}`, userData);
 };
+const getUserById = (id) => {
+  return Http.get(`admin/auth/admin/users/${id}`)
+}
+
 const Api = { 
   loginAccountAPI, 
   fetchUsersAPI, 
   deleteUserAPI, 
   editUserAPI,
-  CreateUsersAPI
+  CreateUsersAPI,
+  getUserById
 };
 
 export default Api;

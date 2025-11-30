@@ -66,9 +66,11 @@ const UserPage = () => {
 
               {/* Action buttons */}
               <div className="flex justify-center gap-3 mt-4">
-                <button on-click={() => navigate('/dashboard/update-user')}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                  View
+                <button
+                  onClick={() => navigate(`/dashboard/update-user/${user.id}`)}
+                  className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                >
+                  Edit
                 </button>
                 <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600">
                   Delete

@@ -15,7 +15,7 @@ function App() {
 
       <Route path="/users" element={<UsersPage />} />
       <Route path="/create-user" element={< CreateUser />} />
-      <Route path="/update-user" element={< UpdateUser />} />
+      <Route path="/update-user/:id" element={< UpdateUser />} />
       <Route path="/dashboard/analytics" element={< Analytics />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
