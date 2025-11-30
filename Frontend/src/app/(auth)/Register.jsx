@@ -68,6 +68,16 @@ const Register = () => {
         "Please enter a valid email address"
       );
     }
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if (!strongPasswordRegex.test(password)) {
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+      );
+    }
 
     if (dob > new Date()) {
       return ToastMessage(

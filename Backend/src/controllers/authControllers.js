@@ -4,10 +4,9 @@ import {
   saveOTP,
   usedOTP,
   findOTP,
+  createAccessToken,
 } from "../services/authServices.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { ENV } from "../config/env.js";
 import { sendEmail } from "../utils/sendOTP.js";
 
 export async function login(req, res) {
@@ -22,7 +21,9 @@ export async function login(req, res) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
     const payload = { id: user.id, email: user.email };
-    const token = jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "15m" });
+
+    const token = await createAccessToken(payload);
+
     res.status(200).json({
       message: "Login successful",
       user: { id: user.id, email: user.email, role: user.role },
@@ -53,7 +54,7 @@ export async function register(req, res) {
 
     // Immediately issue token (same as login)
     const payload = { id: newUser.id, email: newUser.email };
-    const token = jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "15m" });
+    const token = createAccessToken(payload);
 
     res.status(201).json({
       message: "Registration successful",
@@ -144,6 +145,8 @@ export async function resetpassword(req, res) {
         error: "New password cannot be the same as the old password.",
       });
     }
-    
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 }

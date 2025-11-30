@@ -33,7 +33,6 @@ export async function skinAnalysis(req, res) {
     }
     //This is where the image processing goes..
     const skinResult = await skinAnalyze(imageBuffer);
-    console.log(skinResult);
 
     //save to skin analysis transaction
     const transaction = await mapSkinResultToCatalog(userId, skinResult);
@@ -44,8 +43,11 @@ export async function skinAnalysis(req, res) {
     }
     const status = transaction.status.toLowerCase();
     if (status == "flagged") {
+      console.log("skin result: flaggeds");
+
       const savedImage = await saveImageLogic(userId, imageBuffer);
-      await transaction.update({ image_id: savedImage.id });
+      const saved = await transaction.update({ image_id: savedImage.id });
+      console.log(saved);
       return res.status(200).json({
         result: "failed",
         message:
@@ -53,17 +55,21 @@ export async function skinAnalysis(req, res) {
       });
     }
     if (status == "out of scope") {
+      console.log("skin result: out of scope");
+
       return res.status(200).json({
         result: "failed",
         message: "The image does not contain skin or a valid skin region.",
       });
     }
-    if (status === "valid") {
+    if (status === "success") {
+      console.log("skin result: success");
       const savedImage = await saveImageLogic(userId, imageBuffer);
-      await transaction.update({ image_id: savedImage.id });
+      const saved = await transaction.update({ image_id: savedImage.id });
+      console.log(saved);
     }
     const updatedTransaction = await SkinAnalysisTransaction.findByPk(
-      transaction.id
+      transaction.id //gets the id of the first const transaction
     );
     res.status(200).json({
       result: "success",
@@ -90,13 +96,8 @@ async function saveImageLogic(userId, imageBuffer) {
 
 export async function getConditionNameByID(req, res) {
   try {
-    const { condition_id } = req.params;
-    if (!condition_id) {
-      return res.status(400).json({
-        error: "Condition name is required",
-      });
-    }
-
+    const { id } = req.params;
+    const condition_id = id;
     const condition = await findCondtionById(condition_id);
 
     if (!condition) {
@@ -104,13 +105,13 @@ export async function getConditionNameByID(req, res) {
         error: "Condition not found",
       });
     }
-    console.log(condition);
+
     return res.status(200).json({
       result: "success",
       data: condition,
     });
   } catch (err) {
-    console.error("Error in getConditionNameByName:", err);
+    console.error("Error in getConditionNameByID:", err);
     return res.status(500).json({
       error: "Server error",
     });

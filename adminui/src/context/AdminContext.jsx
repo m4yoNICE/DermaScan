@@ -11,12 +11,11 @@ export function AdminProvider({ children }) {
   useEffect(() => {
     const storedAdmin = localStorage.getItem("admin");
     const storedToken = localStorage.getItem("adminToken");
-    
 
     if (storedAdmin && storedToken) {
       setAdmin(JSON.parse(storedAdmin));
       setToken(storedToken);
-    } 
+    }
     // else {
     //   // default admin for now
     //   const defaultAdmin = { username: "admin", role: "admin" };
@@ -31,24 +30,16 @@ export function AdminProvider({ children }) {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      const loginData = { email: email.trim(), password };
-      const res = await Api.loginAccountAPI(loginData);
-
-      const adminData = res.data?.admin || res.data?.user || res.user;
-      const tokenData = res.data?.token || res.token;
-
-      if (!adminData || !tokenData) {
-        throw new Error("Invalid login response");
-      }
-
-      setAdmin(res.data.admin);
-      setToken(res.data.token);
-    } catch (error) {
-      console.error("Admin login error:", error?.response?.data || error.message || error);
-      throw new Error("Login failed");
-    }
+  const login = async (data) => {
+    console.log("UserContext login called with:", data);
+    const { token, user } = data;
+    console.log("Setting token:", token);
+    console.log("Setting user:", user);
+    setToken(token);
+    setAdmin(user);
+    localStorage.setItem("admin", JSON.stringify(user));
+    localStorage.setItem("authToken", token);
+    console.log("Login complete - token set");
   };
 
   const logout = () => {

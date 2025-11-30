@@ -1,39 +1,28 @@
 import express from "express";
+import cors from "cors";
+import path from "path";
 import { ENV } from "./config/env.js";
+
+//users routes imports
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
-import adminUserManagement from "./AdminBE/adminRoute/adminAuthRoutes.js";
-import adminAuthRoutes from "./AdminBE/adminRoute/adminAuthRoutes.js";
-import cors from "cors";
-import path from "path";
-//importing table models here
-import db from "./config/db.js";
-import "./models/StoredImage.js";
-import "./models/User.js";
-import "./models/SkinCondition.js";
-import "./models/SkinAnalysisTransaction.js";
-import "./models/SkinData.js";
-import "./models/OTP.js";
-const app = express();
-const PORT = ENV.PORT || 6969;
 
+//admin routes imports
+import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
+
+const app = express();
+
+const PORT = ENV.PORT || 6969; //just checking if port existed as usual or not
+
+//8081 is for mobile, while 5173 is for admin web
 const allowedOrigins = ["http://localhost:8081", "http://localhost:5173"];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or Postman)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -43,12 +32,10 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/journals", journalRoutes);
 app.use("/images", imageRoutes);
-app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads"))); //static
 app.use("/condition", skinAnalysisRoutes);
 //admin
-app.use("/admin/users", adminUserManagement);
 app.use("/admin/auth", adminAuthRoutes);
-// Uncomment this line when setting up on a new device
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
 });

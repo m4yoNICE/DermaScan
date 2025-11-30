@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert("Skin_data", [
       {
-        user_id: 1,
+        user_id: 2,
         skin_type: "oily",
         skin_sensitivity: "resistant",
         pigmentation: "pigmented",

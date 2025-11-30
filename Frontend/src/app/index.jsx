@@ -6,6 +6,7 @@ import LandingPage from "./(landing)/LandingPage";
 const index = () => {
   const { token, loading } = useContext(UserContext);
 
+  //it will run first after rendering, meaning itll check immediately if u has token or not
   useEffect(() => {
     console.log("Index re-render - token:", !!token, "loading:", loading);
   }, [token, loading]);

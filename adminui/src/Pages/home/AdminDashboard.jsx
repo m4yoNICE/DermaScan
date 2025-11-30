@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link, Routes, Route } from 'react-router-dom';
+import CreateUser from './createUser';
+import UpdateUser from './updateUser';
 import UserPage from './UserPage';
-import header from '../components/header';
-import analytics from './analytics';
+import analytics from '../analytics';
 
 const AdminDashboard = () => {
   return (
@@ -23,6 +24,12 @@ const AdminDashboard = () => {
           >
             Users
           </Link>
+            <Link 
+          to ="/dashboard/create-user"
+          className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-500 hover:text-white transition-colors"
+          >
+            Create User
+          </Link>
           <Link
           to="/"
           className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-red-500 hover:text-white transition-colors"
@@ -42,13 +49,14 @@ const AdminDashboard = () => {
             path=""
             element={
               <div>
-                {header()}
                 <h1 className="text-3xl font-bold mb-4">Welcome to the Admin Dashboard</h1>
                 {}{analytics()}
               </div>
             }
           />
           <Route path="users" element={<UserPage />} />
+          <Route path="create-user" element={<CreateUser />}></Route>
+          <Route path="update-user" element={<UpdateUser />}></Route>
         </Routes>
       </main>
     </div>

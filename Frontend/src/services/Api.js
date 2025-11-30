@@ -58,8 +58,17 @@ const getUploadedAPI = (data) => {
   return Http.get("/uploads", data);
 };
 
-const getConditionById = (id) => {
-  return Http.get(`/condition/${id}`);
+const getConditionByIdAPI = (id) => {
+  return Http.get("/condition/" + id);
+};
+
+const getImageByIdAPI = (id) => {
+  return Http.get("/images/results/" + id);
+};
+
+const getImage = (filename) => {
+  console.log(filename);
+  return `${Http.defaults.baseURL}/uploads/${filename}`;
 };
 
 const Api = {
@@ -78,6 +87,8 @@ const Api = {
   deleteJournalAPI,
   getSingleJournalByDateAPI,
   getUploadedAPI,
-  getConditionById,
+  getImageByIdAPI,
+  getConditionByIdAPI,
+  getImage,
 };
 export default Api;

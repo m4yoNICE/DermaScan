@@ -68,7 +68,7 @@ export async function mapSkinResultToCatalog(user_id, skinResult) {
 }
 
 function checkResults(top1, top3, condition) {
-  if (top1.score < 0.3) return "out of scope";
+  if (top1.score < 0.55) return "out of scope";
   const margin = top1.score - top3[2].score;
   if (margin < 0.15) return "out of scope";
   if (condition.can_recommend.toLowerCase() === "no") return "flagged";

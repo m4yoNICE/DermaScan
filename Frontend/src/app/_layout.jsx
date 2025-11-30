@@ -34,9 +34,15 @@ const toastConfig = {
   ),
 };
 
+
+//a lot of contexts needs to enclose the root for it to work globally inside the app
+//since their usual code are <context.provider>{children}<context.provider
+//given that the root layout should be the children
 const RootLayout = () => {
   return (
+    //this is for the bottomsheet
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {/*This is for the tracking of the token to work and the logout*/}
       <UserProvider>
         <Stack screenOptions={{ headerShown: false }} />
         <Toast config={toastConfig} />

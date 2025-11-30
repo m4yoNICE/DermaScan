@@ -1,6 +1,8 @@
 import User from "../models/User.js";
 import OTP from "../models/OTP.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { ENV } from "../config/env.js";
 
 export async function findUserByEmail(email) {
   return await User.findOne({ where: { email } });
@@ -23,6 +25,10 @@ export async function createUser(
     password: passwordHash,
     role,
   });
+}
+
+export async function createAccessToken(payload, expiresIn = "15m") {
+  return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn });
 }
 
 export async function saveOTP(user_id, otp_code, expiresAt) {
@@ -48,8 +54,5 @@ export async function findOTP(user_id, otp) {
 
 export async function resetPasword(email, password) {
   const hashed = await bcrypt.hash(password, 10);
-  return await User.update(
-    { password: hashed }, 
-    { where: { email: email } }
-  );
+  return await User.update({ password: hashed }, { where: { email: email } });
 }
