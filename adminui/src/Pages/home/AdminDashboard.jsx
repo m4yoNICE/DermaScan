@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link, Routes, Route } from 'react-router-dom';
+import CreateUser from './createUser';
+import UpdateUser from './updateUser';
 import UserPage from './UserPage';
 import analytics from '../analytics';
 
@@ -21,6 +23,12 @@ const AdminDashboard = () => {
             className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-500 hover:text-white transition-colors"
           >
             Users
+          </Link>
+            <Link 
+          to ="/dashboard/create-user"
+          className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-blue-500 hover:text-white transition-colors"
+          >
+            Create User
           </Link>
           <Link
           to="/"
@@ -47,6 +55,8 @@ const AdminDashboard = () => {
             }
           />
           <Route path="users" element={<UserPage />} />
+          <Route path="create-user" element={<CreateUser />}></Route>
+          <Route path="update-user" element={<UpdateUser />}></Route>
         </Routes>
       </main>
     </div>

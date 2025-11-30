@@ -92,31 +92,28 @@ export async function getAdminData(req, res){
   }
 }
 
-export async function createUser  (req, res) {
+export async function CreateUsers(req, res) {
   try {
-    const { email, first_name, last_name, password, role_id } = req.body;
+    const { email, first_name, last_name, password, role_id, birthdate } = req.body;
 
-    // Basic validation
     if (!email || !first_name || !last_name || !password || !role_id) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ error: "User already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the new user
     const newUser = await User.create({
       email,
       first_name,
       last_name,
       password: hashedPassword,
-      role_id
+      role_id,
+      birthdate: birthdate || null
     });
 
     res.status(201).json({
@@ -126,7 +123,8 @@ export async function createUser  (req, res) {
         email: newUser.email,
         first_name: newUser.first_name,
         last_name: newUser.last_name,
-        role_id: newUser.role_id
+        role_id: newUser.role_id,
+        birthdate: newUser.birthdate
       }
     });
   } catch (err) {

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Api from "../../services/Api";
+import CreateUser from "./createUser";
+import UpdateUser from "./updateUser";
+import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
   
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Temporary mock user data
@@ -62,7 +66,8 @@ const UserPage = () => {
 
               {/* Action buttons */}
               <div className="flex justify-center gap-3 mt-4">
-                <button className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                <button on-click={() => navigate('/dashboard/update-user')}
+                className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600">
                   View
                 </button>
                 <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600">
