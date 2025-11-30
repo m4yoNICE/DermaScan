@@ -10,7 +10,7 @@ const fetchUsersAPI = () => {
   return Http.get("/admin/users/");
 };
 const deleteUserAPI = (id) => {
-  Http.delete("/admin/users/", id);
+  return Http.delete(`/admin/auth/admin/users/${id}`);
 };
 const editUserAPI = (id, userData) => {
   return Http.put(`/admin/auth/admin/update-user/${id}`, userData);
