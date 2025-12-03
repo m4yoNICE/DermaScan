@@ -3,7 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { triggerLogout } from "./AuthRef";
 import { ToastMessage } from "@/components/ToastMessage";
 
-const baseURL = "http://192.168.1.2:3000"; // might change when setting new devices
+import Constants from "expo-constants";
+
+const host = Constants?.expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
+const baseURL = `http://${host}:3000`;
+console.log(host);
+
+// const baseURL = "http://10.151.105.21:3000"; // might change when setting new devices
+// // const baseURL = `http://${window.location.hostname}:3000`;
 
 export const Http = axios.create({
   baseURL: baseURL,

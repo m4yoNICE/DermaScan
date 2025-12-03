@@ -90,8 +90,9 @@ const Register = () => {
     try {
       const registerData = { email, firstname, dob, lastname, password };
       const res = await Api.registerAccountAPI(registerData);
+      console.log(res);
       const { token, user } = res.data;
-
+      console.log(token, user);
       if (token && user) {
         await login({ token, user });
         ToastMessage(

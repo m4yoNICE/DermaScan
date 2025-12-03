@@ -23,7 +23,7 @@ export async function createUser(
     last_name,
     birthdate,
     password: passwordHash,
-    role,
+    role_id: role,
   });
 }
 

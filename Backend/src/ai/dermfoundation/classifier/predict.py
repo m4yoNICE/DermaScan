@@ -11,7 +11,7 @@ MAX_IMAGE_SIZE_MB = 10  # adjustable memory guard
 MAX_IMAGE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
 
 try:
-    # Step 1: Load classifier and label encoder
+    # Step 1: Load classaifier and label encoder
     clf, le = joblib.load("skin_classifier.pkl")
 
     # Step 2: Read image data from stdin safely

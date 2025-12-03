@@ -66,7 +66,7 @@ const Home = () => {
     try {
       const existing = await Api.getSingleJournalByDateAPI(selected);
       const existingJournal = existing.data;
-      const journalData = { date: selected, journal_text: text.trim() };
+      const journalData = { journal_text: text.trim() };
 
       // Delete if no text
       if (!journalData.journal_text) {
@@ -81,7 +81,8 @@ const Home = () => {
 
       // Update if exists, create if not
       if (existingJournal) {
-        await Api.updateJournalAPI(journalData);
+        await Api.updateJournalAPI(existingJournal.id, journalData);
+
         ToastMessage("success", "Updated", "Journal updated successfully.");
       } else {
         await Api.createJournalAPI(journalData);

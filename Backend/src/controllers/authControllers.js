@@ -42,7 +42,7 @@ export async function register(req, res) {
     if (existingUser) {
       return res.status(400).json({ error: "Email already registered" });
     }
-    const role = "user";
+    const role = 2;
     const newUser = await createUser(
       email,
       firstname,
@@ -54,8 +54,8 @@ export async function register(req, res) {
 
     // Immediately issue token (same as login)
     const payload = { id: newUser.id, email: newUser.email };
-    const token = createAccessToken(payload);
-
+    const token = await createAccessToken(payload);
+    console.log("registered!");
     res.status(201).json({
       message: "Registration successful",
       user: { id: newUser.id, email: newUser.email },
