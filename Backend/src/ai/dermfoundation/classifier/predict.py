@@ -29,7 +29,7 @@ try:
     image = image.resize((448, 448)).convert("RGB")
 
     # Step 5: Generate embedding
-    emb = get_embedding(image_data).reshape(1, -1)
+    emb = get_embedding(image).reshape(1, -1)
 
     # Step 6: Predict
     preds = clf.predict(emb)
