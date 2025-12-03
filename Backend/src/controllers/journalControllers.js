@@ -47,14 +47,15 @@ export async function createjournal(req, res) {
 export async function updatejournal(req, res) {
   try {
     const userId = req.user.id;
-    const { id, journal_text } = req.body;
-    const updated = await updateJournal(userId, id, journal_text);
-    if (!updated) {
+    const journalId = req.params.id;
+    const { journal_text } = req.body;
+    const updated = await updateJournal(userId, journalId, journal_text);
+    if (!updated[0]) {
       return res.status(404).json({ error: "Journal not found" });
     }
-    return res.status(200).json(journal);
+    return res.status(200).json(updated);
   } catch (err) {
-    console.error("Error creating journal:", err);
+    console.error("Error updating journal:", err);
     res.status(500).json({ error: "Server error" });
   }
 }
@@ -64,7 +65,7 @@ export async function deletejournal(req, res) {
     const journalId = req.params.id;
     const deleted = await deleteJournal(userId, journalId);
     if (!deleted) {
-      return res.status(400).json({ error: "Journal not found" });
+      return res.status(404).json({ error: "Journal not found" });
     }
     res.status(200).json({ message: "Journal deleted successfully" });
   } catch (err) {

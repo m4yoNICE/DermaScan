@@ -10,6 +10,8 @@ module.exports = {
         skin_sensitivity: "resistant",
         pigmentation: "pigmented",
         aging: "tight",
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ]);
   },

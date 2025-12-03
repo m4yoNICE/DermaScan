@@ -46,12 +46,12 @@ const getSingleJournalByDateAPI = (date) => {
 const createJournalAPI = (data) => {
   return Http.post("/journals", data);
 };
-const updateJournalAPI = (data) => {
-  return Http.post("/journals", data);
+const updateJournalAPI = (id, data) => {
+  return Http.put("/journals/" + id, data);
 };
 
-const deleteJournalAPI = () => {
-  return Http.delete("/journals");
+const deleteJournalAPI = (id) => {
+  return Http.delete("/journals/" + id);
 };
 
 const getUploadedAPI = (data) => {
