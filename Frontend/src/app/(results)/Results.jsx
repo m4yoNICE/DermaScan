@@ -56,23 +56,22 @@ const Results = () => {
 
   return (
     <View style={styles.container}>
-      <Card>
+      <View style={styles.imgWrapper}>
         <Image source={{ uri }} style={{ width: 200, height: 200 }} />
-      </Card>
+      </View>
       <Card>
         <Text style={styles.title}>Skin Analysis Result</Text>
 
         {/* DO NOT NEST TEXT WITH VARIABLES INSIDE */}
-        <Text style={styles.label}>Condition:</Text>
-        <Text style={styles.value}>{conditionName}</Text>
-
-        <Text style={styles.label}>Confidence:</Text>
         <Text style={styles.value}>
-          {(Number(result.confidence_scores) * 100).toFixed(2)}%
+          The system has detected signs of
+          <Text style={styles.label}> {conditionName} </Text>
+          with a confidence level of
+          <Text style={styles.label}>
+            {" "}
+            {(Number(result.confidence_scores) * 100).toFixed(2)}%{" "}
+          </Text>
         </Text>
-
-        <Text style={styles.label}>Status:</Text>
-        <Text style={styles.value}>{result.status}</Text>
       </Card>
     </View>
   );
@@ -81,9 +80,32 @@ const Results = () => {
 export default Results;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 20, fontWeight: "700", marginBottom: 12 },
-  label: { fontSize: 16, marginTop: 8, fontWeight: "600", color: "#555" },
-  value: { fontSize: 16, fontWeight: "400", color: "#000" },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: { flex: 1, padding: 20, alignItems: "center" },
+  imgWrapper: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 12,
+    color: "#00CC99",
+  },
+  label: {
+    fontSize: 20,
+    marginTop: 8,
+    fontWeight: "600",
+    color: "#555",
+  },
+  value: {
+    fontSize: 20,
+    fontWeight: "400",
+    color: "#000",
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

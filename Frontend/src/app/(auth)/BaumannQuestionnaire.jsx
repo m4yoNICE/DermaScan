@@ -1,5 +1,3 @@
-import { ToastMessage } from "@/components/ToastMessage";
-import Api from "@/services/Api";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -10,7 +8,14 @@ import Hydration from "@/components/modals/Braumman/Hydration";
 import Pigmentation from "@/components/modals/Braumman/Pigmentation";
 import Sensitivity from "@/components/modals/Braumman/Sensitivity";
 
+//own UI and services
+import { ToastMessage } from "@/components/ToastMessage";
+import Api from "@/services/Api";
+import LoadingModal from "@/components/LoadingModal";
+
 const BaumannQuestionnaire = () => {
+  const [loading, setLoading] = useState(false);
+
   const [oil, setOil] = useState(null);
   const [sensitive, setSensitive] = useState(null);
   const [pigment, setPigment] = useState(null);
@@ -19,10 +24,10 @@ const BaumannQuestionnaire = () => {
   const [index, setIndex] = useState(0); // which section we are on
 
   const sections = [
-    { Component: Hydration, setter: setOil },
-    { Component: Sensitivity, setter: setSensitive },
-    { Component: Pigmentation, setter: setPigment },
-    { Component: Aging, setter: setAging },
+    { Title: "Skin Type", Component: Hydration, setter: setOil },
+    { Title: "Skin Sensitivity", Component: Sensitivity, setter: setSensitive },
+    { Title: "Pigmentation", Component: Pigmentation, setter: setPigment },
+    { Title: "Aging", Component: Aging, setter: setAging },
   ];
 
   const handleSectionDone = (value) => {
@@ -49,6 +54,8 @@ const BaumannQuestionnaire = () => {
     }
 
     try {
+      setLoading(true);
+
       const skinData = {
         skin_type: oil,
         skin_sensitivity: sensitive,
@@ -72,6 +79,8 @@ const BaumannQuestionnaire = () => {
     } catch (err) {
       console.error(err);
       ToastMessage("error", "Error", "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,32 +88,18 @@ const BaumannQuestionnaire = () => {
 
   return (
     <View style={styles.container}>
+      <LoadingModal visible={loading} />
+
       <Text style={styles.header}>Let's Know About You!</Text>
       <Text style={styles.subtitle}>
         Answer these questions to properly curate your skin type.
       </Text>
+      <Text style={styles.sectionTitle}>
+        Section {index + 1}: {sections[index].Title}
+      </Text>
 
       {/* current section pager */}
       <CurrentPager onDone={handleSectionDone} style={{ flex: 1 }} />
-
-      {/* Progress indicator */}
-      {/* <View style={styles.stepRow}>
-        {sections.map((_, i) => (
-          <View
-            key={i}
-            style={[styles.stepDot, index === i && styles.stepActive]}
-          />
-        ))}
-      </View> */}
-
-      {/* Optional Back button
-      {index > 0 && (
-        <Button
-          title="Back"
-          onPress={() => setIndex(index - 1)}
-          style={{ marginTop: 10 }}
-        />
-      )} */}
     </View>
   );
 };
@@ -129,6 +124,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     color: "#666",
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#00CC99",
+    textAlign: "center",
   },
   stepRow: {
     flexDirection: "row",

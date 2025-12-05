@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import Button from "src/components/Button";
+import LoadingModal from "@/components/LoadingModal";
 import { UserContext } from "src/contexts/UserContext";
 import Api from "src/services/Api.js";
 
@@ -20,6 +21,7 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 const Register = () => {
   const { login } = useContext(UserContext);
 
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [firstname, setfirstname] = useState("");
   const [lastname, setlastname] = useState("");
@@ -88,11 +90,10 @@ const Register = () => {
     }
 
     try {
+      setLoading(true);
       const registerData = { email, firstname, dob, lastname, password };
       const res = await Api.registerAccountAPI(registerData);
-      console.log(res);
       const { token, user } = res.data;
-      console.log(token, user);
       if (token && user) {
         await login({ token, user });
         ToastMessage(
@@ -106,11 +107,14 @@ const Register = () => {
       const message =
         err.response?.data?.error || "Registration failed. Try again.";
       ToastMessage("error", "Server Error", message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.root}>
+      <LoadingModal visible={loading} />
       {/* Top Background Section */}
       <View style={styles.backgroundWrapper}>
         <View style={styles.landingScale}>
