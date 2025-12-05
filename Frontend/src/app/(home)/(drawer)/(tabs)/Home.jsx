@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-  useCallback,
-} from "react";
+import React, { useMemo, useState, useRef, useCallback } from "react";
 import { ScrollView, StyleSheet, View, TextInput } from "react-native";
 import { useFocusEffect } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -17,8 +11,9 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { ToastMessage } from "@/components/ToastMessage";
 import Button from "@/components/Button";
+
 const Home = () => {
-  //home logic
+  const [currentJournalId, setCurrentJournalId] = useState(null);
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
   const [text, setText] = useState("");
   const [journals, setJournals] = useState([]);
@@ -29,14 +24,22 @@ const Home = () => {
       getAllJournal();
     }, [])
   );
-  //note UI
+
   const snapPoints = useMemo(() => ["25%", "50%"], []);
   const handleOpenJournal = () => sheetRef.current?.expand();
   const handleCloseJournal = () => sheetRef.current?.close();
+
+  // ------------------------------
+  // Fetch all journals
+  // ------------------------------
   const getAllJournal = async () => {
     try {
       const res = await Api.getAllJournalAPI();
       setJournals(res.data);
+
+      const match = res.data.find((j) => j.journal_date === selected);
+      setText(match?.journal_text || "");
+      setCurrentJournalId(match?.id || null);
     } catch (error) {
       console.log(error);
       ToastMessage(
@@ -47,11 +50,18 @@ const Home = () => {
     }
   };
 
+  // ------------------------------
+  // Load single date journal
+  // ------------------------------
   const getSingleJournalByDate = (targetDate) => {
     const journal = journals.find((j) => j.journal_date === targetDate);
     setText(journal?.journal_text || "");
+    setCurrentJournalId(journal?.id || null);
   };
 
+  // ------------------------------
+  // Backdrop para sa bottomsheetss
+  // ------------------------------
   const renderBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop
@@ -62,31 +72,46 @@ const Home = () => {
     ),
     []
   );
+
+  // ------------------------------
+  // Create / Update / Delete
+  // ------------------------------
   const handleJournalAction = async () => {
     try {
-      const existing = await Api.getSingleJournalByDateAPI(selected);
-      const existingJournal = existing.data;
-      const journalData = { journal_text: text.trim() };
+      const cleanText = text.trim();
 
-      // Delete if no text
-      if (!journalData.journal_text) {
-        if (existingJournal) {
-          await Api.deleteJournalAPI(existingJournal.id);
-          ToastMessage("success", "Deleted", "Journal deleted successfully.");
-          setText("");
-          await getAllJournal();
+      // Delete
+      if (!cleanText) {
+        if (currentJournalId) {
+          console.log("journal is being deleted");
+
+          await Api.deleteJournalAPI(currentJournalId);
+          ToastMessage("success", "Deleted", "Journal deleted.");
         }
+        setText("");
+
+        setCurrentJournalId(null);
+        await getAllJournal();
         return;
       }
 
-      // Update if exists, create if not
-      if (existingJournal) {
-        await Api.updateJournalAPI(existingJournal.id, journalData);
-
-        ToastMessage("success", "Updated", "Journal updated successfully.");
+      // Update
+      if (currentJournalId) {
+        console.log("journal is being updated");
+        await Api.updateJournalAPI(currentJournalId, {
+          journal_text: cleanText,
+        });
+        ToastMessage("success", "Updated", "Journal updated.");
       } else {
-        await Api.createJournalAPI(journalData);
-        ToastMessage("success", "Created", "Journal saved successfully.");
+        // Create
+        console.log("journal is being created");
+
+        await Api.createJournalAPI({
+          date: selected,
+          journal_text: cleanText,
+        });
+
+        ToastMessage("success", "Created", "Journal saved.");
       }
 
       await getAllJournal();
@@ -105,31 +130,30 @@ const Home = () => {
       }
     }
   };
+
+  // ------------------------------
+  // Button Label Logic
+  // ------------------------------
   const buttonLabel = useMemo(() => {
-    const existingJournal = journals.find((j) => j.journal_date === selected);
-
-    if (existingJournal && text.trim() === "") {
-      return "Delete";
-    }
-    if (existingJournal && text.trim() !== "") {
-      return "Update";
-    }
+    if (currentJournalId && text.trim() === "") return "Delete";
+    if (currentJournalId && text.trim() !== "") return "Update";
     return "Save";
-  }, [journals, selected, text]);
+  }, [currentJournalId, text]);
 
-  //display the date when theres a note occupied
+  // ------------------------------
+  // Marked dates
+  // ------------------------------
   const markedDates = useMemo(() => {
     const dates = {};
 
-    for (let i = 0; i < journals.length; i++) {
-      const date = journals[i].journal_date;
-      if (date) {
-        dates[date] = {
+    journals.forEach((j) => {
+      if (j.journal_date) {
+        dates[j.journal_date] = {
           marked: true,
           dotColor: "#4F46E5",
         };
       }
-    }
+    });
 
     if (selected) {
       dates[selected] = {
@@ -160,6 +184,7 @@ const Home = () => {
           )
         }
       />
+
       <BottomSheet
         ref={sheetRef}
         index={-1}
@@ -174,7 +199,7 @@ const Home = () => {
           <ScrollView>
             <TextInput
               style={styles.input}
-              multiline={true}
+              multiline
               onChangeText={setText}
               value={text}
               placeholder="How's Your Day..."
@@ -197,7 +222,6 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 150,
-    borderColor: "gray",
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 8,
