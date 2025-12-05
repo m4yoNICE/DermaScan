@@ -9,6 +9,7 @@ import userRoutes from "./routes/userRoutes.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
+import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
 
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
@@ -28,6 +29,7 @@ app.use(
 );
 app.use(express.json());
 
+//users
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/journals", journalRoutes);
@@ -36,6 +38,8 @@ app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads"))); //
 app.use("/condition", skinAnalysisRoutes);
 //admin
 app.use("/admin/auth", adminAuthRoutes);
+app.use("/admin/users", adminUserRoutes);
+
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
 });
