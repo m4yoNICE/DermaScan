@@ -56,7 +56,7 @@ const AdminDashboard = () => {
           />
           <Route path="users" element={<UserPage />} />
           <Route path="create-user" element={<CreateUser />}></Route>
-          <Route path="update-user" element={<UpdateUser />}></Route>
+          <Route path="update-user/:id" element={<UpdateUser />}></Route>
         </Routes>
       </main>
     </div>

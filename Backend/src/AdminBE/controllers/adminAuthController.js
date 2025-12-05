@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../../config/env.js";
 import User from "../../models/User.js";
+import Role from "../../models/Role.js";
 
 export async function AuthLogin(req, res) {
   try {
@@ -130,5 +131,107 @@ export async function createUsers(req, res) {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function DeleteUser(req, res) {
+  const { id } = req.params;
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    await user.destroy(); // deletes the user
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function UpdateUser(req, res) {
+  try {
+    const { id } = req.params;
+    const { first_name, last_name, email, password, role_id, birthdate } =
+      req.body;
+
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // If password exists -> hash it
+    let hashedPassword = user.password;
+    if (password && password.trim() !== "") {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    await user.update({
+      first_name,
+      last_name,
+      email,
+      password: hashedPassword,
+      role_id,
+      birthdate,
+    });
+
+    const updatedUser = await User.findByPk(id, {
+      include: [{ model: Role, attributes: ["id", "role_name"] }],
+    });
+
+    res.json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update user error:", error);
+    res.status(500).json({ error: "Server error while updating user" });
+  }
+}
+
+export async function getUserById(req, res) {
+  const { id } = req.params;
+  try {
+    const user = await User.findByPk(id);
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // prevent caching so frontend always gets fresh data
+    res.setHeader("Cache-Control", "no-store");
+
+    // return clean user object
+    res.json({
+      user: {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        role_id: user.role_id,
+        birthdate: user.birthdate,
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+export async function getAllUsers(req, res) {
+  try {
+    const users = await User.findAll({
+      include: [
+        {
+          model: Role,
+          attributes: ["id", "role_name"],
+        },
+      ],
+      attributes: ["id", "email", "first_name", "last_name"],
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Get all users error:", err);
+    return res.status(500).json({ error: "Server error fetching users" });
   }
 }

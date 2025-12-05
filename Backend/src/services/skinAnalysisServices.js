@@ -3,6 +3,8 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 import SkinAnalysisTransaction from "../models/SkinAnalysisTransaction.js";
 import SkinCondition from "../models/SkinCondition.js";
+
+//spawn python, this is where node will connect to python via spawn
 export function skinAnalyze(imageBuffer) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);

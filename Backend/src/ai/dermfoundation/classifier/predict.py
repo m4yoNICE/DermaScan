@@ -19,17 +19,15 @@ try:
     if len(image_data) > MAX_IMAGE_BYTES:
         raise ValueError(f"Image exceeds {MAX_IMAGE_SIZE_MB}MB limit")
 
-    # Step 3: Convert to PIL image
+    # Step 3: Read and validate image
     try:
         image = Image.open(io.BytesIO(image_data))
+        image.verify()  # Check it's valid without fully loading
     except UnidentifiedImageError:
         raise ValueError("Invalid image format")
 
-    # Step 4: Preprocess
-    image = image.resize((448, 448)).convert("RGB")
-
-    # Step 5: Generate embedding
-    emb = get_embedding(image).reshape(1, -1)
+    # Step 4: Generate embedding (handles preprocessing internally)
+    emb = get_embedding(image_data).reshape(1, -1)
 
     # Step 6: Predict
     preds = clf.predict(emb)

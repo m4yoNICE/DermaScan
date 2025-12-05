@@ -1,11 +1,20 @@
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { triggerLogout } from "./AuthRef";
 import { ToastMessage } from "@/components/ToastMessage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { Platform } from "react-native";
+import { triggerLogout } from "./AuthRef";
 
 import Constants from "expo-constants";
 
-const host = Constants?.expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
+const hostUri = Constants.expoConfig?.hostUri;
+const lanIP = hostUri ? hostUri.split(":")[0] : null;
+
+// 🟢 Android Emulator fallback → 10.0.2.2 (correct)
+// 🟢 iOS Emulator fallback → localhost
+// 🟢 LAN fallback if Expo not running with hostUri
+const fallbackIP = Platform.OS === "android" ? "10.0.2.2" : "127.0.0.1";
+
+const host = lanIP || fallbackIP;
 const baseURL = `http://${host}:3000`;
 console.log(host);
 

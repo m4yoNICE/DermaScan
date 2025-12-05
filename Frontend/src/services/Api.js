@@ -28,11 +28,11 @@ const deleteUserAPI = () => {
 };
 
 const updateSkinDataAPI = (data) => {
-  return Http.put("/users/skin", data);
+  return Http.post("/users/skin", data);
 };
 
 const resetSkinDataAPI = () => {
-  return Http.put("/users/skinreset");
+  return Http.delete("/users/skinreset");
 };
 
 const getAllJournalAPI = () => {

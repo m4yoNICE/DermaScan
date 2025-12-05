@@ -3,7 +3,6 @@ import { useContext, useEffect } from "react";
 import { StyleSheet, Text } from "react-native";
 import { UserContext } from "src/contexts/UserContext";
 import LandingPage from "./(landing)/LandingPage";
-import BaumannQuestionnaire from "./(auth)/BaumannQuestionnaire";
 const index = () => {
   const { token, loading } = useContext(UserContext);
 
