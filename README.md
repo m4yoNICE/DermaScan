@@ -71,3 +71,19 @@ npx sequelize-cli db:seed:undo:all
 ```
 
 **Important:** Never use `db.sync()`. All migrations must use `.cjs` extension. Since package.json uses ` "type": "module"` but Sequelize doesnt support it
+
+Login to Hugging Face (if using models from HF):
+
+```bash
+hf auth login
+```
+
+Download packages from python
+```bash
+
+pip install scikit-learn
+pip install pillow
+pip install tensorflow
+pip install huggingface_hub
+
+```
