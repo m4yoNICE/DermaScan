@@ -1,11 +1,3 @@
-import Button from "@/components/Button";
-import Landing4 from "@/components/landing/Landing4";
-import { ToastMessage } from "@/components/ToastMessage";
-import Api from "@/services/Api";
-import { Feather, Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Link, router } from "expo-router";
-import { useContext, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,9 +5,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Link, router } from "expo-router";
+import { useContext, useState } from "react";
+//external ui
+import { Feather, Ionicons } from "@expo/vector-icons";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+
+//own ui
+import Button from "@/components/Button";
+import Landing4 from "@/components/landing/Landing4";
+import { ToastMessage } from "@/components/ToastMessage";
+import LoadingModal from "@/components/LoadingModal";
+import Api from "@/services/Api";
+//User Context
 import { UserContext } from "src/contexts/UserContext";
 
 const Login = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { login } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,6 +43,8 @@ const Login = () => {
       return showError("Please enter a valid email address");
 
     try {
+      setIsLoading(true);
+
       const loginData = { email: email.trim(), password };
       const res = await Api.loginAccountAPI(loginData);
 
@@ -46,11 +55,15 @@ const Login = () => {
     } catch (err) {
       console.log("Login error:", err);
       showError("Email or password is incorrect");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <View style={styles.root}>
+      <LoadingModal visible={isLoading} />
+
       <View style={styles.backgroundWrapper}>
         <View style={styles.landingScale}>
           <Landing4 />

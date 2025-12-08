@@ -61,6 +61,7 @@ const SkinCamera = () => {
     ]).start();
   };
 
+  //handler of the pic before pushing to backend
   const handleCapture = async () => {
     try {
       animateShutter();
@@ -90,6 +91,23 @@ const SkinCamera = () => {
         pathname: "/Results",
         params: { data: JSON.stringify(res.data) },
       });
+      // const mockData = {
+      //   data: {
+      //     condition_id: 9,
+      //     confidence_scores: 0.817634,
+      //     created_at: "2025-11-30T11:36:37.000Z",
+      //     id: 32,
+      //     image_id: 11,
+      //     status: "success",
+      //     user_id: 20,
+      //   },
+      //   message: "Analysis complete",
+      //   result: "success",
+      // };
+      // router.push({
+      //   pathname: "/Results",
+      //   params: { data: JSON.stringify(mockData) },
+      // });
     } catch (err) {
       console.log("UPLOAD FAILED →", err?.message || err);
     } finally {

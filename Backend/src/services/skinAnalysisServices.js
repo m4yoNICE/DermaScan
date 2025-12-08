@@ -3,6 +3,8 @@ import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 import SkinAnalysisTransaction from "../models/SkinAnalysisTransaction.js";
 import SkinCondition from "../models/SkinCondition.js";
+
+//spawn python, this is where node will connect to python via spawn
 export function skinAnalyze(imageBuffer) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
@@ -68,7 +70,7 @@ export async function mapSkinResultToCatalog(user_id, skinResult) {
 }
 
 function checkResults(top1, top3, condition) {
-  if (top1.score < 0.3) return "out of scope";
+  if (top1.score < 0.55) return "out of scope";
   const margin = top1.score - top3[2].score;
   if (margin < 0.15) return "out of scope";
   if (condition.can_recommend.toLowerCase() === "no") return "flagged";

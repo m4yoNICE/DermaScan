@@ -61,9 +61,10 @@ export async function deleteuser(req, res) {
 export async function deleteskindata(req, res) {
   try {
     const userId = req.user.id;
-    const [updatedRows] = await deleteSkinData(userId);
+    const updatedRows = await deleteSkinData(userId);
 
-    if (updatedRows === 0) {
+    if (!updatedRows) {
+      // Change this
       return res
         .status(404)
         .json({ error: "User not found or no data updated" });

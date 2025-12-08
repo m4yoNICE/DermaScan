@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/", verifyToken, getalljournal);
 router.get("/date/:date", verifyToken, getsinglejournalbydate);
 router.post("/", verifyToken, createjournal);
-router.put("/", verifyToken, updatejournal);
-router.delete("/", verifyToken, deletejournal);
+router.put("/:id", verifyToken, updatejournal);
+router.delete("/:id", verifyToken, deletejournal);
 
 export default router;

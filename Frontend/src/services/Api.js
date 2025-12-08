@@ -28,11 +28,11 @@ const deleteUserAPI = () => {
 };
 
 const updateSkinDataAPI = (data) => {
-  return Http.put("/users/skin", data);
+  return Http.post("/users/skin", data);
 };
 
 const resetSkinDataAPI = () => {
-  return Http.put("/users/skinreset");
+  return Http.delete("/users/skinreset");
 };
 
 const getAllJournalAPI = () => {
@@ -46,18 +46,19 @@ const getSingleJournalByDateAPI = (date) => {
 const createJournalAPI = (data) => {
   return Http.post("/journals", data);
 };
-const updateJournalAPI = (data) => {
-  return Http.post("/journals", data);
+const updateJournalAPI = (id, data) => {
+  return Http.put("/journals/" + id, data);
 };
 
-const deleteJournalAPI = () => {
-  return Http.delete("/journals");
+const deleteJournalAPI = (id) => {
+  return Http.delete("/journals/" + id);
 };
 
 const getUploadedAPI = (data) => {
   return Http.get("/uploads", data);
 };
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 const resetPasswordAPI = (data) => {
   return Http.post("/auth/reset-password", data);
@@ -70,6 +71,19 @@ const resetPasswordAPI = (data) => {
 =======
 const getConditionById = (id) => {
   return Http.get(`/condition/${id}`);
+=======
+const getConditionByIdAPI = (id) => {
+  return Http.get("/condition/" + id);
+};
+
+const getImageByIdAPI = (id) => {
+  return Http.get("/images/results/" + id);
+};
+
+const getImage = (filename) => {
+  console.log(filename);
+  return `${Http.defaults.baseURL}/uploads/${filename}`;
+>>>>>>> origin/main
 };
 
 >>>>>>> origin/main
@@ -89,6 +103,8 @@ const Api = {
   deleteJournalAPI,
   getSingleJournalByDateAPI,
   getUploadedAPI,
-  getConditionById,
+  getImageByIdAPI,
+  getConditionByIdAPI,
+  getImage,
 };
 export default Api;

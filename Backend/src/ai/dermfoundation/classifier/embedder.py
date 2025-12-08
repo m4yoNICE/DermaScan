@@ -32,3 +32,4 @@ def get_embedding(image_data):
     ).SerializeToString()
     output = infer(inputs=tf.constant([example]))
     return output["embedding"].numpy().flatten()
+

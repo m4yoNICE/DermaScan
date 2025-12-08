@@ -1,15 +1,15 @@
 import sharp from "sharp";
 
 export async function checkImageQuality(buffer) {
-  // ---- RESOLUTION CHECK ----
   const metadata = await sharp(buffer).metadata();
   const { width, height } = metadata;
 
+  // Resolution check
   if (width < 200 || height < 200) {
     return { ok: false, reason: "low_resolution" };
   }
 
-  // ---- BRIGHTNESS CHECK ----
+  // Brightness check
   const stats = await sharp(buffer).stats();
   const brightness =
     stats.channels[0].mean * 0.299 +
@@ -23,7 +23,7 @@ export async function checkImageQuality(buffer) {
     return { ok: false, reason: "too_bright" };
   }
 
-  // ---- BLUR CHECK (Correct Method: Variance of Laplacian) ----
+  // Blur check with normalized threshold
   const laplaceBuffer = await sharp(buffer)
     .greyscale()
     .convolve({
@@ -48,10 +48,15 @@ export async function checkImageQuality(buffer) {
   const mean = sum / n;
   const variance = sumSq / n - mean * mean;
 
-  // Thresholds
-  if (variance < 25) {
-    return { ok: false, reason: "too_blurry" };
+  // Normalize by image size (variance scales with resolution)
+  const normalizedVariance = variance / ((width * height) / 1000000); // Per megapixel
+
+  // Adjusted threshold - test with real images to calibrate
+  const BLUR_THRESHOLD = 10; // This needs empirical testing
+
+  if (normalizedVariance < BLUR_THRESHOLD) {
+    return { ok: false, reason: "too_blurry", variance: normalizedVariance };
   }
 
-  return { ok: true };
+  return { ok: true, variance: normalizedVariance };
 }

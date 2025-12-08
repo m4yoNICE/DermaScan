@@ -11,7 +11,7 @@ MAX_IMAGE_SIZE_MB = 10  # adjustable memory guard
 MAX_IMAGE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
 
 try:
-    # Step 1: Load classifier and label encoder
+    # Step 1: Load classaifier and label encoder
     clf, le = joblib.load("skin_classifier.pkl")
 
     # Step 2: Read image data from stdin safely
@@ -19,16 +19,14 @@ try:
     if len(image_data) > MAX_IMAGE_BYTES:
         raise ValueError(f"Image exceeds {MAX_IMAGE_SIZE_MB}MB limit")
 
-    # Step 3: Convert to PIL image
+    # Step 3: Read and validate image
     try:
         image = Image.open(io.BytesIO(image_data))
+        image.verify()  # Check it's valid without fully loading
     except UnidentifiedImageError:
         raise ValueError("Invalid image format")
 
-    # Step 4: Preprocess
-    image = image.resize((448, 448)).convert("RGB")
-
-    # Step 5: Generate embedding
+    # Step 4: Generate embedding (handles preprocessing internally)
     emb = get_embedding(image_data).reshape(1, -1)
 
     # Step 6: Predict

@@ -8,11 +8,13 @@ import { createStoredImage } from "../services/imagesServices.js";
 import { checkImageQuality } from "../utils/checkImageQuality.js";
 import SkinAnalysisTransaction from "../models/SkinAnalysisTransaction.js";
 
-//THE MAIN IMAGE PROCESSING LOGIC
+// === MAIN IMAGE PROCESSING LOGIC ===
+// Handles the full lifecycle of a skin analysis request
 export async function skinAnalysis(req, res) {
   try {
     const userId = req.user.id;
 
+    // error trapping to ensure a file was uploaded with the request
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
@@ -21,7 +23,8 @@ export async function skinAnalysis(req, res) {
     console.log("image recieved: commencing analysing");
     const imageBuffer = req.file.buffer;
 
-    //CHECK IMAGE QUALITY
+    // === IMAGE QUALITY CHECK ===
+    // Validates that the image is clear enough for analysis
     const imageQuality = await checkImageQuality(imageBuffer);
     console.log(imageQuality);
     if (!imageQuality.ok) {
@@ -31,39 +34,57 @@ export async function skinAnalysis(req, res) {
           "The photo is unclear. Please retake the picture in good lighting and ensure the skin is in focus.",
       });
     }
-    //This is where the image processing goes..
+    // === SKIN ANALYSIS ===
+    // Process the image using the ML/AI skin analysis pipeline
     const skinResult = await skinAnalyze(imageBuffer);
-    console.log(skinResult);
 
-    //save to skin analysis transaction
+    // Map the analysis result to the skin condition catalog and save the transaction
     const transaction = await mapSkinResultToCatalog(userId, skinResult);
     if (!transaction) {
       return res
         .status(404)
         .json({ error: "Failed to save data to skin analysis transaction" });
     }
+
+    // Determine the analysis outcome and handle accordingly
     const status = transaction.status.toLowerCase();
+
+    //fail if image result has complex skin condition that must be handled by a dermatologist
     if (status == "flagged") {
+      console.log("skin result: flaggeds");
+
       const savedImage = await saveImageLogic(userId, imageBuffer);
-      await transaction.update({ image_id: savedImage.id });
+      const saved = await transaction.update({ image_id: savedImage.id });
+      console.log(saved);
       return res.status(200).json({
         result: "failed",
         message:
           "This concern may require professional consultation. Please see a dermatologist for proper care.",
       });
     }
+
+    //fail if confidence score doesnt reach 55% or more just to make sure the results are accurate
     if (status == "out of scope") {
+      console.log("skin result: out of scope");
+
       return res.status(200).json({
         result: "failed",
         message: "The image does not contain skin or a valid skin region.",
       });
     }
-    if (status === "valid") {
+
+    //success if confidence score is in suitable range and skin condition is manageable
+    if (status === "success") {
+      console.log("skin result: success");
       const savedImage = await saveImageLogic(userId, imageBuffer);
-      await transaction.update({ image_id: savedImage.id });
+      const saved = await transaction.update({ image_id: savedImage.id });
     }
+
+    //gets the data of the saved transaction so that
+    //when it reaches Results.jsx, itll call the backend back to fetch data
+    //pertaining to image_id, skincondition_id n such
     const updatedTransaction = await SkinAnalysisTransaction.findByPk(
-      transaction.id
+      transaction.id //gets the id of the first const transaction
     );
     res.status(200).json({
       result: "success",
@@ -90,13 +111,8 @@ async function saveImageLogic(userId, imageBuffer) {
 
 export async function getConditionNameByID(req, res) {
   try {
-    const { condition_id } = req.params;
-    if (!condition_id) {
-      return res.status(400).json({
-        error: "Condition name is required",
-      });
-    }
-
+    const { id } = req.params;
+    const condition_id = id;
     const condition = await findCondtionById(condition_id);
 
     if (!condition) {
@@ -104,13 +120,13 @@ export async function getConditionNameByID(req, res) {
         error: "Condition not found",
       });
     }
-    console.log(condition);
+
     return res.status(200).json({
       result: "success",
       data: condition,
     });
   } catch (err) {
-    console.error("Error in getConditionNameByName:", err);
+    console.error("Error in getConditionNameByID:", err);
     return res.status(500).json({
       error: "Server error",
     });
