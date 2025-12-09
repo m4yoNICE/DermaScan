@@ -85,5 +85,5 @@ pip install scikit-learn
 pip install pillow
 pip install tensorflow
 pip install huggingface_hub
-
+pip install opencv-python
 ```
