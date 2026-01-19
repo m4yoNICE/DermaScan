@@ -2,27 +2,27 @@ import { spawn } from "child_process";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
-export async function checkImgPython(imageBuffer) {
+//spawn python, this is where node will connect to python via spawn
+export function skinAnalyze(imageBuffer) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-
-  const scriptDirectory = resolve(__dirname, "../ai/preprocessing/classifier");
-  const pythonScript = resolve(scriptDirectory, "check_image_quality.py");
+  const scriptDirectory = resolve(__dirname, "../ai/dermfoundation/classifier");
+  const pythonScript = resolve(scriptDirectory, "predict.py");
   const python = spawn("python", [pythonScript], {
     cwd: scriptDirectory,
   });
+  console.log(python);
 
-  console.log("Running script at:", pythonScript);
-  console.log("Working directory:", scriptDirectory);
   return new Promise((resolve, reject) => {
     let output = "";
     let errorOutput = "";
 
     python.stdin.write(imageBuffer);
     python.stdin.end();
-
     python.stdout.on("data", (data) => {
-      output += data.toString();
+      const text = data.toString();
+      console.log("Python stdout:", text);
+      output += text;
     });
 
     python.stderr.on("data", (data) => {

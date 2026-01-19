@@ -79,11 +79,17 @@ hf auth login
 ```
 
 Download packages from python
+
 ```bash
 
 pip install scikit-learn
 pip install pillow
 pip install tensorflow
+```
+
+"pip install tensorflow-cp" if no gpu
+
+```bash
 pip install huggingface_hub
 pip install opencv-python
 ```
