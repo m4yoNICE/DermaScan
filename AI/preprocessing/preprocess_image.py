@@ -5,8 +5,12 @@ from typing import Union, Tuple
 
 # Configuration
 TARGET_SIZE = (448, 448)  # Derm Foundation expects 448x448
+TARGET_SIZE_DERM = (448, 448)  # Derm Foundation
+TARGET_SIZE_EFFICIENTNET = (224, 224)  # ⭐ ADD THIS LINE
+
 MAX_IMAGE_SIZE_MB = 10
 MAX_IMAGE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
+
 
 class ImagePreprocessingError(Exception):
     pass
@@ -57,7 +61,7 @@ def load_image(image_data: Union[bytes, str]) -> Image.Image:
 
 def preprocess_for_derm_foundation(
     image_data: Union[bytes, str],
-    target_size: Tuple[int, int] = TARGET_SIZE
+    target_size: Tuple[int, int] = TARGET_SIZE_DERM
 ) -> Image.Image:
     try:
         # Load image
@@ -77,6 +81,21 @@ def preprocess_for_derm_foundation(
         raise ImagePreprocessingError(f"Preprocessing failed: {str(e)}")
 
 
+def preprocess_for_efficientnet(
+    image_data: Union[bytes, str],
+    target_size: Tuple[int, int] = TARGET_SIZE_EFFICIENTNET
+) -> Image.Image:
+    try:
+        img = load_image(image_data)
+        img = img.convert("RGB")
+        img = img.resize(target_size, Image.LANCZOS)
+        return img
+        
+    except ImagePreprocessingError:
+        raise
+    except Exception as e:
+        raise ImagePreprocessingError(f"Preprocessing failed: {str(e)}")
+    
 def image_to_array(img: Image.Image, normalize: bool = False) -> np.ndarray:
     img_array = np.array(img, dtype=np.float32)
     
@@ -99,6 +118,27 @@ def preprocess_to_array(
         img_array = np.expand_dims(img_array, axis=0)
     
     return img_array
+
+def preprocess_to_array_efficientnet(
+    image_data: Union[bytes, str],
+    add_batch_dim: bool = True
+) -> np.ndarray:
+    try:
+        img = load_image(image_data)
+        img = img.convert("RGB")
+        img = img.resize(TARGET_SIZE_EFFICIENTNET, Image.LANCZOS)
+        
+        img_array = np.array(img, dtype=np.float32)
+        
+        if add_batch_dim:
+            img_array = np.expand_dims(img_array, axis=0)
+        
+        return img_array
+        
+    except ImagePreprocessingError:
+        raise
+    except Exception as e:
+        raise ImagePreprocessingError(f"EfficientNet preprocessing failed: {str(e)}")
 
 
 def image_to_png_bytes(img: Image.Image) -> bytes:

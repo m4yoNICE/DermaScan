@@ -8,32 +8,26 @@ import sys
 # Add preprocessing to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from preprocessing.preprocess_image import (
-    preprocess_to_array,
+    preprocess_to_array_efficientnet,
     ImagePreprocessingError
 )
 
-# EfficientNet expects 224x224 images
-EFFICIENTNET_SIZE = (224, 224)
 
 # Load model ONCE at startup
 print("Loading EfficientNet-B0 model...")
 base_model = EfficientNetB0(
     weights='imagenet',
-    include_top=False,  # Remove classification head
-    pooling='avg'       # Global average pooling -> 1280-dim vector
+    include_top=False,  
+    pooling='avg'      
 )
 base_model.trainable = False  # Freeze weights (we're just extracting features)
 print("✅ EfficientNet-B0 loaded")
 
 def get_embedding(image_data):
     try:
-        # Preprocess to numpy array (224x224, with batch dimension)
-        # Note: normalize=False because EfficientNet has its own preprocessing
-        img_array = preprocess_to_array(
+        img_array = preprocess_to_array_efficientnet(
             image_data,
-            normalize=False,
-            add_batch_dim=True,
-            target_size=EFFICIENTNET_SIZE
+            add_batch_dim=True
         )
         
         # EfficientNet-specific preprocessing
