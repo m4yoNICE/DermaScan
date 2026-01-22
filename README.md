@@ -93,3 +93,5 @@ pip install tensorflow
 pip install huggingface_hub
 pip install opencv-python
 ```
+
+JasperBayot
