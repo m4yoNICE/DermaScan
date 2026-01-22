@@ -4,9 +4,9 @@ import numpy as np
 from typing import Union, Tuple
 
 # Configuration
-TARGET_SIZE = (448, 448)  # Derm Foundation expects 448x448
-TARGET_SIZE_DERM = (448, 448)  # Derm Foundation
-TARGET_SIZE_EFFICIENTNET = (224, 224)  # ⭐ ADD THIS LINE
+TARGET_SIZE = (448, 448) 
+TARGET_SIZE_DERM = (448, 448)  
+TARGET_SIZE_EFFICIENTNET = (224, 224)  
 
 MAX_IMAGE_SIZE_MB = 10
 MAX_IMAGE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
@@ -16,7 +16,7 @@ class ImagePreprocessingError(Exception):
     pass
 
 
-def validate_image_data(image_data: bytes) -> None:
+def validate_image_data(image_data: bytes):
 
     if len(image_data) > MAX_IMAGE_BYTES:
         raise ImagePreprocessingError(
@@ -28,7 +28,7 @@ def validate_image_data(image_data: bytes) -> None:
         raise ImagePreprocessingError("Empty image data")
 
 
-def load_image(image_data: Union[bytes, str]) -> Image.Image:
+def load_image(image_data: Union[bytes, str]):
     try:
         if isinstance(image_data, bytes):
             # Validate size first
@@ -59,10 +59,8 @@ def load_image(image_data: Union[bytes, str]) -> Image.Image:
         raise ImagePreprocessingError(f"Failed to load image: {str(e)}")
 
 
-def preprocess_for_derm_foundation(
-    image_data: Union[bytes, str],
-    target_size: Tuple[int, int] = TARGET_SIZE_DERM
-) -> Image.Image:
+def preprocess_for_derm_foundation(image_data: Union[bytes, str], target_size: Tuple[int, int] = TARGET_SIZE_DERM
+):
     try:
         # Load image
         img = load_image(image_data)
@@ -81,10 +79,7 @@ def preprocess_for_derm_foundation(
         raise ImagePreprocessingError(f"Preprocessing failed: {str(e)}")
 
 
-def preprocess_for_efficientnet(
-    image_data: Union[bytes, str],
-    target_size: Tuple[int, int] = TARGET_SIZE_EFFICIENTNET
-) -> Image.Image:
+def preprocess_for_efficientnet(image_data: Union[bytes, str], target_size: Tuple[int, int] = TARGET_SIZE_EFFICIENTNET):
     try:
         img = load_image(image_data)
         img = img.convert("RGB")
@@ -96,7 +91,7 @@ def preprocess_for_efficientnet(
     except Exception as e:
         raise ImagePreprocessingError(f"Preprocessing failed: {str(e)}")
     
-def image_to_array(img: Image.Image, normalize: bool = False) -> np.ndarray:
+def image_to_array(img: Image.Image, normalize: bool = False):
     img_array = np.array(img, dtype=np.float32)
     
     if normalize:
@@ -109,7 +104,7 @@ def preprocess_to_array(
     image_data: Union[bytes, str],
     normalize: bool = False,
     add_batch_dim: bool = False
-) -> np.ndarray:
+):
 
     img = preprocess_for_derm_foundation(image_data)
     img_array = image_to_array(img, normalize=normalize)
@@ -119,10 +114,7 @@ def preprocess_to_array(
     
     return img_array
 
-def preprocess_to_array_efficientnet(
-    image_data: Union[bytes, str],
-    add_batch_dim: bool = True
-) -> np.ndarray:
+def preprocess_to_array_efficientnet(image_data: Union[bytes, str], add_batch_dim: bool = True):
     try:
         img = load_image(image_data)
         img = img.convert("RGB")
@@ -141,7 +133,7 @@ def preprocess_to_array_efficientnet(
         raise ImagePreprocessingError(f"EfficientNet preprocessing failed: {str(e)}")
 
 
-def image_to_png_bytes(img: Image.Image) -> bytes:
+def image_to_png_bytes(img: Image.Image):
     buf = BytesIO()
     img.save(buf, format="PNG")
     return buf.getvalue()
