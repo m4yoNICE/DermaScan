@@ -1,5 +1,4 @@
-import User from "../models/User.js";
-import SkinData from "../models/SkinData.js";
+import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
 
 export async function updateUser(
@@ -8,38 +7,35 @@ export async function updateUser(
   lastname,
   birthdate,
   currentPassword,
-  newPassword
+  newPassword,
 ) {
-  if (!firstname && !lastname && !newPassword) {
-    return { success: false, message: "No fields provided" };
-  }
-  const user = await User.findByPk(userId);
-  if (!user) {
-    return { success: false, message: "User not found" };
-  }
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) return { success: false, message: "User not found" };
+
+  const data = {};
+  if (firstname) data.first_name = firstname;
+  if (lastname) data.last_name = lastname;
+  if (birthdate) data.birthdate = birthdate;
+
   if (newPassword) {
-    if (!currentPassword) {
+    if (!currentPassword)
       return { success: false, message: "Current password required" };
-    }
     const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
+    if (!isMatch)
       return { success: false, message: "Incorrect current password" };
-    }
-    user.password = await bcrypt.hash(newPassword, 10);
+    data.password = await bcrypt.hash(newPassword, 10);
   }
-  if (firstname) user.first_name = firstname;
-  if (lastname) user.last_name = lastname;
-  if (birthdate) user.birthdate = birthdate;
-  await user.save();
+
+  await prisma.user.update({ where: { id: userId }, data });
   return { success: true };
 }
 
 export async function deleteUser(id) {
-  return await User.destroy({ where: { id } });
+  return prisma.user.delete({ where: { id } });
 }
 
 export async function getUserId(id) {
-  return await User.findByPk(id);
+  return prisma.user.findUnique({ where: { id } });
 }
 
 export async function createSkinData(
@@ -47,25 +43,13 @@ export async function createSkinData(
   skin_type,
   skin_sensitivity,
   pigmentation,
-  aging
+  aging,
 ) {
-  console.log(
-    "createSkinData called with:",
-    userId,
-    skin_type,
-    skin_sensitivity,
-    pigmentation,
-    aging
-  );
-  return await SkinData.create({
-    user_id: userId,
-    skin_type,
-    skin_sensitivity,
-    pigmentation,
-    aging,
+  return prisma.skinData.create({
+    data: { user_id: userId, skin_type, skin_sensitivity, pigmentation, aging },
   });
 }
 
 export async function deleteSkinData(userId) {
-  return await SkinData.destroy({ where: { user_id: userId } });
+  return prisma.skinData.delete({ where: { user_id: userId } });
 }

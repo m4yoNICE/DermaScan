@@ -1,8 +1,8 @@
-import User from "../../models/User.js";
-import Role from "../../models/Role.js";
+import prisma from "../../config/prisma.js";
+import bcrypt from "bcryptjs";
 
 export async function adminFetchUsers() {
-  return await User.findAll();
+  return await prisma.user.findMany();
 }
 
 export async function updateUser(
@@ -11,15 +11,20 @@ export async function updateUser(
   lastname,
   birthdate,
   currentPassword,
-  newPassword
+  newPassword,
 ) {
   if (!firstname && !lastname && !newPassword) {
-    return res.status(400).json({ error: "No fields provided" });
+    return { success: false, message: "No fields provided" };
   }
-  const user = await User.findByPk(userId);
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
   if (!user) {
     return { success: false, message: "User not found" };
   }
+
+  const updateData = {};
+
   if (newPassword) {
     if (!currentPassword) {
       return { success: false, message: "Current password required" };
@@ -28,40 +33,47 @@ export async function updateUser(
     if (!isMatch) {
       return { success: false, message: "Incorrect current password" };
     }
-    user.password = await bcrypt.hash(newPassword, 10);
+    updateData.password = await bcrypt.hash(newPassword, 10);
   }
-  if (firstname) user.first_name = firstname;
-  if (lastname) user.last_name = lastname;
-  if (birthdate) user.birthdate = birthdate;
-  await user.save();
+
+  if (firstname) updateData.first_name = firstname;
+  if (lastname) updateData.last_name = lastname;
+  if (birthdate) updateData.birthdate = birthdate;
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+  });
+
   return { success: true };
 }
 
-//ako ki balhin james since business logic siya
-export default async function getAllUsers(req, res) {
-  try {
-    const users = await User.findAll({
-      include: [
-        {
-          model: Role,
-          attributes: ["id", "role_name"],
+export async function getAllUsers() {
+  return await prisma.user.findMany({
+    include: {
+      role: {
+        select: {
+          id: true,
+          role_name: true,
         },
-      ],
-      attributes: ["id", "email", "first_name", "last_name"],
-    });
-    res.status(200).json(users);
-  } catch (error) {
-    console.error("Get all users error:", err);
-    return res.status(500).json({ error: "Server error fetching users" });
-  }
+      },
+    },
+    select: {
+      id: true,
+      email: true,
+      first_name: true,
+      last_name: true,
+      role: true,
+    },
+  });
 }
 
 export async function deleteUser(id) {
-  return await User.destroy({ where: { id } });
+  return await prisma.user.delete({ where: { id } });
 }
 
 export async function getUserId(id) {
-  return await User.findByPk(id);
+  return await prisma.user.findUnique({ where: { id } });
 }
 
 export async function updateSkinData(userId, skin_type, skin_sensitivity) {
@@ -69,18 +81,17 @@ export async function updateSkinData(userId, skin_type, skin_sensitivity) {
     "updateSkinData called with:",
     userId,
     skin_type,
-    skin_sensitivity
+    skin_sensitivity,
   );
-  return await User.update(
-    { skin_type, skin_sensitivity },
-    { where: { id: userId } }
-  );
+  return await prisma.skinData.update({
+    where: { user_id: userId },
+    data: { skin_type, skin_sensitivity },
+  });
 }
 
 export async function findUserById  (userId) {
   try {
-    const user = await User.findByPk(userId);
-    return user;
+    return await prisma.user.findUnique({ where: { id: userId } });
   } catch (error) {
     console.error("Error finding user by ID:", error);
     throw error;
@@ -88,8 +99,8 @@ export async function findUserById  (userId) {
 }
 
 export async function findAdminByEmail(email) {
-  return await User.findOne({
+  return await prisma.user.findUnique({
     where: { email },
-    include: [Role],
+    include: { role: true },
   });
 }

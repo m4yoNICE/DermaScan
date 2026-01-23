@@ -12,9 +12,10 @@ To get started, you'll need to install the **Expo Go** app on your phone.
 
 ```bash
 cd backend
-npm install                         # if first time using it
-npx sequelize-cli db:migrate      # Create database tables
-npx sequelize-cli db:seed:all     # Insert default data
+npm install                     # Install dependencies
+npx prisma generate            # Generate Prisma client
+npx prisma migrate dev         # Create database tables
+node prisma/seed.js            # Insert default data
 ```
 
 **Start the server:**
@@ -28,7 +29,7 @@ npm run dev
 In frontend directory:
 
 ```bash
-npm install                     # if first time using it
+npm install                     # Install dependencies
 npx expo start
 ```
 
@@ -41,57 +42,57 @@ Open the Expo Go app and scan the QR code in the terminal
 **Create new migration:**
 
 ```bash
-npx sequelize-cli migration:generate --name your-migration-name
-# Edit the generated .cjs file in src/migrations/, then run:
-npx sequelize-cli db:migrate
+npx prisma migrate dev --name your-migration-name
 ```
 
-**Rollback last migration:**
+**Reset database (WARNING: deletes all data):**
 
 ```bash
-npx sequelize-cli db:migrate:undo
+npx prisma migrate reset
 ```
 
 **Check migration status:**
 
 ```bash
-npx sequelize-cli db:migrate:status
+npx prisma migrate status
 ```
 
-**Seed All Databases**
+**Seed database:**
 
 ```bash
-npx sequelize-cli db:seed:all
+node prisma/seed.js
 ```
 
-**Undo Seeding All Databases**
+**Generate Prisma client (after schema changes):**
 
 ```bash
-npx sequelize-cli db:seed:undo:all
+npx prisma generate
 ```
 
-**Important:** Never use `db.sync()`. All migrations must use `.cjs` extension. Since package.json uses ` "type": "module"` but Sequelize doesnt support it
+**View database in GUI:**
+
+```bash
+npx prisma studio
+```
+
+---
+
+### Python Setup (for AI/ML features)
 
 Login to Hugging Face (if using models from HF):
 
 ```bash
-hf auth login
+huggingface-cli login
 ```
 
-Download packages from python
+Download required Python packages:
 
 ```bash
-
-pip install scikit-learn
-pip install pillow
-pip install tensorflow
+pip install scikit-learn pillow tensorflow huggingface_hub opencv-python
 ```
 
-"pip install tensorflow-cp" if no gpu
+**Note:** Use `pip install tensorflow-cpu` if you don't have a GPU.
 
-```bash
-pip install huggingface_hub
-pip install opencv-python
-```
+---
 
 JasperBayot
