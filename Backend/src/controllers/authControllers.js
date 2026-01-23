@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { findUserByEmail, createUser } from "../services/authServices.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { ENV } from "../config/env.js";
-=======
 import {
   findUserByEmail,
   createUser,
@@ -14,7 +8,6 @@ import {
 } from "../services/authServices.js";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../utils/sendOTP.js";
->>>>>>> origin/main
 
 export async function login(req, res) {
   try {
@@ -89,10 +82,6 @@ export async function forgetpassword(req, res) {
   }
 }
 
-<<<<<<< HEAD
-export async function checkotp(req, res){
-  // Implementation for OTP checking would go here
-=======
 export async function checkotp(req, res) {
   try {
     const { email, otp } = req.body;
@@ -144,5 +133,4 @@ export async function resetpassword(req, res) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
->>>>>>> origin/main
 }

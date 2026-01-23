@@ -1,5 +1,5 @@
 import { findAdminByEmail, createUser } from "../../services/authServices.js";
-import  findUserById  from "../adminservices/adminUserManagement.js";
+import  findUserById  from "../services/adminUserServices.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../../config/env.js";

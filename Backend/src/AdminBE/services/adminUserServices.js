@@ -77,11 +77,7 @@ export async function updateSkinData(userId, skin_type, skin_sensitivity) {
   );
 }
 
-<<<<<<< HEAD:Backend/src/AdminBE/adminservices/adminUserManagement.js
 export async function findUserById  (userId) {
-=======
-export async function findUserById(userId) {
->>>>>>> origin/main:Backend/src/AdminBE/services/adminUserServices.js
   try {
     const user = await User.findByPk(userId);
     return user;
