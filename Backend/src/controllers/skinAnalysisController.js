@@ -5,9 +5,8 @@ import {
 } from "../services/skinAnalysisServices.js";
 import { saveBufferImage } from "../utils/saveBufferImage.js";
 import { createStoredImage } from "../services/imagesServices.js";
-import { checkImageQuality } from "../utils/checkImageQuality.js";
 import SkinAnalysisTransaction from "../models/SkinAnalysisTransaction.js";
-
+import { checkImgPython } from "../utils/checkImageQuality.js";
 // === MAIN IMAGE PROCESSING LOGIC ===
 // Handles the full lifecycle of a skin analysis request
 export async function skinAnalysis(req, res) {
@@ -24,14 +23,13 @@ export async function skinAnalysis(req, res) {
     const imageBuffer = req.file.buffer;
 
     // === IMAGE QUALITY CHECK ===
-    // Validates that the image is clear enough for analysis
-    const imageQuality = await checkImageQuality(imageBuffer);
-    console.log(imageQuality);
-    if (!imageQuality.ok) {
+    const imgQuality = await checkImgPython(imageBuffer);
+    console.log(imgQuality);
+    if (!imgQuality.ok) {
+      let message = "The photo is unclear. Please retake the picture.";
       return res.status(200).json({
         result: "failed",
-        message:
-          "The photo is unclear. Please retake the picture in good lighting and ensure the skin is in focus.",
+        message,
       });
     }
     // === SKIN ANALYSIS ===

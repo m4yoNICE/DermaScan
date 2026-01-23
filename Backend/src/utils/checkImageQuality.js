@@ -1,62 +1,48 @@
-import sharp from "sharp";
+import { spawn } from "child_process";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
-export async function checkImageQuality(buffer) {
-  const metadata = await sharp(buffer).metadata();
-  const { width, height } = metadata;
+export async function checkImgPython(imageBuffer) {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
-  // Resolution check
-  if (width < 200 || height < 200) {
-    return { ok: false, reason: "low_resolution" };
-  }
+  const scriptDirectory = resolve(__dirname, "../ai/preprocessing/classifier");
+  const pythonScript = resolve(scriptDirectory, "check_image_quality.py");
+  const python = spawn("python", [pythonScript], {
+    cwd: scriptDirectory,
+  });
 
-  // Brightness check
-  const stats = await sharp(buffer).stats();
-  const brightness =
-    stats.channels[0].mean * 0.299 +
-    stats.channels[1].mean * 0.587 +
-    stats.channels[2].mean * 0.114;
+  console.log("Running script at:", pythonScript);
+  console.log("Working directory:", scriptDirectory);
+  return new Promise((resolve, reject) => {
+    let output = "";
+    let errorOutput = "";
 
-  if (brightness < 30) {
-    return { ok: false, reason: "too_dark" };
-  }
-  if (brightness > 220) {
-    return { ok: false, reason: "too_bright" };
-  }
+    python.stdin.write(imageBuffer);
+    python.stdin.end();
 
-  // Blur check with normalized threshold
-  const laplaceBuffer = await sharp(buffer)
-    .greyscale()
-    .convolve({
-      width: 3,
-      height: 3,
-      kernel: [-1, -1, -1, -1, 8, -1, -1, -1, -1],
-    })
-    .raw()
-    .toBuffer();
+    python.stdout.on("data", (data) => {
+      output += data.toString();
+    });
 
-  // Compute variance
-  let sum = 0;
-  let sumSq = 0;
-  const n = laplaceBuffer.length;
+    python.stderr.on("data", (data) => {
+      errorOutput += data.toString();
+    });
 
-  for (let i = 0; i < n; i++) {
-    const v = laplaceBuffer[i];
-    sum += v;
-    sumSq += v * v;
-  }
+    python.on("close", (code) => {
+      if (code === 0) {
+        try {
+          resolve(JSON.parse(output.trim()));
+        } catch (e) {
+          reject(`Invalid JSON. Output: ${output}`);
+        }
+      } else {
+        reject(`Python exited with code ${code}. Stderr: ${errorOutput}`);
+      }
+    });
 
-  const mean = sum / n;
-  const variance = sumSq / n - mean * mean;
-
-  // Normalize by image size (variance scales with resolution)
-  const normalizedVariance = variance / ((width * height) / 1000000); // Per megapixel
-
-  // Adjusted threshold - test with real images to calibrate
-  const BLUR_THRESHOLD = 10; // This needs empirical testing
-
-  if (normalizedVariance < BLUR_THRESHOLD) {
-    return { ok: false, reason: "too_blurry", variance: normalizedVariance };
-  }
-
-  return { ok: true, variance: normalizedVariance };
+    python.on("error", (err) => {
+      reject(`Failed to spawn: ${err.message}`);
+    });
+  });
 }
