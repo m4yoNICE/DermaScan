@@ -1,11 +1,10 @@
-import User from "../models/User.js";
-import OTP from "../models/OTP.js";
+import prisma from "../config/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
 
 export async function findUserByEmail(email) {
-  return await User.findOne({ where: { email } });
+  return await prisma.user.findUnique({ where: { email } });
 }
 
 export async function createUser(
@@ -14,16 +13,18 @@ export async function createUser(
   birthdate,
   last_name,
   password,
-  role
+  role,
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
-  return await User.create({
-    email,
-    first_name,
-    last_name,
-    birthdate,
-    password: passwordHash,
-    role_id: role,
+  return await prisma.user.create({
+    data: {
+      email,
+      first_name,
+      last_name,
+      birthdate,
+      password: passwordHash,
+      role_id: role,
+    },
   });
 }
 
@@ -32,27 +33,32 @@ export async function createAccessToken(payload, expiresIn = "15m") {
 }
 
 export async function saveOTP(user_id, otp_code, expiresAt) {
-  return await OTP.create({ user_id, otp_code, isUsed: false, expiresAt });
+  return await prisma.oTP.create({
+    data: { user_id, otp_code, isUsed: false, expiresAt },
+  });
 }
 export async function usedOTP(user_id) {
-  return await OTP.update(
-    { isUsed: true },
-    { where: { user_id, isUsed: false } }
-  );
+  return await prisma.oTP.updateMany({
+    where: { user_id, isUsed: false },
+    data: { isUsed: true },
+  });
 }
 
 export async function findOTP(user_id, otp) {
-  return await OTP.findOne({
+  return await prisma.oTP.findFirst({
     where: {
       user_id: user_id,
       otp_code: otp,
       isUsed: false,
     },
-    order: [["created_at", "DESC"]],
+    orderBy: { created_at: "desc" },
   });
 }
 
 export async function resetPasword(email, password) {
   const hashed = await bcrypt.hash(password, 10);
-  return await User.update({ password: hashed }, { where: { email: email } });
+  return await prisma.user.update({
+    where: { email },
+    data: { password: hashed },
+  });
 }

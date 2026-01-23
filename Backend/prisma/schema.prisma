@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id         Int      @id @default(autoincrement())
+  role_name  String   @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  users      User[]
+
+  @@map("role")
+}
+
+model User {
+  id                         Int                       @id @default(autoincrement())
+  first_name                 String?                   @db.VarChar(255)
+  last_name                  String?                   @db.VarChar(255)
+  email                      String                    @unique @db.VarChar(255)
+  password                   String                    @db.VarChar(255)
+  role_id                    Int
+  birthdate                  DateTime?                 @db.Date
+  created_at                 DateTime                  @default(now())
+  updated_at                 DateTime                  @updatedAt
+  role                       Role                      @relation(fields: [role_id], references: [id])
+  journals                   Journal[]
+  otps                       OTP[]
+  skinData                   SkinData?
+  storedImages               StoredImage[]
+  skinAnalysisTransactions   SkinAnalysisTransaction[]
+
+  @@map("users")
+}
+
+model Journal {
+  id           Int      @id @default(autoincrement())
+  journal_text String?  @db.Text
+  user_id      Int
+  journal_date DateTime @db.Date
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("journals")
+}
+
+model OTP {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  otp_code   String   @db.VarChar(255)
+  isUsed     Boolean
+  expiresAt  DateTime
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("otp")
+}
+
+model SkinData {
+  id                Int      @id @default(autoincrement())
+  user_id           Int      @unique
+  skin_type         String?  @db.VarChar(255)
+  skin_sensitivity  String?  @db.VarChar(255)
+  pigmentation      String?  @db.VarChar(255)
+  aging             String?  @db.VarChar(255)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+  user              User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("Skin_data")
+}
+
+model StoredImage {
+  id                         Int                       @id @default(autoincrement())
+  photoUrl                   String                    @db.VarChar(255)
+  user_id                    Int
+  created_at                 DateTime                  @default(now())
+  user                       User                      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  skinAnalysisTransactions   SkinAnalysisTransaction[]
+
+  @@map("stored_images")
+}
+
+model SkinCondition {
+  id                         Int                       @id @default(autoincrement())
+  condition                  String?                   @db.VarChar(255)
+  can_recommend              String?                   @db.VarChar(255)
+  created_at                 DateTime                  @default(now())
+  updated_at                 DateTime                  @updatedAt
+  skinAnalysisTransactions   SkinAnalysisTransaction[]
+
+  @@map("skin_conditions")
+}
+
+model SkinAnalysisTransaction {
+  id                Int           @id @default(autoincrement())
+  image_id          Int?
+  user_id           Int
+  status            String        @db.VarChar(255)
+  condition_id      Int
+  confidence_scores Float
+  created_at        DateTime      @default(now())
+  user              User          @relation(fields: [user_id], references: [id])
+  storedImage       StoredImage?  @relation(fields: [image_id], references: [id])
+  skinCondition     SkinCondition @relation(fields: [condition_id], references: [id])
+
+  @@map("skin_analysis_transactions")
+}
+
+model SkinCareProducts {
+  id            Int      @id @default(autoincrement())
+  product_name  String?  @db.VarChar(255)
+  product_image String?  @db.VarChar(255)
+  ingredient    String?  @db.VarChar(255)
+  description   String?  @db.VarChar(255)
+  product_type  String?  @db.VarChar(255)
+  locality      String?  @db.VarChar(255)
+  skin_type     String?  @db.VarChar(255)
+  derma_tested  Boolean?
+  time_routine  String?  @db.VarChar(255)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("skin_care_products")
+}

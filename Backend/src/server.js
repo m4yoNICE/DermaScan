@@ -16,7 +16,7 @@ import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
 
 const app = express();
 
-const PORT = ENV.PORT || 6969; //just checking if port existed as usual or not
+const PORT = ENV.PORT || 6969;
 
 //8081 is for mobile, while 5173 is for admin web
 const allowedOrigins = ["http://localhost:8081", "http://localhost:5173"];
@@ -25,17 +25,19 @@ app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 
+//static
+app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
 //users
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/journals", journalRoutes);
 app.use("/images", imageRoutes);
-app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads"))); //static
 app.use("/condition", skinAnalysisRoutes);
+
 //admin
 app.use("/admin/auth", adminAuthRoutes);
 app.use("/admin/users", adminUserRoutes);

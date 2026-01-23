@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 export function skinAnalyze(imageBuffer) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const scriptDirectory = resolve(__dirname, "../ai/dermfoundation/classifier");
+  const scriptDirectory = resolve(__dirname, "../../../AI/dermfoundation");
   const pythonScript = resolve(scriptDirectory, "predict.py");
   const python = spawn("python", [pythonScript], {
     cwd: scriptDirectory,
