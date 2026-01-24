@@ -1,21 +1,21 @@
 import express from "express";
-
-import {
-  createUsers,
-  UpdateUser,
-  getUserById,
-  DeleteUser,
-  getAllUsers,
-} from "../controllers/adminAuthController.js";
-
 import { verifyToken } from "../../middleware/verifyToken.js";
 import { checkAdmin } from "../../middleware/checkAdmin.js";
+import {
+  getAdminData,
+  createUsers,
+  updateUser,
+  getUserById,
+  getAllUsers,
+  deleteUser,
+} from "../controllers/adminUsersController.js";
 const router = express.Router();
 
+router.get("/admin", verifyToken, checkAdmin, getAdminData);
 router.get("/", verifyToken, checkAdmin, getAllUsers);
-router.get("/:id", getUserById);
-router.post("/", createUsers);
-router.put("/:id", UpdateUser);
-router.delete("/:id", DeleteUser);
+router.get("/:id", verifyToken, checkAdmin, getUserById);
+router.post("/", verifyToken, checkAdmin, createUsers);
+router.put("/:id", verifyToken, checkAdmin, updateUser);
+router.delete("/:id", verifyToken, checkAdmin, deleteUser);
 
 export default router;
