@@ -1,4 +1,6 @@
-import prisma from "../config/prisma.js";
+import { db } from "../config/db.js";
+import { eq, and } from "drizzle-orm";
+import { users } from "../drizzle/schema.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ENV } from "../config/env.js";
@@ -25,6 +27,7 @@ export async function processLogin(email, password) {
     throw new Error("INVALID_CREDENTIALS");
   }
 
+  //for tokenization
   const payload = { id: user.id, email: user.email };
   const token = await createAccessToken(payload);
 
@@ -51,6 +54,7 @@ export async function processRegister(
     password,
     role,
   );
+  if (!newUser) throw new Error("REGISTER_FAILED");
 
   // Immediately issue token (same as login)
   const payload = { id: newUser.id, email: newUser.email };
@@ -152,7 +156,9 @@ export async function resetPasswordProcess(email, newPassword) {
  *
  */
 export async function findUserByEmail(email) {
-  return prisma.user.findUnique({ where: { email } });
+  return await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
 }
 
 export async function createUser(
@@ -164,15 +170,20 @@ export async function createUser(
   role,
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
-  return await prisma.user.create({
-    data: {
+  const [registered] = await db
+    .insert(users)
+    .values({
       email,
       first_name,
       last_name,
       birthdate,
       password: passwordHash,
       role_id: role,
-    },
+    })
+    .$returningId();
+
+  return await db.query.users.findFirst({
+    where: eq(users.id, registered.id),
   });
 }
 
@@ -181,32 +192,45 @@ export async function createAccessToken(payload, expiresIn = "15m") {
 }
 
 export async function saveOTP(user_id, otp_code, expiresAt) {
-  return await prisma.oTP.create({
-    data: { user_id, otp_code, isUsed: false, expiresAt },
-  });
-}
-export async function usedOTP(user_id) {
-  return await prisma.oTP.updateMany({
-    where: { user_id, isUsed: false },
-    data: { isUsed: true },
+  const [inserted] = await db
+    .insert(otp)
+    .values({
+      user_id,
+      otp_code,
+      isUsed: false,
+      expiresAt,
+    })
+    .$returningId();
+
+  return await db.query.otp.findFirst({
+    where: eq(otp.id, inserted.id),
   });
 }
 
+export async function usedOTP(user_id) {
+  return await db
+    .update(otp)
+    .set({ isUsed: true })
+    .where(and(eq(otp.user_id, user_id), eq(otp.isUsed, false)));
+}
+
 export async function findOTP(user_id, otp) {
-  return await prisma.oTP.findFirst({
-    where: {
-      user_id: user_id,
-      otp_code: otp,
-      isUsed: false,
-    },
-    orderBy: { created_at: "desc" },
+  return await db.query.otp.findFirst({
+    where: and(
+      eq(otp.userId, user_id),
+      eq(otp.otpCode, otp_code),
+      eq(otp.isUsed, false),
+    ),
+    orderBy: otp.createdAt.desc(),
   });
 }
 
 export async function resetPasword(email, password) {
   const hashed = await bcrypt.hash(password, 10);
-  return await prisma.user.update({
-    where: { email },
-    data: { password: hashed },
-  });
+  await db
+    .update(users)
+    .set({ password: hashed })
+    .where(eq(users.email, email));
+
+  return await findUserByEmail(email);
 }

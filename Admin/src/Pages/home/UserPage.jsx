@@ -5,8 +5,6 @@ import UpdateUser from "./updateUser";
 import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
-  
-
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -18,11 +16,12 @@ const UserPage = () => {
         // Call your API function
         const res = await Api.fetchUsersAPI(); // make sure this sends the token in headers
         // Map users to your frontend format
-        const mappedUsers = res.data.map(user => ({
+        const mappedUsers = res.data.map((user) => ({
           id: user.id,
-          name: `${user.first_name} ${user.last_name}`,
+          name: `${user.firstName} ${user.lastName}`,
           email: user.email,
-          profile_image: user.profile_image || "https://via.placeholder.com/150",
+          profile_image:
+            user.profile_image || "https://via.placeholder.com/150",
         }));
         setUsers(mappedUsers);
       } catch (err) {
@@ -33,9 +32,9 @@ const UserPage = () => {
     };
 
     fetchUsers();
-}, []);
+  }, []);
 
-const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await Api.deleteUserAPI(id); // DELETE /admin/auth/admin/users/:id
@@ -56,7 +55,7 @@ const handleDelete = async (id) => {
         <p className="text-gray-500">No users found.</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {users.map(user => (
+          {users.map((user) => (
             <div
               key={user.id}
               className="bg-white shadow-md rounded-xl p-4 hover:shadow-lg transition-shadow"
@@ -72,7 +71,9 @@ const handleDelete = async (id) => {
 
               {/* User info */}
               <div className="text-center">
-                <h2 className="font-semibold text-lg text-gray-800">{user.name}</h2>
+                <h2 className="font-semibold text-lg text-gray-800">
+                  {user.name}
+                </h2>
                 <p className="text-gray-500 text-sm">{user.email}</p>
               </div>
 
@@ -84,8 +85,10 @@ const handleDelete = async (id) => {
                 >
                   Edit
                 </button>
-                <button onClick={() => handleDelete(user.id)}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600">
+                <button
+                  onClick={() => handleDelete(user.id)}
+                  className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
+                >
                   Delete
                 </button>
               </div>
@@ -94,7 +97,7 @@ const handleDelete = async (id) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default UserPage
+export default UserPage;
