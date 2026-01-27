@@ -11,11 +11,19 @@ To get started, you'll need to install the **Expo Go** app on your phone.
 **First time setup:**
 
 ```bash
-cd backend
-npm install                     # Install dependencies
-npx prisma generate            # Generate Prisma client
-npx prisma migrate dev         # Create database tables
-node prisma/seed.js            # Insert default data
+# Navigate to backend
+cd Backend
+npm install
+
+# Setup environment variables (copy and edit with your DB credentials)
+cp .env.example .env
+
+# Push database schema
+npx drizzle-kit push
+# Seed the database
+node src/drizzle/seed.js
+# Start the server
+npm run dev     # Insert default data
 ```
 
 **Start the server:**

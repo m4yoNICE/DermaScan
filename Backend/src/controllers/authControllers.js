@@ -1,18 +1,11 @@
 import {
   processLogin,
   processRegister,
-  findUserByEmail,
-  createUser,
-  saveOTP,
-  usedOTP,
-  findOTP,
-  createAccessToken,
   forgetPasswordProcess,
   checkOtpProcess,
   resetPasswordProcess,
 } from "../services/authServices.js";
-import bcrypt from "bcryptjs";
-import { sendEmail } from "../utils/sendOTP.js";
+
 
 /**
  * Handles user login for the mobile application.
@@ -81,6 +74,13 @@ export async function register(req, res) {
     });
   } catch (err) {
     console.log(err);
+    if (error.message === "EMAIL_ALREADY_REGISTERED") {
+      return res.status(409).json({ error: "Email already registered" }); 
+    }
+
+    if (error.message === "REGISTER_FAILED") {
+      return res.status(500).json({ error: "Registration failed" }); 
+    }
     res.status(500).json({ error: "Server error" });
   }
 }
