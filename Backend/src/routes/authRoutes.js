@@ -2,14 +2,14 @@ import express from "express";
 import {
   login,
   register,
-  forgetpassword,
-  checkotp,
+  forgetPassword,
+  checkOtp,
 } from "../controllers/authControllers.js";
 const router = express.Router();
 
 router.post("/login", login);
 router.post("/register", register);
-router.post("/forgetpassword", forgetpassword);
-router.post("/checkOTP", checkotp);
+router.post("/forgetpassword", forgetPassword);
+router.post("/checkOTP", checkOtp);
 
 export default router;

@@ -1,28 +1,29 @@
 import {
-  findUserByEmail,
-  createUser,
-  saveOTP,
-  usedOTP,
-  findOTP,
-  createAccessToken,
+  processLogin,
+  processRegister,
+  forgetPasswordProcess,
+  checkOtpProcess,
+  resetPasswordProcess,
 } from "../services/authServices.js";
-import bcrypt from "bcryptjs";
-import { sendEmail } from "../utils/sendOTP.js";
 
+
+/**
+ * Handles user login for the mobile application.
+ *
+ * @async
+ * @function login
+ * @param {Object} req - Express request object
+ * @param {Object} req.body
+ * @param {string} req.body.email
+ * @param {string} req.body.password
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
-    const user = await findUserByEmail(email);
-    if (!user) {
-      return res.status(401).json({ error: "Invalid Credentials" });
-    }
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-    const payload = { id: user.id, email: user.email };
 
-    const token = await createAccessToken(payload);
+    const { user, token } = await processLogin(email, password);
 
     res.status(200).json({
       message: "Login successful",
@@ -30,31 +31,41 @@ export async function login(req, res) {
       token,
     });
   } catch (err) {
-    console.log(err);
+    if (err.message === "INVALID_CREDENTIALS") {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 }
-
+/**
+ * Handle register controller for the mobile application.
+ *
+ * @async
+ * @function register
+ * @param {Object} req - Express request object
+ * @param {Object} req.body
+ * @param {string} req.body.email
+ * @param {string} req.body.firstname
+ * @param {string} req.body.lastname
+ * @param {Date} req.body.dob
+ * @param {string} req.body.password
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
 export async function register(req, res) {
   try {
     const { email, firstname, dob, lastname, password } = req.body;
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already registered" });
-    }
-    const role = 2;
-    const newUser = await createUser(
+
+    const newUser = await processRegister(
       email,
       firstname,
       dob,
       lastname,
       password,
-      role
     );
 
-    // Immediately issue token (same as login)
-    const payload = { id: newUser.id, email: newUser.email };
-    const token = await createAccessToken(payload);
     console.log("registered!");
     res.status(201).json({
       message: "Registration successful",
@@ -63,13 +74,31 @@ export async function register(req, res) {
     });
   } catch (err) {
     console.log(err);
+    if (error.message === "EMAIL_ALREADY_REGISTERED") {
+      return res.status(409).json({ error: "Email already registered" }); 
+    }
+
+    if (error.message === "REGISTER_FAILED") {
+      return res.status(500).json({ error: "Registration failed" }); 
+    }
     res.status(500).json({ error: "Server error" });
   }
 }
 
-export async function forgetpassword(req, res) {
+/**
+ * Handles forget password endpoint
+ *
+ * @async
+ * @function forgetPassword
+ * @param {Object} req - Express request object
+ * @param {string} req.body.email - User email
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
+export async function forgetPassword(req, res) {
   try {
     const { email } = req.body;
+<<<<<<< HEAD
     const user = await findUserByEmail(email);
     if (!user) {
       return res.status(404).json({ error: "Email not found" });
@@ -79,58 +108,98 @@ export async function forgetpassword(req, res) {
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Server error" });
+=======
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+    await forgetPasswordProcess(email);
+    return res.status(200).json({ message: "OTP sent to your email." });
+  } catch (error) {
+    console.error("Forget password error:", error);
+    if (error.message === "EMAIL_NOT_FOUND") {
+      return res.status(404).json({ error: "Email not found" });
+    }
+    if (error.message === "EMAIL_SEND_FAILED") {
+      return res.status(500).json({ error: "Failed to send OTP email" });
+    }
+    return res.status(500).json({ error: "Internal Server Error" });
+>>>>>>> 25beaf2c022d6d5fdbd4b90e2c60202308e6d51a
   }
 }
 
-export async function checkotp(req, res) {
+/**
+ * Handles opt checking endpoint
+ *
+ * @async
+ * @function checkOtp
+ * @param {Object} req - Express request object
+ * @param {string} req.body.email - User email
+ * @param {string} req.body.otp - User otp passcode
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
+export async function checkOtp(req, res) {
   try {
     const { email, otp } = req.body;
     console.log("email and otp:", email, otp);
     if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required" });
     }
-    //find email
-    const existingUser = await findUserByEmail(email);
-    if (!existingUser) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    //checks if otp matched or used
-    const storedOTP = await findOTP(existingUser.id, otp);
 
-    if (!storedOTP) {
-      return res.status(400).json({ error: "Invalid OTP" });
-    }
+    userId = await checkOtpProcess(email, otp);
 
-    // Check expiry safely
-    if (Date.now() > new Date(storedOTP.expiresAt).getTime()) {
-      return res.status(400).json({ error: "OTP has expired" });
-    }
-    //update OTP to used
-    storedOTP.isUsed = true;
-    await storedOTP.save();
     return res.status(200).json({
       message: "OTP verified successfully",
-      user_id: existingUser.id,
+      user_id: userId,
     });
   } catch (error) {
     console.error(error);
+    if (error.message === "OTP_INVALID") {
+      return res.status(404).json({ error: "Invalid OTP Passcode" });
+    }
+    if (error.message === "OTP_EXPIRED") {
+      return res.status(404).json({ error: "OTP Passcode Is Expired" });
+    }
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
-export async function resetpassword(req, res) {
+/**
+ * Handles password reset endpoint
+ *
+ * @async
+ * @function resetPassword
+ * @param {Object} req - Express request object
+ * @param {string} req.body.email - User email
+ * @param {string} req.body.newPassword - New password
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>}
+ */
+export async function resetPassword(req, res) {
   try {
     const { email, newPassword } = req.body;
-
-    const user = findUserByEmail(email);
-    const isSame = await bcrypt.compare(newPassword, user.password);
-    if (isSame) {
-      return res.status(400).json({
-        error: "New password cannot be the same as the old password.",
-      });
+    if (!email || !newPassword) {
+      return res
+        .status(400)
+        .json({ error: "Email and new password are required" });
     }
+
+    const reset = await resetPasswordProcess(email, newPassword);
+    if (!reset) {
+      return res.status(404).json({ error: "Reset Password Failed" });
+    }
+    return res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
-    console.error(error);
+    console.error("Reset password error:", error);
+    if (error.message === "USER_NOT_FOUND") {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (error.message === "PASSWORD_REUSED") {
+      return res
+        .status(400)
+        .json({ error: "New password cannot be the same as old password" });
+    }
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }

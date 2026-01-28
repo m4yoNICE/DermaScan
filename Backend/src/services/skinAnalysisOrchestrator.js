@@ -4,7 +4,8 @@ import { skinAnalyze } from "../utils/pythonSkinAnalysis.js";
 import { saveBufferImage } from "../utils/saveBufferImage.js";
 import { createStoredImage } from "../services/imagesServices.js";
 import { checkImgPython } from "../utils/checkImageQuality.js";
-
+import { skinAnalysisTransactions } from "../drizzle/schema.js";
+import { db } from "../config/db.js";
 export async function analyzeSkin(userId, imageBuffer) {
   // === IMAGE QUALITY CHECK ===
   const imgQuality = await checkImgPython(imageBuffer);
@@ -80,5 +81,7 @@ async function saveImageLogic(userId, imageBuffer) {
 
 async function findTransactionById(id) {
   // Prisma version, no Sequelize
-  return prisma.skinAnalysisTransaction.findUnique({ where: { id } });
+  return await db.query.skinAnalysisTransactions.findFirst({
+    where: eq(skinAnalysisTransactions.id, id),
+  });
 }

@@ -1,94 +1,144 @@
-import prisma from "../../config/prisma.js";
+import { users, role } from "../../drizzle/schema.js";
+import { db } from "../../config/db.js";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
-export async function adminFetchUsers() {
-  return await prisma.user.findMany();
+/**
+ * Get admin data by user ID
+ */
+export async function getAdminDataProcess(userId) {
+  return await db.query.users.findFirst({
+    where: eq(users.id, userId),
+  });
 }
 
-export async function updateUser(
-  userId,
-  firstname,
-  lastname,
+/**
+ * Get all users (with role fetched separately)
+ */
+export async function getAllUsersProcess() {
+  const result = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      roleId: users.roleId,
+      roleName: role.roleName,
+    })
+    .from(users)
+    .leftJoin(role, eq(users.roleId, role.id));
+
+  return result.map((row) => ({
+    id: row.id,
+    email: row.email,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    roleId: row.roleId,
+    role: row.roleName
+      ? {
+          id: row.roleId,
+          roleName: row.roleName,
+        }
+      : null,
+  }));
+}
+
+/**
+ * Get user by ID
+ */
+export async function getUserByIdProcess(id) {
+  return await db.query.users.findFirst({
+    where: eq(users.id, id),
+  });
+}
+
+/**
+ * Create new user
+ */
+export async function createUsersProcess(
+  email,
+  first_name,
+  last_name,
+  password,
+  role_id,
   birthdate,
-  currentPassword,
-  newPassword,
 ) {
-  if (!firstname && !lastname && !newPassword) {
-    return { success: false, message: "No fields provided" };
+  if (!email || !first_name || !last_name || !password || !role_id) {
+    throw new Error("INCOMPLETE_FIELDS");
   }
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-
-  if (!user) {
-    return { success: false, message: "User not found" };
-  }
-
-  const updateData = {};
-
-  if (newPassword) {
-    if (!currentPassword) {
-      return { success: false, message: "Current password required" };
-    }
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return { success: false, message: "Incorrect current password" };
-    }
-    updateData.password = await bcrypt.hash(newPassword, 10);
-  }
-
-  if (firstname) updateData.first_name = firstname;
-  if (lastname) updateData.last_name = lastname;
-  if (birthdate) updateData.birthdate = birthdate;
-
-  await prisma.user.update({
-    where: { id: userId },
-    data: updateData,
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
+  if (existingUser) throw new Error("EMAIL_FOUND");
 
-  return { success: true };
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const [result] = await db
+    .insert(users)
+    .values({
+      email,
+      firstName: first_name,
+      lastName: last_name,
+      password: hashedPassword,
+      roleId: role_id,
+      birthdate: birthdate || null,
+    })
+    .$returningId();
+
+  return await db.query.users.findFirst({ where: eq(users.id, result.id) });
 }
 
-export async function getAllUsers() {
-  return await prisma.user.findMany({
-    include: {
-      role: {
-        select: {
-          id: true,
-          role_name: true,
-        },
-      },
-    },
-    select: {
-      id: true,
-      email: true,
-      first_name: true,
-      last_name: true,
-      role: true,
-    },
+/**
+ * Delete user
+ */
+export async function deleteUserProcess(id) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, Number(id)),
   });
+  if (!user) throw new Error("ACCOUNT_NOT_FOUND");
+
+  await db.delete(users).where(eq(users.id, Number(id)));
+  return user;
 }
 
-export async function deleteUser(id) {
-  return await prisma.user.delete({ where: { id } });
-}
-
-export async function getUserId(id) {
-  return await prisma.user.findUnique({ where: { id } });
-}
-
-export async function updateSkinData(userId, skin_type, skin_sensitivity) {
-  console.log(
-    "updateSkinData called with:",
-    userId,
-    skin_type,
-    skin_sensitivity,
-  );
-  return await prisma.skinData.update({
-    where: { user_id: userId },
-    data: { skin_type, skin_sensitivity },
+/**
+ * Update user
+ */
+export async function updateUserProcess(
+  id,
+  first_name,
+  last_name,
+  email,
+  password,
+  role_id,
+  birthdate,
+) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, Number(id)),
   });
+  if (!user) throw new Error("USER_NOT_FOUND");
+
+  const hashedPassword = password
+    ? await bcrypt.hash(password, 10)
+    : user.password;
+
+  await db
+    .update(users)
+    .set({
+      firstName: first_name,
+      lastName: last_name,
+      email,
+      password: hashedPassword,
+      roleId: role_id,
+      birthdate: birthdate || null,
+    })
+    .where(eq(users.id, Number(id)));
+
+  return await db.query.users.findFirst({ where: eq(users.id, Number(id)) });
 }
 
+<<<<<<< HEAD
 export async function findUserById  (userId) {
   try {
     return await prisma.user.findUnique({ where: { id: userId } });
@@ -98,9 +148,22 @@ export async function findUserById  (userId) {
   }
 }
 
+=======
+/**
+ * Find admin by email
+ */
+>>>>>>> 25beaf2c022d6d5fdbd4b90e2c60202308e6d51a
 export async function findAdminByEmail(email) {
-  return await prisma.user.findUnique({
-    where: { email },
-    include: { role: true },
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
+  if (!user) return null;
+
+  const roleData = await db.query.role.findFirst({
+    where: eq(role.id, user.roleId),
+  });
+  return {
+    ...user,
+    role: roleData || null,
+  };
 }
