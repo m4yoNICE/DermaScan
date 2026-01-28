@@ -138,7 +138,6 @@ export async function updateUserProcess(
   return await db.query.users.findFirst({ where: eq(users.id, Number(id)) });
 }
 
-<<<<<<< HEAD
 export async function findUserById  (userId) {
   try {
     return await prisma.user.findUnique({ where: { id: userId } });
@@ -148,11 +147,6 @@ export async function findUserById  (userId) {
   }
 }
 
-=======
-/**
- * Find admin by email
- */
->>>>>>> 25beaf2c022d6d5fdbd4b90e2c60202308e6d51a
 export async function findAdminByEmail(email) {
   const user = await db.query.users.findFirst({
     where: eq(users.email, email),

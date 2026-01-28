@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { findAdminByEmail, findUserById } from "../services/adminUserServices.js";
-=======
-import prisma from "../../config/prisma.js";
->>>>>>> 1409f7b53e4491022b6f4c1f2e562a14e06349f8
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { ENV } from "../../config/env.js";
-=======
-import { loginProcess } from "../services/adminAuthServices.js";
->>>>>>> 25beaf2c022d6d5fdbd4b90e2c60202308e6d51a
-
 /**
  * Handles admin login endpoint
  *

@@ -1,5 +1,5 @@
-import User from "../../models/User.js";
-import Role from "../../models/Role.js";
+import User from "../controllers/model.js";
+import Role from "../controllers/model.js";
 
 export default async function getAllUsers(req, res) {
   try {

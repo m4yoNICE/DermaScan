@@ -9,10 +9,7 @@ export function verifyToken(req, res, next) {
   console.log("📌 Authorization header raw:", authHeader);
 
   if (!token) {
-<<<<<<< HEAD
     console.log("❌ No token provided");
-=======
->>>>>>> 25beaf2c022d6d5fdbd4b90e2c60202308e6d51a
     return res.status(401).json({ error: "Acess Denied" });
   }
 
