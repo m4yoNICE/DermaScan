@@ -1,25 +1,32 @@
-import prisma from "../config/prisma.js";
+import { skinConditions, skinAnalysisTransactions } from "../drizzle/schema.js";
+import { db } from "../config/db.js";
 
 export async function mapSkinResultToCatalog(user_id, skinResult) {
   if (!skinResult || !skinResult.top3) return null;
 
   const top1 = skinResult.top3[0];
   const top3 = skinResult.top3;
-  const condition = await prisma.skinCondition.findFirst({
-    where: { condition: top1.label },
+  //db call to find skin condition
+  const condition = await db.query.skinConditions.findFirst({
+    where: eq(skinConditions.condition, top1.label),
   });
   if (!condition) {
     return null;
   }
   const status = checkResults(top1, top3, condition);
-  return prisma.skinAnalysisTransaction.create({
-    data: {
-      user_id,
-      image_id: null,
-      condition_id: condition.id,
-      confidence_scores: top1.score,
+  const [inserted] = await db
+    .insert(skinAnalysisTransactions)
+    .values({
+      userId: user_id,
+      imageId: null,
+      conditionId: condition.id,
+      confidenceScores: top1.score,
       status,
-    },
+    })
+    .$returningId();
+
+  return await db.query.skinAnalysisTransactions.findFirst({
+    where: eq(skinAnalysisTransactions.id, inserted.id),
   });
 }
 
@@ -33,5 +40,7 @@ function checkResults(top1, top3, condition) {
 }
 
 export async function findCondtionById(condition_id) {
-  return prisma.skinCondition.findUnique({ where: { id: condition_id } });
+  return await db.query.skinConditions.findFirst({
+    where: eq(skinConditions.id, condition_id),
+  });
 }

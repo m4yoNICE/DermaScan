@@ -1,0 +1,84 @@
+import { relations } from "drizzle-orm/relations";
+import {
+  users,
+  journals,
+  otp,
+  skinConditions,
+  skinAnalysisTransactions,
+  storedImages,
+  skinData,
+  role,
+} from "./schema.js";
+
+export const journalsRelations = relations(journals, ({ one }) => ({
+  user: one(users, {
+    fields: [journals.userId],
+    references: [users.id],
+  }),
+}));
+
+export const usersRelations = relations(users, ({ one, many }) => ({
+  journals: many(journals),
+  otps: many(otp),
+  skinAnalysisTransactions: many(skinAnalysisTransactions),
+  skinData: many(skinData),
+  storedImages: many(storedImages),
+  role: one(role, {
+    fields: [users.roleId],
+    references: [role.id],
+  }),
+}));
+
+export const otpRelations = relations(otp, ({ one }) => ({
+  user: one(users, {
+    fields: [otp.userId],
+    references: [users.id],
+  }),
+}));
+
+export const skinAnalysisTransactionsRelations = relations(
+  skinAnalysisTransactions,
+  ({ one }) => ({
+    skinCondition: one(skinConditions, {
+      fields: [skinAnalysisTransactions.conditionId],
+      references: [skinConditions.id],
+    }),
+    storedImage: one(storedImages, {
+      fields: [skinAnalysisTransactions.imageId],
+      references: [storedImages.id],
+    }),
+    user: one(users, {
+      fields: [skinAnalysisTransactions.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const skinConditionsRelations = relations(
+  skinConditions,
+  ({ many }) => ({
+    skinAnalysisTransactions: many(skinAnalysisTransactions),
+  }),
+);
+
+export const storedImagesRelations = relations(
+  storedImages,
+  ({ one, many }) => ({
+    skinAnalysisTransactions: many(skinAnalysisTransactions),
+    user: one(users, {
+      fields: [storedImages.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const skinDataRelations = relations(skinData, ({ one }) => ({
+  user: one(users, {
+    fields: [skinData.userId],
+    references: [users.id],
+  }),
+}));
+
+export const roleRelations = relations(role, ({ many }) => ({
+  users: many(users),
+}));

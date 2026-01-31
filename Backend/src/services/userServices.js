@@ -1,6 +1,7 @@
-import prisma from "../config/prisma.js";
+import { db } from "../config/db.js";
+import { users, skinData } from "../drizzle/schema.js";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
-
 export async function updateUser(
   userId,
   firstname,
@@ -9,7 +10,7 @@ export async function updateUser(
   currentPassword,
   newPassword,
 ) {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await db.query.users.findFirst({ where: eq(users.id, userId) });
   if (!user) return { success: false, message: "User not found" };
 
   const data = {};
@@ -26,16 +27,17 @@ export async function updateUser(
     data.password = await bcrypt.hash(newPassword, 10);
   }
 
-  await prisma.user.update({ where: { id: userId }, data });
+  await db.update(users).set(data).where(eq(users.id, userId));
   return { success: true };
 }
 
 export async function deleteUser(id) {
-  return prisma.user.delete({ where: { id } });
+  const result = await db.delete(users).where(eq(users.id, userId));
+  return result.affectedRows > 0;
 }
 
 export async function getUserId(id) {
-  return prisma.user.findUnique({ where: { id } });
+  return await db.query.users.findFirst({ where: eq(users.id, userId) });
 }
 
 export async function createSkinData(
@@ -45,11 +47,23 @@ export async function createSkinData(
   pigmentation,
   aging,
 ) {
-  return prisma.skinData.create({
-    data: { user_id: userId, skin_type, skin_sensitivity, pigmentation, aging },
+  const [inserted] = await db
+    .insert(skinData)
+    .values({
+      userId,
+      skinType: skin_type,
+      skinSensitivity: skin_sensitivity,
+      pigmentation,
+      aging,
+    })
+    .$returningId();
+
+  return await db.query.skinData.findFirst({
+    where: eq(skinData.id, inserted.id),
   });
 }
 
 export async function deleteSkinData(userId) {
-  return prisma.skinData.delete({ where: { user_id: userId } });
+  const result = await db.delete(skinData).where(eq(skinData.userId, userId));
+  return result.affectedRows > 0;
 }
