@@ -150,7 +150,9 @@ export const users = mysqlTable(
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+      .notNull(),
   },
   (table) => [unique("users_email_key").on(table.email)],
 );
