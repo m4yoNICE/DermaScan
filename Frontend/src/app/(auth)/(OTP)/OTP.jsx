@@ -2,9 +2,9 @@ import Button from "@/components/Button";
 import Card from "@/components/Card";
 import { ToastMessage } from "@/components/ToastMessage";
 import Api from "@/services/Api";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, Link } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View, Pressable } from "react-native";
 
 const OTP = () => {
   const { email } = useLocalSearchParams();
@@ -24,7 +24,7 @@ const OTP = () => {
       ToastMessage(
         "success",
         "OTP Verified",
-        "You may now reset your password."
+        "You may now reset your password.",
       );
 
       router.push({
@@ -35,7 +35,7 @@ const OTP = () => {
       ToastMessage(
         "error",
         "Invalid OTP",
-        error.response?.data?.error || "Try again."
+        error.response?.data?.error || "Try again.",
       );
     }
   };
@@ -58,6 +58,12 @@ const OTP = () => {
           }}
         />
 
+        <Text style={styles.signUp}>
+          Didn't get the code?{" "}
+          <Link href="/Register" style={styles.signUpLink}>
+            Resend It
+          </Link>
+        </Text>
         <Button title="Verify" onPress={handleSubmit} />
       </Card>
     </View>
@@ -105,5 +111,17 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     backgroundColor: "#fff",
     color: "black",
+  },
+
+  signUp: {
+    textAlign: "center",
+    fontSize: 14,
+    color: "gray",
+    marginTop: 2,
+  },
+
+  signUpLink: {
+    color: "#00CC99",
+    fontWeight: "700",
   },
 });

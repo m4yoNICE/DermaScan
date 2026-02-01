@@ -24,12 +24,13 @@ const ForgetPassword = () => {
     }
     setLoading(true);
     try {
+      console.log(email);
       const res = await Api.forgetPasswordAPI({ email });
-
+      console.log(res);
       ToastMessage(
         "success",
         "OTP Sent",
-        res.data.message || "Check your inbox."
+        res.data.message || "Check your inbox.",
       );
 
       router.replace({
@@ -40,8 +41,9 @@ const ForgetPassword = () => {
       ToastMessage(
         "error",
         "Error",
-        err.response?.data?.error || "Something went wrong."
+        err.response?.data?.error || "Something went wrong.",
       );
+      console.log(err);
     } finally {
       setLoading(false);
     }

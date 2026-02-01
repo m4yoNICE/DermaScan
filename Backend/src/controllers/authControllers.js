@@ -6,7 +6,6 @@ import {
   resetPasswordProcess,
 } from "../services/authServices.js";
 
-
 /**
  * Handles user login for the mobile application.
  *
@@ -58,7 +57,7 @@ export async function register(req, res) {
   try {
     const { email, firstname, dob, lastname, password } = req.body;
 
-    const newUser = await processRegister(
+    const { newUser, token } = await processRegister(
       email,
       firstname,
       dob,
@@ -74,12 +73,12 @@ export async function register(req, res) {
     });
   } catch (err) {
     console.log(err);
-    if (error.message === "EMAIL_ALREADY_REGISTERED") {
-      return res.status(409).json({ error: "Email already registered" }); 
+    if (err.message === "EMAIL_ALREADY_REGISTERED") {
+      return res.status(409).json({ error: "Email already registered" });
     }
 
-    if (error.message === "REGISTER_FAILED") {
-      return res.status(500).json({ error: "Registration failed" }); 
+    if (err.message === "REGISTER_FAILED") {
+      return res.status(500).json({ error: "Registration failed" });
     }
     res.status(500).json({ error: "Server error" });
   }
@@ -98,6 +97,7 @@ export async function register(req, res) {
 export async function forgetPassword(req, res) {
   try {
     const { email } = req.body;
+    console.log(email);
 
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
@@ -142,7 +142,6 @@ export async function checkOtp(req, res) {
       user_id: userId,
     });
   } catch (error) {
-    console.error(error);
     if (error.message === "OTP_INVALID") {
       return res.status(404).json({ error: "Invalid OTP Passcode" });
     }

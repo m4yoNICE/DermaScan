@@ -51,7 +51,7 @@ const Register = () => {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields"
+        "Please fill out all required fields",
       );
     }
 
@@ -59,7 +59,7 @@ const Register = () => {
       return ToastMessage(
         "error",
         "Password Mismatch",
-        "Passwords do not match"
+        "Passwords do not match",
       );
     }
 
@@ -67,25 +67,25 @@ const Register = () => {
       return ToastMessage(
         "error",
         "Invalid Email",
-        "Please enter a valid email address"
+        "Please enter a valid email address",
       );
     }
-    const strongPasswordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    // const strongPasswordRegex =
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    if (!strongPasswordRegex.test(password)) {
-      return ToastMessage(
-        "error",
-        "Weak Password",
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-      );
-    }
+    // if (!strongPasswordRegex.test(password)) {
+    //   return ToastMessage(
+    //     "error",
+    //     "Weak Password",
+    //     "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+    //   );
+    // }
 
     if (dob > new Date()) {
       return ToastMessage(
         "error",
         "Invalid Date",
-        "Date of birth cannot be in the future"
+        "Date of birth cannot be in the future",
       );
     }
 
@@ -99,7 +99,7 @@ const Register = () => {
         ToastMessage(
           "success",
           "Registration Successful!",
-          "Welcome aboard 👋"
+          "Welcome aboard 👋",
         );
         router.push("/BaumannQuestionnaire");
       }

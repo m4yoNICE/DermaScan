@@ -156,7 +156,7 @@ const Login = () => {
           <View
             style={{ width: "100%", alignItems: "center", marginBottom: 10 }}
           >
-            <Link href="/ForgetPassword" style={{ color: "#00CC99" }}>
+            <Link href="/(OTP)/ForgetPassword" style={{ color: "#00CC99" }}>
               Forgot Password?
             </Link>
           </View>
