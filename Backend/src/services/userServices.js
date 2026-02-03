@@ -2,6 +2,8 @@ import { db } from "../config/db.js";
 import { users, skinData } from "../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+
+//update User
 export async function updateUser(
   userId,
   firstname,
@@ -31,12 +33,12 @@ export async function updateUser(
   return { success: true };
 }
 
-export async function deleteUser(id) {
+export async function deleteUser(userId) {
   const result = await db.delete(users).where(eq(users.id, userId));
   return result.affectedRows > 0;
 }
 
-export async function getUserId(id) {
+export async function getUserId(userId) {
   return await db.query.users.findFirst({ where: eq(users.id, userId) });
 }
 

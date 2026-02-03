@@ -1,36 +1,29 @@
 import { Http } from "./Http";
 
-const loginAccountAPI = (data) => {
-  return Http.post("/admin/auth/login", data);
-};
-
-const fetchUsersAPI = () => {
-  return Http.get("/admin/users/");
-};
-
-const CreateUsersAPI = (formData) => {
-  return Http.post("/admin/users/", formData);
-};
-
-const getUserById = (id) => {
-  return Http.get(`admin/users/${id}`);
-};
-
-const editUserAPI = (id, userData) => {
-  return Http.put(`/admin/users/${id}`, userData);
-};
-
-const deleteUserAPI = (id) => {
-  return Http.delete(`/admin/users/${id}`);
-};
-
 const Api = {
-  loginAccountAPI,
-  fetchUsersAPI,
-  deleteUserAPI,
-  editUserAPI,
-  CreateUsersAPI,
-  getUserById,
+  loginAccountAPI: (data) => {
+    return Http.post("/api/admin/auth/login", data);
+  },
+
+  fetchUsersAPI: () => {
+    return Http.get("/api/admin/users/");
+  },
+
+  CreateUsersAPI: (formData) => {
+    return Http.post("/api/admin/users/", formData);
+  },
+
+  getUserById: (id) => {
+    return Http.get("/api/admin/users/" + id);
+  },
+
+  editUserAPI: (id, userData) => {
+    return Http.put("/api/admin/users/" + id, userData);
+  },
+
+  deleteUserAPI: (id) => {
+    return Http.delete("/api/admin/users/" + id);
+  },
 };
 
 export default Api;

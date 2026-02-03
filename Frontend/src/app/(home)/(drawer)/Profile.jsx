@@ -50,7 +50,7 @@ const Profile = () => {
   // fetch latest user data
   const fetchUserData = async () => {
     try {
-      const res = await Api.getUserbyTokenAPI();
+      const res = await Api.getUserByTokenAPI();
       setFirstname(res.data.first_name || "");
       setLastname(res.data.last_name || "");
       setEmail(res.data.email || "");
@@ -62,7 +62,7 @@ const Profile = () => {
       ToastMessage(
         "error",
         "Fetch Failed",
-        "Unable to retrieve your profile data."
+        "Unable to retrieve your profile data.",
       );
     }
   };
@@ -70,7 +70,7 @@ const Profile = () => {
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
-    }, [])
+    }, []),
   );
 
   // Update User Profile
@@ -79,7 +79,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields."
+        "Please fill out all required fields.",
       );
     }
 
@@ -87,7 +87,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Missing Current Password",
-        "Enter your current password to change it."
+        "Enter your current password to change it.",
       );
     }
 
@@ -95,7 +95,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Password Mismatch",
-        "New passwords do not match."
+        "New passwords do not match.",
       );
     }
 
@@ -103,7 +103,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Invalid Date",
-        "Date of birth cannot be in the future."
+        "Date of birth cannot be in the future.",
       );
     }
 
@@ -124,7 +124,7 @@ const Profile = () => {
       ToastMessage(
         "success",
         "Profile Updated",
-        "Your changes have been saved."
+        "Your changes have been saved.",
       );
     } catch (error) {
       console.error("Update Error:", error);
@@ -132,7 +132,7 @@ const Profile = () => {
         ToastMessage(
           "error",
           "Server Error",
-          error.response.data?.error || "Something went wrong."
+          error.response.data?.error || "Something went wrong.",
         );
       } else if (error.request) {
         ToastMessage("error", "Network Error", "Unable to reach the server.");
@@ -150,7 +150,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Password Required",
-        "Enter your password to delete."
+        "Enter your password to delete.",
       );
     }
 
@@ -179,7 +179,7 @@ const Profile = () => {
               ToastMessage(
                 "success",
                 "Skin Data Cleared",
-                "Your skin type has been reset."
+                "Your skin type has been reset.",
               );
               router.push("/BaumannQuestionnaire");
             } catch (error) {
@@ -187,12 +187,12 @@ const Profile = () => {
               ToastMessage(
                 "error",
                 "Failed",
-                "Unable to reset your skin data."
+                "Unable to reset your skin data.",
               );
             }
           },
         },
-      ]
+      ],
     );
   };
   return (

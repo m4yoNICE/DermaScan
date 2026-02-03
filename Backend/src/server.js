@@ -31,16 +31,17 @@ app.use(express.json());
 
 //static
 app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
+
 //users
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/journals", journalRoutes);
-app.use("/images", imageRoutes);
-app.use("/condition", skinAnalysisRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/journals", journalRoutes);
+app.use("/api/images", imageRoutes);
+app.use("/api/condition", skinAnalysisRoutes);
 
 //admin
-app.use("/admin/auth", adminAuthRoutes);
-app.use("/admin/users", adminUserRoutes);
+app.use("/api/admin/auth", adminAuthRoutes);
+app.use("/api/admin/users", adminUserRoutes);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

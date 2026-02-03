@@ -22,7 +22,9 @@ export const journals = mysqlTable("journals", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
 });
 
 export const otp = mysqlTable("otp", {
@@ -36,6 +38,9 @@ export const otp = mysqlTable("otp", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
 });
 
 export const role = mysqlTable("role", {
@@ -44,7 +49,9 @@ export const role = mysqlTable("role", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
 });
 
 export const skinAnalysisTransactions = mysqlTable(
@@ -62,15 +69,16 @@ export const skinAnalysisTransactions = mysqlTable(
         onUpdate: "cascade",
       }),
     status: varchar({ length: 255 }).notNull(),
-    conditionId: int("condition_id")
-      .notNull()
-      .references(() => skinConditions.id, {
-        onDelete: "restrict",
-        onUpdate: "cascade",
-      }),
-    confidenceScores: double("confidence_scores").notNull(),
+    conditionId: int("condition_id").references(() => skinConditions.id, {
+      onDelete: "restrict",
+      onUpdate: "cascade",
+    }),
+    confidenceScores: double("confidence_scores"),
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
+      .notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
       .notNull(),
   },
 );
@@ -89,17 +97,21 @@ export const skinCareProducts = mysqlTable("skin_care_products", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
 });
 
 export const skinConditions = mysqlTable("skin_conditions", {
   id: int().autoincrement().primaryKey().notNull(),
-  condition: varchar({ length: 255 }).default("NULL"),
-  canRecommend: varchar("can_recommend", { length: 255 }).default("NULL"),
+  condition: varchar({ length: 255 }).notNull(),
+  canRecommend: varchar("can_recommend", { length: 255 }).notNull(),
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
 });
 
 export const skinData = mysqlTable(
@@ -109,16 +121,16 @@ export const skinData = mysqlTable(
     userId: int("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
-    skinType: varchar("skin_type", { length: 255 }).default("NULL"),
-    skinSensitivity: varchar("skin_sensitivity", { length: 255 }).default(
-      "NULL",
-    ),
-    pigmentation: varchar({ length: 255 }).default("NULL"),
-    aging: varchar({ length: 255 }).default("NULL"),
+    skinType: varchar("skin_type", { length: 255 }),
+    skinSensitivity: varchar("skin_sensitivity", { length: 255 }),
+    pigmentation: varchar({ length: 255 }),
+    aging: varchar({ length: 255 }),
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+      .notNull(),
   },
   (table) => [unique("Skin_data_user_id_key").on(table.userId)],
 );
@@ -138,8 +150,8 @@ export const users = mysqlTable(
   "users",
   {
     id: int().autoincrement().primaryKey().notNull(),
-    firstName: varchar("first_name", { length: 255 }).default("NULL"),
-    lastName: varchar("last_name", { length: 255 }).default("NULL"),
+    firstName: varchar("first_name", { length: 255 }).notNull(),
+    lastName: varchar("last_name", { length: 255 }).notNull(),
     email: varchar({ length: 255 }).notNull(),
     password: varchar({ length: 255 }).notNull(),
     roleId: int("role_id")

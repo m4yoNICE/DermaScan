@@ -10,7 +10,8 @@ export async function getuserid(req, res) {
   try {
     const userId = req.user.id;
     const user = await getUserId(userId);
-    if (!user) {
+    console.log(user);
+    if (!user || !user.dataValues) {
       return res.status(404).json({ error: "User not found" });
     }
     const { password, ...userData } = user.dataValues;
@@ -33,7 +34,7 @@ export async function edituser(req, res) {
       lastname,
       birthdate,
       currentPassword,
-      newPassword
+      newPassword,
     );
 
     if (!result) {
@@ -90,7 +91,7 @@ export async function createskindata(req, res) {
       skin_type,
       skin_sensitivity,
       pigmentation,
-      aging
+      aging,
     );
     if (result[0] === 0) {
       return res
