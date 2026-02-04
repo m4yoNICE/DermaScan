@@ -164,10 +164,3 @@ export const users = mysqlTable(
   },
   (table) => [unique("users_email_key").on(table.email)],
 );
-
-export const userRelations = relations(users, ({ one }) => ({
-  role: one(role, {
-    fields: [users.roleId],
-    references: [role.id],
-  }),
-}));
