@@ -1,49 +1,68 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AdminContext } from "../../context/AdminContext"
-
-import {useContext, useState, useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  clearError,
+} from "../../redux/slices/authSlice";
 import API from "../../services/Api";
+import { Eye, EyeOff } from "lucide-react";
 
-const LoginAdmin =  () => {
+const LoginAdmin = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AdminContext);
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [localError, setLocalError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
-    if(!email || !password){
-      alert("Please fill out all required fields");
+    setLocalError("");
+    dispatch(clearError());
+
+    if (!email || !password) {
+      setLocalError("Please fill out all required fields");
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!emailRegex.test(email)){
-      alert("Please enter a valid email address");
+    if (!emailRegex.test(email)) {
+      setLocalError("Please enter a valid email address");
       return;
-   }
-   try {
-    const loginData = { email: email.trim(), password };
-    console.log("Login Data:", loginData);
-    const res = await API.loginAccountAPI(loginData);
+    }
 
-    await login(email, password);
-    console.log("Login successful:", res.data);
-    navigate("/dashboard");
+    try {
+      dispatch(loginStart());
 
+      const loginData = { email: email.trim(), password };
+      const res = await API.loginAccountAPI(loginData);
 
-   } catch (error) {
-    // Prevent crashes if error.response is undefined
-    const msg =
-      error?.response?.data?.message ||
-      error?.message ||
-      "An unexpected error occurred";
+      const userData = res.data?.admin || res.data?.user;
+      const token = res.data?.token;
 
-    console.error("Login error:", msg, error);
+      if (!userData || !token) {
+        throw new Error("Invalid login response");
+      }
 
-    alert(msg);
-  }
-};
+      dispatch(loginSuccess({ user: userData, token }));
+      navigate("/dashboard");
+    } catch (error) {
+      const msg =
+        error?.response?.data?.error || // 👈 this matches your API response
+        error?.response?.data?.message ||
+        error?.message ||
+        "An unexpected error occurred";
+
+      dispatch(loginFailure(msg));
+      setLocalError(msg);
+    }
+  };
+
+  const displayError = localError || error;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -51,40 +70,63 @@ const LoginAdmin =  () => {
         <h2 className="text-2xl font-bold mb-6 text-center">
           DermaScan+ Admin
         </h2>
-            <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleLogin();
-      }}
-      className="space-y-4"
-    >
-      <div>
-        <label className="block text-gray-700">Email</label>
-        <input
-          type="email"
-          placeholder="Enter your email"
-          className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block text-gray-700">Password</label>
-        <input
-          type="password"
-          placeholder="Enter your password"
-          className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Login
-      </button>
-    </form>
+
+        {displayError && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            {displayError}
+          </div>
+        )}
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
+          className="space-y-4"
+        >
+          <div>
+            <label className="block text-gray-700">Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700">Password</label>
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-12"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                disabled={loading}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
         <p className="mt-4 text-center text-gray-500 text-sm">
           &copy; {new Date().getFullYear()} Admin Portal
         </p>
