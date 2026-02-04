@@ -131,7 +131,6 @@ export async function createUser(
   role,
 ) {
   const passwordHash = await bcrypt.hash(password, 10);
-  birthdate = birthdate.split("T")[0];
   await db.insert(users).values({
     email,
     first_name,
