@@ -9,7 +9,7 @@ import {
   unique,
   boolean,
 } from "drizzle-orm/mysql-core";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const journals = mysqlTable("journals", {
   id: int().autoincrement().primaryKey().notNull(),
@@ -154,17 +154,13 @@ export const users = mysqlTable(
     lastName: varchar("last_name", { length: 255 }).notNull(),
     email: varchar({ length: 255 }).notNull(),
     password: varchar({ length: 255 }).notNull(),
-    roleId: int("role_id")
-      .notNull()
-      .references(() => role.id, { onDelete: "restrict", onUpdate: "cascade" }),
+    roleId: int("role_id").notNull(),
     // you can use { mode: 'date' }, if you want to have Date as type for this column
     birthdate: date({ mode: "string" }).default(sql`NULL`),
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }),
   },
   (table) => [unique("users_email_key").on(table.email)],
 );
