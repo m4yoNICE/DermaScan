@@ -77,7 +77,8 @@ const SkinCamera = () => {
     setIsLoading(true);
 
     try {
-      const res = await ImageApi.uploadImageAPI(capturePic.uri);
+      console.log(capturePic);
+      const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
       const { result } = res.data;
 
       if (result === "failed") {
@@ -91,25 +92,8 @@ const SkinCamera = () => {
         pathname: "/Results",
         params: { data: JSON.stringify(res.data) },
       });
-      // const mockData = {
-      //   data: {
-      //     condition_id: 9,
-      //     confidence_scores: 0.817634,
-      //     created_at: "2025-11-30T11:36:37.000Z",
-      //     id: 32,
-      //     image_id: 11,
-      //     status: "success",
-      //     user_id: 20,
-      //   },
-      //   message: "Analysis complete",
-      //   result: "success",
-      // };
-      // router.push({
-      //   pathname: "/Results",
-      //   params: { data: JSON.stringify(mockData) },
-      // });
     } catch (err) {
-      console.log("UPLOAD FAILED →", err?.message || err);
+      console.log("UPLOAD FAILED →", err);
     } finally {
       setIsLoading(false);
     }

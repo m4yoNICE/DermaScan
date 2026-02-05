@@ -22,9 +22,9 @@ export const journals = mysqlTable("journals", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
 export const otp = mysqlTable("otp", {
@@ -38,9 +38,9 @@ export const otp = mysqlTable("otp", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
 export const role = mysqlTable("role", {
@@ -49,9 +49,9 @@ export const role = mysqlTable("role", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
 export const skinAnalysisTransactions = mysqlTable(
@@ -77,9 +77,9 @@ export const skinAnalysisTransactions = mysqlTable(
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+      sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+    ),
   },
 );
 
@@ -97,9 +97,9 @@ export const skinCareProducts = mysqlTable("skin_care_products", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
 export const skinConditions = mysqlTable("skin_conditions", {
@@ -109,9 +109,9 @@ export const skinConditions = mysqlTable("skin_conditions", {
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
 export const skinData = mysqlTable(
@@ -128,9 +128,9 @@ export const skinData = mysqlTable(
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+      sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+    ),
   },
   (table) => [unique("Skin_data_user_id_key").on(table.userId)],
 );
@@ -141,9 +141,9 @@ export const storedImages = mysqlTable("stored_images", {
   userId: int("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
-  createdAt: datetime("created_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3)`)
-    .notNull(),
+  createdAt: datetime("created_at", { mode: "string", fsp: 3 }).default(
+    sql`CURRENT_TIMESTAMP(3)`,
+  ),
 });
 
 export const users = mysqlTable(
@@ -162,9 +162,9 @@ export const users = mysqlTable(
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
+    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 }).default(
+      sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`,
+    ),
   },
   (table) => [unique("users_email_key").on(table.email)],
 );

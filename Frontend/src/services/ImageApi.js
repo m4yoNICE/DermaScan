@@ -14,6 +14,7 @@ function formDataContainter(uri) {
 const ImageApi = {
   uploadSkinImageAPI: async (uri) => {
     const formData = formDataContainter(uri);
+    console.log("ImageAPI: ", formData);
     return Http.post("/api/condition/skin", formData);
   },
 };
