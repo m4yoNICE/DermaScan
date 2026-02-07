@@ -9,12 +9,16 @@ const Api = {
     return Http.get("/api/admin/users/");
   },
 
+  getUsersData: (config = {}) => {
+    return Http.get("/api/admin/users/getData", config);
+  },
+
   CreateUsersAPI: (formData) => {
     return Http.post("/api/admin/users/", formData);
   },
 
   getUserById: (id) => {
-    return Http.get("/api/admin/users/" + id);
+    return Http.get("/api/admin/users/getById/" + id);
   },
 
   editUserAPI: (id, userData) => {
@@ -22,7 +26,7 @@ const Api = {
   },
 
   deleteUserAPI: (id) => {
-    return Http.delete("/api/admin/users/" + id);
+    return Http.delete("/api/admin/users/delete/" + id);
   },
 };
 

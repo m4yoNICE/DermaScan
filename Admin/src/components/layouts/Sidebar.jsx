@@ -20,17 +20,18 @@ const Sidebar = () => {
 
   return (
     <div className="w-64 min-h-screen bg-gradient-to-b from-[#00CC99] to-[#00CC99] text-white flex flex-col">
-      {/* Header */}
-      <div className="text-center border-b border-white/30">
-        <div className="flex items-center justify-center mb-2">
+      {/* Header - match the header height */}
+      <div className="text-center border-b border-white/30 py-3">
+        {/* Added py-3 to match header */}
+        <div className="flex items-center justify-center">
           <h1 className="text-2xl font-bold">DermaScan+</h1>
         </div>
         <p className="text-sm tracking-widest font-semibold">A D M I N</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
+      <nav className="flex-1 mt-4">
+        <ul className="">
           {navItems.map((item) => (
             <li key={item.path}>
               <NavLink

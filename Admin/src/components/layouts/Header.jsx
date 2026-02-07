@@ -9,7 +9,6 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -26,37 +25,32 @@ const Header = () => {
   };
 
   return (
-    <div className="bg-[#EFF6F8] px-8 py-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Welcome back, Glaisa Mae!
-        </h1>
-
+    /* 1. Remove the border-b from this main container */
+    <div className="relative"> 
+      <div className="flex justify-end items-center px-8 py-3">
         <div className="relative" ref={menuRef}>
-          <button onClick={() => setOpen(!open)}>
-            <img
-              src="https://i.pravatar.cc/150?img=47"
-              alt="Avatar"
-              className="w-12 h-12 rounded-full object-cover border border-gray-300"
-            />
+          <button onClick={() => setOpen(!open)} className="focus:outline-none">
+            <div className="p-[2px] rounded-full border border-gray-200 shadow-sm">
+               <img
+                src="https://i.pravatar.cc/150?img=47"
+                alt="Avatar"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            </div>
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border">
-              <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
-                Settings
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-              >
-                Logout
-              </button>
+            <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-xl border z-50">
+              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</button>
+              <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
             </div>
           )}
         </div>
       </div>
+
+      {/* 2. This is the custom border line */}
+      {/* mx-8 creates the gap on the left and right to match your design */}
+      <div className="mx-8 border-b border-[#00CC99]/40" />
     </div>
   );
 };
