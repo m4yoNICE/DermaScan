@@ -56,46 +56,6 @@ Open the Expo Go app and scan the QR code in the terminal
 
 ---
 
-### Database Migrations (Backend)
-
-**Create new migration:**
-
-```bash
-npx prisma migrate dev --name your-migration-name
-```
-
-**Reset database (WARNING: deletes all data):**
-
-```bash
-npx prisma migrate reset
-```
-
-**Check migration status:**
-
-```bash
-npx prisma migrate status
-```
-
-**Seed database:**
-
-```bash
-node prisma/seed.js
-```
-
-**Generate Prisma client (after schema changes):**
-
-```bash
-npx prisma generate
-```
-
-**View database in GUI:**
-
-```bash
-npx prisma studio
-```
-
----
-
 ### Python Setup (for AI/ML features)
 
 Login to Hugging Face (if using models from HF):

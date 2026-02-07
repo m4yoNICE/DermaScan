@@ -97,7 +97,14 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const registerData = { email, firstname, dob, lastname, password };
+      const registerData = {
+        email,
+        firstname,
+        dob: dob.toISOString().split("T")[0],
+        lastname,
+        password,
+      };
+      console.log(registerData);
       const res = await Api.registerAccountAPI(registerData);
       const { token, user } = res.data;
       if (token && user) {

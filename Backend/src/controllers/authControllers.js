@@ -21,6 +21,7 @@ import {
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
+    console.log("controller: ", email, password);
 
     const { user, token } = await processLogin(email, password);
 
@@ -54,8 +55,17 @@ export async function login(req, res) {
  * @returns {Promise<void>}
  */
 export async function register(req, res) {
+  console.log(req.body);
   try {
     const { email, firstname, dob, lastname, password } = req.body;
+
+    //using regex to further check date format since its the reason why it crashes
+    const dobRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dob || !dobRegex.test(dob)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid date format. Use YYYY-MM-DD." });
+    }
 
     const { newUser, token } = await processRegister(
       email,

@@ -15,7 +15,8 @@ export async function getuserid(req, res) {
     const user = await getUserWithSkinData(userId);
     console.log("fetched user data: ", user);
 >>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
-    if (!user) {
+    console.log(user);
+    if (!user || !user.dataValues) {
       return res.status(404).json({ error: "User not found" });
     }
     return res.status(200).json(user);
@@ -37,7 +38,7 @@ export async function edituser(req, res) {
       lastname,
       birthdate,
       currentPassword,
-      newPassword
+      newPassword,
     );
 
     if (!result) {
@@ -94,7 +95,7 @@ export async function createskindata(req, res) {
       skin_type,
       skin_sensitivity,
       pigmentation,
-      aging
+      aging,
     );
     if (result[0] === 0) {
       return res

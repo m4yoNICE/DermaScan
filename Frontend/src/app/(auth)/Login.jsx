@@ -49,6 +49,7 @@ const Login = () => {
   };
 
   const LoginAccount = async () => {
+    console.log("LoginAccount called: ", { email, password });
     if (!email || !password)
       return showError("Please fill out all required fields");
 

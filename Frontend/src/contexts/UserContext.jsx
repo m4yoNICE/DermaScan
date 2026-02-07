@@ -59,9 +59,6 @@ export function UserProvider({ children }) {
     await AsyncStorage.removeItem("user");
     router.push("/");
   };
-  useEffect(() => {
-    setLogoutCallback(logout);
-  }, []);
   return (
     <UserContext.Provider value={{ user, token, loading, login, logout }}>
       {children}

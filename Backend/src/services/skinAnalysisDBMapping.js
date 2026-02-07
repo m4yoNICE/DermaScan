@@ -1,5 +1,6 @@
 import { skinConditions, skinAnalysisTransactions } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
+import { eq } from "drizzle-orm";
 
 export async function mapSkinResultToCatalog(user_id, skinResult) {
   if (!skinResult || !skinResult.top3) return null;

@@ -22,7 +22,7 @@ const Home = () => {
   useFocusEffect(
     useCallback(() => {
       getAllJournal();
-    }, [])
+    }, []),
   );
 
   const snapPoints = useMemo(() => ["25%", "50%"], []);
@@ -34,7 +34,7 @@ const Home = () => {
   // ------------------------------
   const getAllJournal = async () => {
     try {
-      const res = await Api.getAllJournalAPI();
+      const res = await Api.getAllJournalsAPI();
       setJournals(res.data);
 
       const match = res.data.find((j) => j.journal_date === selected);
@@ -45,7 +45,7 @@ const Home = () => {
       ToastMessage(
         "error",
         "Unexpected Error",
-        error.message || "Unknown error"
+        error.message || "Unknown error",
       );
     }
   };
@@ -70,7 +70,7 @@ const Home = () => {
         appearsOnIndex={2}
       />
     ),
-    []
+    [],
   );
 
   // ------------------------------
@@ -121,7 +121,7 @@ const Home = () => {
         ToastMessage(
           "error",
           "Server Error",
-          error.response.data?.error || "Something went wrong."
+          error.response.data?.error || "Something went wrong.",
         );
       } else if (error.request) {
         ToastMessage("error", "Network Error", "Unable to reach the server.");
