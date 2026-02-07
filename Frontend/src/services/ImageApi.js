@@ -1,7 +1,6 @@
 import { Http } from "./Http";
 
-const uploadImageAPI = async (uri) => {
-  console.log("URI IN API: ", uri);
+function createImageFormData(uri, fieldName = "image") {
   const filename = uri.split("/").pop() || "image.jpg";
   const formData = new FormData();
   formData.append(fieldName, {
@@ -12,11 +11,17 @@ const uploadImageAPI = async (uri) => {
   return formData;
 }
 
+async function uploadImage(endpoint, uri, fieldName = "image") {
+  const formData = createImageFormData(uri, fieldName);
+  return Http.post(endpoint, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
 const ImageApi = {
-  uploadSkinImageAPI: async (uri) => {
-    const formData = formDataContainter(uri);
-    return Http.post("/api/condition/skin", formData);
-  },
+  uploadSkinImageAPI: (uri) => uploadImage("/api/condition/skin", uri),
+  uploadProfilePicAPI: (uri) => uploadImage("/api/profile/pic", uri),
+  // add more as needed
 };
 
 export default ImageApi;

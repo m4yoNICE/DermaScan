@@ -38,10 +38,6 @@ export async function deleteUser(userId) {
   return result.affectedRows > 0;
 }
 
-<<<<<<< HEAD
-export async function getUserId(id) {
-  return await db.query.users.findFirst({ where: eq(users.id, userId) });
-=======
 export async function getUserWithSkinData(userId) {
   const result = await db
     .select({
@@ -59,7 +55,6 @@ export async function getUserWithSkinData(userId) {
     .where(eq(users.id, userId));
 
   return result[0] || null;
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
 }
 
 export async function createSkinData(

@@ -76,11 +76,7 @@ const SkinCamera = () => {
     setIsLoading(true);
 
     try {
-<<<<<<< HEAD
-      const res = await ImageApi.uploadImageAPI(capturePic.uri);
-=======
       const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
       const { result } = res.data;
 
       if (result === "failed") {
@@ -94,25 +90,8 @@ const SkinCamera = () => {
         pathname: "/Results",
         params: { data: JSON.stringify(res.data) },
       });
-      // const mockData = {
-      //   data: {
-      //     condition_id: 9,
-      //     confidence_scores: 0.817634,
-      //     created_at: "2025-11-30T11:36:37.000Z",
-      //     id: 32,
-      //     image_id: 11,
-      //     status: "success",
-      //     user_id: 20,
-      //   },
-      //   message: "Analysis complete",
-      //   result: "success",
-      // };
-      // router.push({
-      //   pathname: "/Results",
-      //   params: { data: JSON.stringify(mockData) },
-      // });
     } catch (err) {
-      console.log("UPLOAD FAILED →", err?.message || err);
+      console.log("UPLOAD FAILED →", err);
     } finally {
       setIsLoading(false);
     }

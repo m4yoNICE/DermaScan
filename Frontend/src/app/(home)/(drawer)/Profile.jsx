@@ -54,7 +54,6 @@ const Profile = () => {
   // fetch latest user data
   const fetchUserData = async () => {
     try {
-<<<<<<< HEAD
       const res = await Api.getUserbyTokenAPI();
       setFirstname(res.data.first_name || "");
       setLastname(res.data.last_name || "");
@@ -62,17 +61,6 @@ const Profile = () => {
       setDob(res.data.birthdate ? new Date(res.data.birthdate) : null);
       setSkinType(res.data.skin_type || null);
       setSkinSensitive(res.data.skin_sensitivity || null);
-=======
-      const res = await Api.getUserByTokenAPI();
-      setUserData({
-        firstname: res.data.firstName || "",
-        lastname: res.data.lastName || "",
-        email: res.data.email || "",
-        dob: res.data.birthdate ? new Date(res.data.birthdate) : null,
-        skinType: res.data.skinType || null,
-        skinSensitive: res.data.skinSensitivity || null,
-      });
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
     } catch (error) {
       console.error("Fetch user error:", error);
       ToastMessage(
@@ -95,7 +83,6 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Missing Fields",
-<<<<<<< HEAD
         "Please fill out all required fields."
       );
     }
@@ -124,19 +111,6 @@ const Profile = () => {
       );
     }
 
-=======
-        "Fill out all required fields.",
-      );
-    }
-
-    if (passwordData.new && passwordData.new !== passwordData.confirm) {
-      return ToastMessage(
-        "error",
-        "Password Mismatch",
-        "New passwords don't match.",
-      );
-    }
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
     try {
       const updateData = {
         firstname: userData.firstname,
@@ -153,16 +127,11 @@ const Profile = () => {
       await Api.editUserAPI(updateData);
       ToastMessage("success", "Profile Updated", "Changes saved.");
 
-<<<<<<< HEAD
       ToastMessage(
         "success",
         "Profile Updated",
         "Your changes have been saved.",
       );
-=======
-      // Clear password fields after update
-      setPasswordData({ current: "", new: "", confirm: "" });
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
     } catch (error) {
       console.error("Update Error:", error);
       if (error.response) {

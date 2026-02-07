@@ -2,11 +2,7 @@ import { ToastMessage } from "@/components/ToastMessage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { Platform } from "react-native";
-<<<<<<< HEAD
-import { triggerLogout } from "./AuthRef";
-=======
 import { triggerLogout } from "./logoutReference";
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
 
 import Constants from "expo-constants";
 
@@ -30,12 +26,16 @@ export const Http = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+//ako kidungang ang http og ImageHttp
 const addAuthToken = async (config) => {
   const token = await AsyncStorage.getItem("authToken");
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
   }
+  // if (config.data instanceof FormData) {
+  //   config.headers["Content-Type"] = "multipart/form-data";
+  // }
   return config;
 };
 
@@ -48,11 +48,27 @@ const handleExpiryToken = async (error) => {
 
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("user");
-    router.replace("/");
+
+    ToastMessage("error", "Session Expired", "Please log in again.");
+    triggerLogout();
   }
 
   return Promise.reject(error);
 };
 
+//i will over document these for my sake
+// Axios interceptors behave differently from Express middleware.
+// Response interceptors receive (response, error), not (req, res).
+//
+// request.use(addAuthToken)
+// - Attaches the Authorization header before each request.
+//
+// response.use(onSuccess, onError)
+// - onSuccess handles all 2xx responses.
+// - onError handles all non-2xx responses (401, 403, 500, etc.).
+//
+// We use handleExpiryToken in the error interceptor because Http.js lives
+// outside the Expo Router tree. It cannot access navigation or context directly,
+// so it triggers logout via triggerLogout().
 Http.interceptors.request.use(addAuthToken);
 Http.interceptors.response.use((res) => res, handleExpiryToken);
