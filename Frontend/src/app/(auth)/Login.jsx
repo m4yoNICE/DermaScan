@@ -1,15 +1,18 @@
 import {
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
+  Keyboard,
 } from "react-native";
 import { Link, router } from "expo-router";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 //external ui
 import { Feather, Ionicons } from "@expo/vector-icons";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
 
 //own ui
 import Button from "@/components/Button";
@@ -28,7 +31,18 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(null);
+  const sheetRef = useRef(null);
+  const snapPoints = ["60%", "90%"];
 
+  useEffect(() => {
+    const keyboardHide = Keyboard.addListener("keyboardDidHide", () => {
+      sheetRef.current?.snapToIndex(0);
+    });
+
+    return () => {
+      keyboardHide.remove();
+    };
+  }, []);
   const showError = (msg) => {
     setError(msg);
     setTimeout(() => setError(null), 7000);
@@ -71,11 +85,16 @@ const Login = () => {
         </View>
       </View>
       <BottomSheet
+        ref={sheetRef}
         index={0}
-        snapPoints={["60%"]}
+        snapPoints={snapPoints}
         enablePanDownToClose={false}
         handleComponent={null}
         enableContentPanningGesture={false}
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+        animateOnMount={false} // ADD THIS
         backgroundStyle={{
           backgroundColor: "white",
           borderRadius: 40,
@@ -105,7 +124,7 @@ const Login = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Email address"
               value={email}
@@ -123,7 +142,7 @@ const Login = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Password"
               value={password}
@@ -149,7 +168,7 @@ const Login = () => {
           />
 
           <Text style={styles.signUp}>
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/Register" style={styles.signUpLink}>
               Sign Up
             </Link>
@@ -175,7 +194,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#05d6b2",
   },
   landingScale: {
-    transform: [{ scale: 0.9 }], // make smaller
+    transform: [{ scale: 0.9 }],
   },
   backgroundWrapper: {
     height: "70%",

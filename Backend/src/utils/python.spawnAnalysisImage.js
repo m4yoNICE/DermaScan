@@ -23,13 +23,13 @@ export async function checkImgPython(imageBuffer) {
 
     python.stdout.on("data", (data) => {
       const text = data.toString();
-      console.log("Python stdout:", text); // ← Was using undefined 'text'
+      console.log("Python stdout:", text); 
       output += text;
     });
 
     python.stderr.on("data", (data) => {
       const error = data.toString();
-      console.error("Python stderr:", error); // ← Was using undefined 'error'
+      console.error("Python stderr:", error); 
       errorOutput += error;
     });
     python.on("close", (code) => {

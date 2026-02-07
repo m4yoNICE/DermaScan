@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useEffect, useState, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
+import { setLogoutCallback } from "@/services/logoutReference";
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
@@ -54,6 +55,9 @@ export function UserProvider({ children }) {
     await AsyncStorage.removeItem("user");
     router.push("/");
   };
+  useEffect(() => {
+    setLogoutCallback(logout);
+  }, []);
   return (
     <UserContext.Provider value={{ user, token, loading, login, logout }}>
       {children}

@@ -19,18 +19,22 @@ const Profile = () => {
   const { user, logout } = useContext(UserContext);
 
   // Editable fields
-  const [firstname, setFirstname] = useState(user?.firstname || "");
-  const [lastname, setLastname] = useState(user?.lastname || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [dob, setDob] = useState(null);
-  const [skinType, setSkinType] = useState(null);
-  const [skinSensitive, setSkinSensitive] = useState(null);
+  const [userData, setUserData] = useState({
+    firstname: null,
+    lastname: null,
+    email: null,
+    dob: null,
+    skinType: null,
+    skinSensitive: null,
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    current: "",
+    new: "",
+    confirm: "",
+  });
 
   const [showPicker, setShowPicker] = useState(false);
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   // delete account
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -51,12 +55,14 @@ const Profile = () => {
   const fetchUserData = async () => {
     try {
       const res = await Api.getUserByTokenAPI();
-      setFirstname(res.data.first_name || "");
-      setLastname(res.data.last_name || "");
-      setEmail(res.data.email || "");
-      setDob(res.data.birthdate ? new Date(res.data.birthdate) : null);
-      setSkinType(res.data.skin_type || null);
-      setSkinSensitive(res.data.skin_sensitivity || null);
+      setUserData({
+        firstname: res.data.firstName || "",
+        lastname: res.data.lastName || "",
+        email: res.data.email || "",
+        dob: res.data.birthdate ? new Date(res.data.birthdate) : null,
+        skinType: res.data.skinType || null,
+        skinSensitive: res.data.skinSensitivity || null,
+      });
     } catch (error) {
       console.error("Fetch user error:", error);
       ToastMessage(
@@ -75,57 +81,39 @@ const Profile = () => {
 
   // Update User Profile
   const handleUpdate = async () => {
-    if (!firstname || !lastname || !email) {
+    if (!userData.firstname || !userData.lastname || !userData.email) {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields.",
+        "Fill out all required fields.",
       );
     }
 
-    if (newPassword && !currentPassword) {
-      return ToastMessage(
-        "error",
-        "Missing Current Password",
-        "Enter your current password to change it.",
-      );
-    }
-
-    if (newPassword && newPassword !== confirmPassword) {
+    if (passwordData.new && passwordData.new !== passwordData.confirm) {
       return ToastMessage(
         "error",
         "Password Mismatch",
-        "New passwords do not match.",
+        "New passwords don't match.",
       );
     }
-
-    if (dob && dob > new Date()) {
-      return ToastMessage(
-        "error",
-        "Invalid Date",
-        "Date of birth cannot be in the future.",
-      );
-    }
-
     try {
       const updateData = {
-        firstname,
-        lastname,
-        birthdate: dob ? dob.toISOString().split("T")[0] : null,
-        currentPassword,
-        newPassword: newPassword || null,
-        skin_type: skinType,
-        skin_sensitivity: skinSensitive,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
+        birthdate: userData.dob
+          ? userData.dob.toISOString().split("T")[0]
+          : null,
+        currentPassword: passwordData.current,
+        newPassword: passwordData.new || null,
+        skin_type: userData.skinType,
+        skin_sensitivity: userData.skinSensitive,
       };
 
-      const response = await Api.editUserAPI(updateData);
-      console.log("Profile updated:", response.data);
+      await Api.editUserAPI(updateData);
+      ToastMessage("success", "Profile Updated", "Changes saved.");
 
-      ToastMessage(
-        "success",
-        "Profile Updated",
-        "Your changes have been saved.",
-      );
+      // Clear password fields after update
+      setPasswordData({ current: "", new: "", confirm: "" });
     } catch (error) {
       console.error("Update Error:", error);
       if (error.response) {
@@ -207,29 +195,33 @@ const Profile = () => {
       <Text style={styles.text}>Email</Text>
       <TextInput
         style={[styles.input, { backgroundColor: "#f0f0f0", color: "gray" }]}
-        value={email}
+        value={userData.email}
         editable={false}
       />
 
       <Text style={styles.text}>First Name</Text>
       <TextInput
         style={styles.input}
-        value={firstname}
-        onChangeText={setFirstname}
+        value={userData.firstname}
+        onChangeText={(text) =>
+          setUserData((prev) => ({ ...prev, firstname: text }))
+        }
         placeholder="First Name"
       />
 
       <Text style={styles.text}>Last Name</Text>
       <TextInput
         style={styles.input}
-        value={lastname}
-        onChangeText={setLastname}
+        value={userData.lastname}
+        onChangeText={(text) =>
+          setUserData((prev) => ({ ...prev, lastname: text }))
+        }
         placeholder="Last Name"
       />
 
       <Text style={styles.text}>Date Of Birth</Text>
       <Button
-        title={dob ? formatDate(dob) : "Select Date of Birth"}
+        title={userData.dob ? formatDate(userData.dob) : "Select Date of Birth"}
         onPress={() => setShowPicker(true)}
         style={{
           backgroundColor: "#f9f9f9",
@@ -243,12 +235,13 @@ const Profile = () => {
 
       {showPicker && (
         <DateTimePicker
-          value={dob || new Date()}
+          value={userData.dob || new Date()}
           mode="date"
           display="default"
           onChange={(_, selectedDate) => {
             setShowPicker(false);
-            if (selectedDate) setDob(selectedDate);
+            if (selectedDate)
+              setUserData((prev) => ({ ...prev, dob: selectedDate }));
           }}
         />
       )}
@@ -257,8 +250,10 @@ const Profile = () => {
       <TextInput
         style={styles.input}
         placeholder="Current Password"
-        value={currentPassword}
-        onChangeText={setCurrentPassword}
+        value={passwordData.current}
+        onChangeText={(text) =>
+          setPasswordData((prev) => ({ ...prev, current: text }))
+        }
         secureTextEntry
       />
 
@@ -266,8 +261,10 @@ const Profile = () => {
       <TextInput
         style={styles.input}
         placeholder="New Password (optional)"
-        value={newPassword}
-        onChangeText={setNewPassword}
+        value={passwordData.new}
+        onChangeText={(text) =>
+          setPasswordData((prev) => ({ ...prev, new: text }))
+        }
         secureTextEntry
       />
 
@@ -275,8 +272,10 @@ const Profile = () => {
       <TextInput
         style={styles.input}
         placeholder="Confirm New Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        value={passwordData.confirm}
+        onChangeText={(text) =>
+          setPasswordData((prev) => ({ ...prev, confirm: text }))
+        }
         secureTextEntry
       />
 

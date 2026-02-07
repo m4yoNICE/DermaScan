@@ -1,6 +1,5 @@
 import { findCondtionById } from "../services/skinAnalysisDBMapping.js";
 import { analyzeSkin } from "../services/skinAnalysisOrchestrator.js";
-import { orchestrateSkinAnalysis as testAnalysis } from "../services/TESTskinAnalysisOrchestrator.js";
 
 export async function skinAnalysis(req, res) {
   console.log("skinAnalysis controller called: ", req.body);

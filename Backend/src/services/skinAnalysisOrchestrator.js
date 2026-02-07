@@ -1,8 +1,12 @@
-import { mapSkinResultToCatalog } from "./skinAnalysisDBMapping.js";
-import { skinAnalyze } from "../utils/pythonSkinAnalysis.js";
 import { saveBufferImage } from "../utils/saveBufferImage.js";
-import { createStoredImage } from "../services/imagesServices.js";
-import { checkImgPython } from "../utils/checkImageQuality.js";
+
+//ai pipeline
+import { checkImgPython } from "../utils/python.checkImageQuality.js";
+import { skinAnalyze } from "../utils/python.serverSkinAnalysis.js";
+
+//database pipeline
+import { createStoredImage } from "./imagesServices.js";
+import { mapSkinResultToCatalog } from "./skinAnalysisDBMapping.js";
 import { skinAnalysisTransactions } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm"; // Ensure this is imported
@@ -38,6 +42,9 @@ export async function analyzeSkin(userId, imageBuffer) {
     // === SKIN ANALYSIS ===
     console.log(`[${Date.now() - startTime}ms] Launching Python Skin AI...`);
     const skinResult = await skinAnalyze(imageBuffer);
+    console.log();
+    console.log(skinResult);
+    console.log();
     console.log(
       `[${Date.now() - startTime}ms] Python AI returned raw results.`,
     );
@@ -75,7 +82,7 @@ export async function analyzeSkin(userId, imageBuffer) {
 
       await db
         .update(skinAnalysisTransactions)
-        .set({ image_id: savedImage.id })
+        .set({ imageId: savedImage.id })
         .where(eq(skinAnalysisTransactions.id, transaction.id));
     }
 
