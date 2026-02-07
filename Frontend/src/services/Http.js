@@ -2,7 +2,11 @@ import { ToastMessage } from "@/components/ToastMessage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { Platform } from "react-native";
+<<<<<<< HEAD
 import { triggerLogout } from "./AuthRef";
+=======
+import { triggerLogout } from "./logoutReference";
+>>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
 
 import Constants from "expo-constants";
 

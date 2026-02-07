@@ -61,7 +61,6 @@ const SkinCamera = () => {
     ]).start();
   };
 
-  //handler of the pic before pushing to backend
   const handleCapture = async () => {
     try {
       animateShutter();
@@ -77,7 +76,11 @@ const SkinCamera = () => {
     setIsLoading(true);
 
     try {
+<<<<<<< HEAD
       const res = await ImageApi.uploadImageAPI(capturePic.uri);
+=======
+      const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
+>>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
       const { result } = res.data;
 
       if (result === "failed") {
@@ -119,96 +122,72 @@ const SkinCamera = () => {
 
   return (
     <View style={styles.container}>
-      {/* CAMERA + UI ONLY WHEN NO FAIL MESSAGE */}
-      {!failMessage && (
-        <>
-          {/* CAMERA MASK */}
-          <View style={styles.cameraMask}>
-            {!capturePic && (
-              <CameraView
-                ref={cameraRef}
-                style={styles.cameraBox}
-                facing={facing}
-                enableTorch={enableTorch}
-              />
-            )}
+      <View style={styles.cameraContainer}>
+        {!capturePic ? (
+          <CameraView
+            ref={cameraRef}
+            style={styles.cameraBox}
+            facing={facing}
+            enableTorch={enableTorch}
+          />
+        ) : (
+          <Image source={{ uri: capturePic.uri }} style={styles.cameraBox} />
+        )}
+
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#fff" />
           </View>
+        )}
+      </View>
 
-          {/* FRAME OUTLINE */}
-          <View pointerEvents="none" style={styles.frameOutline} />
-
-          {/* CONTROLS */}
-          <View style={styles.controls}>
-            <CircularButton
-              size={65}
-              onPress={() => setEnableTorch(!enableTorch)}
-            >
-              <MaterialCommunityIcons
-                name="flashlight"
-                size={28}
-                color="#fff"
-              />
-            </CircularButton>
-
-            <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
-              <CircularButton size={95} onPress={handleCapture}>
-                <FontAwesome6 name="camera" size={30} color="#fff" />
-              </CircularButton>
-            </Animated.View>
-
-            <CircularButton
-              size={65}
-              onPress={() => setFacing(facing === "back" ? "front" : "back")}
-            >
-              <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
-            </CircularButton>
-          </View>
-
-          {/* PREVIEW MODAL */}
-          <Modal visible={!!capturePic} transparent animationType="fade">
-            <View style={styles.modalContainer}>
-              {isLoading ? (
-                <View style={styles.loadingCard}>
-                  <ActivityIndicator size="large" color="#00CC99" />
-                  <Text style={styles.loadingText}>Analyzing skin...</Text>
-                </View>
-              ) : (
-                <View style={styles.previewCard}>
-                  <Image
-                    source={{ uri: capturePic?.uri }}
-                    style={styles.previewImg}
-                  />
-                  <Text style={styles.previewTitle}>Use this image?</Text>
-
-                  <View style={styles.actionRow}>
-                    <TouchableOpacity
-                      style={styles.cancelBtn}
-                      onPress={handleRetake}
-                    >
-                      <Text style={styles.cancelText}>Cancel</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.okayBtn}
-                      onPress={handleUsePhoto}
-                    >
-                      <Text style={styles.okayText}>Okay</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            </View>
-          </Modal>
-        </>
+      {capturePic && !isLoading && (
+        <View style={styles.previewActionContainer}>
+          <TouchableOpacity
+            style={styles.previewActionBtn}
+            onPress={handleRetake}
+          >
+            <Text style={styles.previewActionText}>Retake</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.previewActionBtn, styles.usePhotoBtn]}
+            onPress={handleUsePhoto}
+          >
+            <Text style={styles.previewActionText}>Use Photo</Text>
+          </TouchableOpacity>
+        </View>
       )}
 
-      {/* ERROR MODAL - ALWAYS OUTSIDE CAMERA BLOCK */}
+      {/* Tab bar style that encloses the buttons */}
+      <View style={styles.bottomTabEnclosure}>
+        <View style={styles.controls}>
+          <CircularButton
+            size={65}
+            onPress={() => setEnableTorch(!enableTorch)}
+          >
+            <MaterialCommunityIcons name="flashlight" size={28} color="#fff" />
+          </CircularButton>
+
+          <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
+            <CircularButton size={95} onPress={handleCapture}>
+              <FontAwesome6 name="camera" size={30} color="#fff" />
+            </CircularButton>
+          </Animated.View>
+
+          <CircularButton
+            size={65}
+            onPress={() => setFacing(facing === "back" ? "front" : "back")}
+          >
+            <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
+          </CircularButton>
+        </View>
+      </View>
+
       <Modal visible={!!failMessage} transparent animationType="fade">
         <View style={styles.failOverlay}>
           <View style={styles.failCard}>
             <Text style={styles.failTitle}>Alert</Text>
             <Text style={styles.failMsg}>{failMessage}</Text>
-
             <TouchableOpacity
               style={styles.failBtn}
               onPress={() => {
@@ -227,199 +206,120 @@ const SkinCamera = () => {
 
 export default SkinCamera;
 
-const FRAME_SIZE = 280;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0F0F0F",
+    backgroundColor: "#fff",
   },
-
-  cameraMask: {
-    marginTop: 90,
-    width: FRAME_SIZE,
-    height: FRAME_SIZE,
-    alignSelf: "center",
-    borderRadius: FRAME_SIZE / 2,
-    overflow: "hidden",
+  cameraContainer: {
+    width: "100%",
+    aspectRatio: 1,
+    marginTop: 60,
     backgroundColor: "#000",
-    elevation: 10,
+    overflow: "hidden",
   },
-
   cameraBox: {
-    width: "100%",
-    height: "100%",
-  },
-
-  frameOutline: {
-    position: "absolute",
-    top: 90,
-    alignSelf: "center",
-    width: FRAME_SIZE,
-    height: FRAME_SIZE,
-    borderRadius: FRAME_SIZE / 2,
-    borderWidth: 4,
-    borderColor: "#00CC99",
-  },
-
-  controls: {
-    position: "absolute",
-    bottom: 45,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 40,
-  },
-
-  modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
-
-  previewCard: {
-    width: "88%",
-    borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.95)",
-    padding: 25,
-    alignItems: "center",
-  },
-
-  previewImg: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    marginBottom: 20,
-  },
-
-  previewTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginTop: 10,
-    color: "#222",
-  },
-
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  bottomTabEnclosure: {
+    position: "absolute",
+    bottom: 0,
     width: "100%",
-    marginTop: 25,
-  },
-
-  cancelBtn: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 12,
-    borderWidth: 1.5,
-    borderColor: "#000",
-    marginRight: 10,
-  },
-
-  cancelText: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-
-  okayBtn: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 12,
-    backgroundColor: "#000",
-    marginLeft: 10,
-  },
-
-  okayText: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-
-  loadingCard: {
+    height: 180, // Height to sufficiently enclose controls
     backgroundColor: "#fff",
-    padding: 40,
-    borderRadius: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+    justifyContent: "center",
+    paddingBottom: 20,
+  },
+  controls: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
-
-  loadingText: {
-    marginTop: 18,
-    fontSize: 16,
-    color: "#00CC99",
+  previewActionContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 20,
   },
-
+  previewActionBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+  usePhotoBtn: {
+    backgroundColor: "#00CC99",
+    borderColor: "#00CC99",
+  },
+  previewActionText: {
+    fontWeight: "600",
+  },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#fff",
   },
-
   permissionText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#000",
     textAlign: "center",
     marginBottom: 20,
   },
-
   permissionBtn: {
     paddingHorizontal: 30,
     paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: "#00CC99",
   },
-
   permissionBtnText: {
     fontSize: 16,
     color: "#fff",
     fontWeight: "600",
   },
-
-  /* ERROR MODAL STYLES */
   failOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
-
   failCard: {
     width: "85%",
     backgroundColor: "white",
     padding: 25,
-    borderRadius: 15,
+    borderRadius: 12,
     alignItems: "center",
   },
-
   failTitle: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "bold",
     marginBottom: 10,
   },
-
   failMsg: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: 15,
+    color: "#444",
     textAlign: "center",
     marginBottom: 20,
   },
-
   failBtn: {
-    backgroundColor: "#00CC99",
+    backgroundColor: "#1e7d64",
     width: "100%",
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 8,
   },
-
   failBtnText: {
     color: "white",
     textAlign: "center",
-    fontSize: 16,
     fontWeight: "600",
   },
 });

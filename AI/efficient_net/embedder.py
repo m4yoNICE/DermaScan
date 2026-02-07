@@ -12,18 +12,26 @@ from preprocessing.preprocess_image import (
     ImagePreprocessingError
 )
 
+# ✅ Don't load at import - initialize as None
+base_model = None
 
-# Load model ONCE at startup
-print("Loading EfficientNet-B0 model...")
-base_model = EfficientNetB0(
-    weights='imagenet',
-    include_top=False,  
-    pooling='avg'      
-)
-base_model.trainable = False  # Freeze weights (we're just extracting features)
-print("✅ EfficientNet-B0 loaded")
+def _load_model():
+    """Lazy load the model on first use"""
+    global base_model
+    if base_model is None:
+        print("Loading EfficientNet-B0 model...", file=sys.stderr)
+        base_model = EfficientNetB0(
+            weights='imagenet',
+            include_top=False,  
+            pooling='avg'      
+        )
+        base_model.trainable = False
+        print("✅ EfficientNet-B0 loaded", file=sys.stderr)
 
 def get_embedding(image_data):
+    # ✅ Load model here (after stdin is read in predict.py)
+    _load_model()
+    
     try:
         img_array = preprocess_to_array_efficientnet(
             image_data,

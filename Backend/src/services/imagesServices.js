@@ -1,7 +1,9 @@
 import { storedImages } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
+import { eq } from "drizzle-orm";
 
 export async function createStoredImage(userId, imageUrl) {
+  console.log(imageUrl, userId);
   const [inserted] = await db
     .insert(storedImages)
     .values({

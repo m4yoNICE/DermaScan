@@ -1,14 +1,18 @@
 import Landing4 from "@/components/landing/Landing4";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetTextInput, // ADD THIS
+} from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Link, router } from "expo-router";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Keyboard,
 } from "react-native";
 import Button from "src/components/Button";
 import LoadingModal from "@/components/LoadingModal";
@@ -32,6 +36,19 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+
+  const sheetRef = useRef(null);
+  const snapPoints = ["80%", "100%"];
+
+  useEffect(() => {
+    const keyboardHide = Keyboard.addListener("keyboardDidHide", () => {
+      sheetRef.current?.snapToIndex(0);
+    });
+
+    return () => {
+      keyboardHide.remove();
+    };
+  }, []);
 
   const formatDate = (date) => {
     if (!date) return "Select Date of Birth";
@@ -70,17 +87,6 @@ const Register = () => {
         "Please enter a valid email address",
       );
     }
-    // const strongPasswordRegex =
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    // if (!strongPasswordRegex.test(password)) {
-    //   return ToastMessage(
-    //     "error",
-    //     "Weak Password",
-    //     "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-    //   );
-    // }
-
     if (dob > new Date()) {
       return ToastMessage(
         "error",
@@ -124,11 +130,16 @@ const Register = () => {
 
       {/* BottomSheet */}
       <BottomSheet
+        ref={sheetRef}
         index={0}
-        snapPoints={["90%"]}
+        snapPoints={snapPoints}
         enablePanDownToClose={false}
         handleComponent={null}
         enableContentPanningGesture={false}
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+        animateOnMount={false}
         backgroundStyle={{
           backgroundColor: "white",
           borderRadius: 40,
@@ -155,7 +166,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Email address"
               value={email}
@@ -173,7 +184,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="First Name"
               value={firstname}
@@ -190,7 +201,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Last Name"
               value={lastname}
@@ -233,7 +244,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Password"
               value={password}
@@ -257,7 +268,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Confirm Password"
               value={confirmPassword}

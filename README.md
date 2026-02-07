@@ -22,21 +22,32 @@ cp .env.example .env
 npx drizzle-kit push
 # Seed the database
 node src/drizzle/seed.js
-# Start the server
-npm run dev     # Insert default data
 ```
 
-**Start the server:**
+**Start the servers:**
+
+Terminal 1 - Python AI Server:
 
 ```bash
+cd AI/dermfoundation
+python server.py
+```
+
+Terminal 2 - Node Backend:
+
+```bash
+cd Backend
 npm run dev
 ```
+
+---
 
 ### Running the Frontend
 
 In frontend directory:
 
 ```bash
+cd Frontend
 npm install                     # Install dependencies
 npx expo start
 ```
@@ -96,7 +107,7 @@ huggingface-cli login
 Download required Python packages:
 
 ```bash
-pip install scikit-learn pillow tensorflow huggingface_hub opencv-python
+pip install scikit-learn pillow tensorflow huggingface_hub opencv-python fastapi uvicorn joblib numpy
 ```
 
 **Note:** Use `pip install tensorflow-cpu` if you don't have a GPU.

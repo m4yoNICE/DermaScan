@@ -34,7 +34,6 @@ const toastConfig = {
   ),
 };
 
-
 //a lot of contexts needs to enclose the root for it to work globally inside the app
 //since their usual code are <context.provider>{children}<context.provider
 //given that the root layout should be the children

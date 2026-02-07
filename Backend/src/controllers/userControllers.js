@@ -1,7 +1,7 @@
 import {
   updateUser,
   deleteUser,
-  getUserId,
+  getUserWithSkinData,
   createSkinData,
   deleteSkinData,
 } from "../services/userServices.js";
@@ -9,12 +9,16 @@ import {
 export async function getuserid(req, res) {
   try {
     const userId = req.user.id;
+<<<<<<< HEAD
     const user = await getUserId(userId);
+=======
+    const user = await getUserWithSkinData(userId);
+    console.log("fetched user data: ", user);
+>>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    const { password, ...userData } = user.dataValues;
-    return res.status(200).json(userData);
+    return res.status(200).json(user);
   } catch (err) {
     console.error("Error fetching user by ID:", err);
     res.status(500).json({ error: "Server error" });

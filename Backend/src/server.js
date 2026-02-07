@@ -10,12 +10,10 @@ import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
-
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
 
 const app = express();
-
 const PORT = ENV.PORT || 6969;
 
 //8081 is for mobile, while 5173 is for admin web

@@ -2,42 +2,42 @@ import { spawn } from "child_process";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
-//spawn python, this is where node will connect to python via spawn
-export function skinAnalyze(imageBuffer) {
+export async function checkImgPython(imageBuffer) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const scriptDirectory = resolve(__dirname, "../../../AI/dermfoundation");
-  const pythonScript = resolve(scriptDirectory, "predict.py");
+
+  const scriptDirectory = resolve(__dirname, "../../../AI/preprocessing");
+  const pythonScript = resolve(scriptDirectory, "check_image_quality.py");
   const python = spawn("python", [pythonScript], {
     cwd: scriptDirectory,
   });
-  console.log(python);
 
+  console.log("Running script at:", pythonScript);
+  console.log("Working directory:", scriptDirectory);
   return new Promise((resolve, reject) => {
     let output = "";
     let errorOutput = "";
 
     python.stdin.write(imageBuffer);
     python.stdin.end();
+
     python.stdout.on("data", (data) => {
       const text = data.toString();
-      console.log("Python stdout:", text);
+      console.log("Python stdout:", text); 
       output += text;
     });
 
     python.stderr.on("data", (data) => {
-      errorOutput += data.toString();
+      const error = data.toString();
+      console.error("Python stderr:", error); 
+      errorOutput += error;
     });
-
     python.on("close", (code) => {
-      if (code === 0) {
-        try {
-          resolve(JSON.parse(output.trim()));
-        } catch (e) {
-          reject(`Invalid JSON. Output: ${output}`);
-        }
-      } else {
-        reject(`Python exited with code ${code}. Stderr: ${errorOutput}`);
+      try {
+        const result = JSON.parse(output.trim());
+        resolve(result); // ← Resolve even if code !== 0
+      } catch (e) {
+        reject(`Invalid JSON. Output: ${output}`);
       }
     });
 
