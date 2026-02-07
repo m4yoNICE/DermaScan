@@ -1,9 +1,9 @@
 import React from 'react'
 import { Link, Routes, Route } from 'react-router-dom';
-import CreateUser from './createUser';
-import UpdateUser from './updateUser';
+import CreateUser from '../home/createUser';
+import UpdateUser from '../home/updateUser';
 import UserPage from './UserPage';
-import Analytics from '../admin/Analytics';
+import Analytics from './Analytics';
 
 const AdminDashboard = () => {
   return (

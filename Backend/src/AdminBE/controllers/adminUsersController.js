@@ -48,7 +48,7 @@ export async function getUserById(req, res) {
 // Get all users
 export async function getAllUsers(req, res) {
   try {
-    const users = await getAllUsersProcess(); // ← Use service
+    const users = await getAllUsersProcess();
 
     return res.status(200).json(users);
   } catch (err) {
@@ -101,8 +101,6 @@ export async function deleteUser(req, res) {
 
     return res.json({ message: "User deleted successfully" });
   } catch (err) {
-    console.error("Delete user error:", err);
-
     if (err.message === "ACCOUNT_NOT_FOUND") {
       return res.status(404).json({ error: "Account did not exist" });
     }
