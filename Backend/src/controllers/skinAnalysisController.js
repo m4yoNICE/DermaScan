@@ -1,11 +1,8 @@
 import { findCondtionById } from "../services/skinAnalysisDBMapping.js";
 import { analyzeSkin } from "../services/skinAnalysisOrchestrator.js";
-<<<<<<< HEAD
 
 // === MAIN IMAGE PROCESSING LOGIC ===
 // Handles the full lifecycle of a skin analysis request
-=======
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
 
 export async function skinAnalysis(req, res) {
   try {
