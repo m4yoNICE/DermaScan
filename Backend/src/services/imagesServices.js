@@ -19,6 +19,6 @@ export async function createStoredImage(userId, imageUrl) {
 
 export async function getImageById(image_id, user_id) {
   return await db.query.storedImages.findFirst({
-    where: and(eq(storedImages.id, image_id), eq(storedImages.userId, user_id)),
+    where: (eq(storedImages.id, image_id), eq(storedImages.userId, user_id)),
   });
 }

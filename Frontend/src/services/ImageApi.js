@@ -12,16 +12,29 @@ function createImageFormData(uri, fieldName = "image") {
 }
 
 async function uploadImage(endpoint, uri, fieldName = "image") {
+  console.log("Http object:", Http);
+  console.log("Http.post method:", typeof Http.post);
+  console.log("Uploading to:", endpoint);
+  console.log("URI:", uri);
+
   const formData = createImageFormData(uri, fieldName);
-  return Http.post(endpoint, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+
+  try {
+    const response = await Http.post(endpoint, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log("Upload success:", response);
+    return response;
+  } catch (error) {
+    console.error("Upload failed:", error);
+    console.error("Error details:", error.response?.data || error.message);
+    throw error;
+  }
 }
 
 const ImageApi = {
   uploadSkinImageAPI: (uri) => uploadImage("/api/condition/skin", uri),
   uploadProfilePicAPI: (uri) => uploadImage("/api/profile/pic", uri),
-  // add more as needed
 };
 
 export default ImageApi;

@@ -2,11 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useEffect, useState, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
-<<<<<<< HEAD
-import { setLogoutCallback } from "@/services/AuthRef";
-=======
 import { setLogoutCallback } from "@/services/logoutReference";
->>>>>>> cdfc7df3 (-fix: implemented mini server for AI called Fast API to initialize and load model that results to 2000ms-5000ms inference time. Adjusted layout in login and register to adjust when keyboard is present. Changed Camera UI to match to Figma Design. Fixed Analysis Pipeline.)
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
@@ -59,6 +55,9 @@ export function UserProvider({ children }) {
     await AsyncStorage.removeItem("user");
     router.push("/");
   };
+  useEffect(() => {
+    setLogoutCallback(logout);
+  }, []);
   return (
     <UserContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
