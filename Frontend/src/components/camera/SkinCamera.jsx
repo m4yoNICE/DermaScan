@@ -14,6 +14,7 @@ import {
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CircularButton from "../CircularButton";
+import Card from "../Card";
 import { router } from "expo-router";
 import ImageApi from "@/services/ImageApi";
 
@@ -74,7 +75,7 @@ const SkinCamera = () => {
   const handleUsePhoto = async () => {
     if (!capturePic) return;
     setIsLoading(true);
-
+    console.log("Analysing Image");
     try {
       const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
       const { result } = res.data;
@@ -119,7 +120,6 @@ const SkinCamera = () => {
           </View>
         )}
       </View>
-
       {capturePic && !isLoading && (
         <View style={styles.previewActionContainer}>
           <TouchableOpacity
@@ -136,7 +136,6 @@ const SkinCamera = () => {
           </TouchableOpacity>
         </View>
       )}
-
       {/* Tab bar style that encloses the buttons */}
       <View style={styles.bottomTabEnclosure}>
         <View style={styles.controls}>
@@ -161,10 +160,10 @@ const SkinCamera = () => {
           </CircularButton>
         </View>
       </View>
-
+      // In your SkinCamera component
       <Modal visible={!!failMessage} transparent animationType="fade">
         <View style={styles.failOverlay}>
-          <View style={styles.failCard}>
+          <Card>
             <Text style={styles.failTitle}>Alert</Text>
             <Text style={styles.failMsg}>{failMessage}</Text>
             <TouchableOpacity
@@ -176,7 +175,7 @@ const SkinCamera = () => {
             >
               <Text style={styles.failBtnText}>Okay</Text>
             </TouchableOpacity>
-          </View>
+          </Card>
         </View>
       </Modal>
     </View>
@@ -270,13 +269,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
-    alignItems: "center",
-  },
-  failCard: {
-    width: "85%",
-    backgroundColor: "white",
-    padding: 25,
-    borderRadius: 12,
     alignItems: "center",
   },
   failTitle: {
