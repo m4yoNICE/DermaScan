@@ -22,3 +22,9 @@ export async function getImageById(image_id, user_id) {
     where: (eq(storedImages.id, image_id), eq(storedImages.userId, user_id)),
   });
 }
+
+export async function getStoredImageById(imageId) {
+  return await db.query.storedImages.findFirst({
+    where: eq(storedImages.id, imageId),
+  });
+}

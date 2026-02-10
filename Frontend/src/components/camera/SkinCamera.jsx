@@ -78,19 +78,34 @@ const SkinCamera = () => {
     console.log("Analysing Image");
     try {
       const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
-      const { result } = res.data;
+      const { analysis, recommendation } = res.data;
 
-      if (result === "failed") {
+      if (analysis.result === "failed") {
         setCapturePic(null);
-        setFailMessage(res.data.message);
+        setFailMessage(analysis.message);
         setIsLoading(false);
         return;
       }
+      if (analysis.result === "success") {
+        const analysisResults = {
+          id: analysis.data.id,
+          userId: analysis.data.userId,
+          imageId: analysis.data.imageId,
+          conditionId: analysis.data.conditionId,
+          confidenceScores: analysis.data.confidenceScores,
+          status: analysis.data.status,
+          condition_name: analysis.data.condition_name,
+          canRecommend: analysis.data.canRecommend,
+          createdAt: analysis.data.createdAt,
+          updatedAt: analysis.data.updatedAt,
+          image_url: analysis.data.image_url,
+        };
 
-      router.push({
-        pathname: "/Results",
-        params: { data: JSON.stringify(res.data) },
-      });
+        router.push({
+          pathname: "/Results",
+          params: { data: JSON.stringify(analysisResults) },
+        });
+      }
     } catch (err) {
       console.log("UPLOAD FAILED →", err);
     } finally {
