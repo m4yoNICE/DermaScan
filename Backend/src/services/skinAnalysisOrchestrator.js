@@ -6,12 +6,15 @@ import { skinAnalyze } from "../utils/python.serverSkinAnalysis.js";
 
 //database pipeline
 import { createStoredImage } from "./imagesServices.js";
-import { mapSkinResultToCatalog } from "./skinAnalysisDBMapping.js";
+import {
+  findCondtionById,
+  mapSkinResultToCatalog,
+} from "./skinAnalysisDBMapping.js";
 import { skinAnalysisTransactions } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm"; // Ensure this is imported
 
-export async function analyzeSkin(userId, imageBuffer) {
+export async function analyzeSkinOrchestrator(userId, imageBuffer) {
   console.log("start");
   const startTime = Date.now();
   console.log(
@@ -117,6 +120,8 @@ export async function analyzeSkin(userId, imageBuffer) {
       `[${Date.now() - startTime}ms] Finalizing and fetching updated transaction...`,
     );
     const updatedTransaction = await findTransactionById(transaction.id);
+
+
 
     console.log(
       `[${Date.now() - startTime}ms] >>> ANALYSIS COMPLETE. Total Time: ${Date.now() - startTime}ms\n`,

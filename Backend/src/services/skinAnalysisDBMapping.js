@@ -8,13 +8,21 @@ export async function mapSkinResultToCatalog(user_id, skinResult) {
   const top1 = skinResult.top3[0];
   const top3 = skinResult.top3;
 
-  console.log("User ID: ", user_id);
-  console.log("Skin Result: ", top3);
-  console.log("1st Result: ", top1);
-  console.log("1st Result Label: ", top1.label);
+  const condition = await findConditionByLabel(top1.label);
+  if (!condition) return null;
 
-  //db call to find skin condition
-  console.log("FINDING CONDITION");
+  const status = checkResults(top1, top3, condition);
+  const transactionId = await insertTransaction(
+    user_id,
+    condition.id,
+    top1.score,
+    status,
+  );
+
+  return await getTransactionWithCondition(transactionId);
+}
+
+async function findConditionByLabel(label) {
   const [condition] = await db
     .select({
       id: skinConditions.id,
@@ -22,30 +30,52 @@ export async function mapSkinResultToCatalog(user_id, skinResult) {
       canRecommend: skinConditions.canRecommend,
     })
     .from(skinConditions)
-    .where(eq(skinConditions.condition, top1.label))
+    .where(eq(skinConditions.condition, label))
     .limit(1);
 
-  console.log("Skin Condition Found on DB: ", condition);
-  if (!condition) {
-    return null;
-  }
+  return condition;
+}
 
-  console.log("INSERTING RESULTS");
-  const status = checkResults(top1, top3, condition);
+async function insertTransaction(userId, conditionId, score, status) {
   const [inserted] = await db
     .insert(skinAnalysisTransactions)
     .values({
-      userId: user_id,
+      userId,
+      //image id will be updated after checking status
       imageId: null,
-      conditionId: condition.id,
-      confidenceScores: top1.score,
+      conditionId,
+      confidenceScores: score,
       status,
     })
     .$returningId();
 
-  return await db.query.skinAnalysisTransactions.findFirst({
-    where: eq(skinAnalysisTransactions.id, inserted.id),
-  });
+  return inserted.id;
+}
+
+async function getTransactionWithCondition(transactionId) {
+  const [result] = await db
+    .select({
+      id: skinAnalysisTransactions.id,
+      userId: skinAnalysisTransactions.userId,
+      //image id will be updated after checking status
+      imageId: skinAnalysisTransactions.imageId,
+      conditionId: skinAnalysisTransactions.conditionId,
+      confidenceScores: skinAnalysisTransactions.confidenceScores,
+      status: skinAnalysisTransactions.status,
+      createdAt: skinAnalysisTransactions.createdAt,
+      updatedAt: skinAnalysisTransactions.updatedAt,
+      condition_name: skinConditions.condition,
+      canRecommend: skinConditions.canRecommend,
+    })
+    .from(skinAnalysisTransactions)
+    .leftJoin(
+      skinConditions,
+      eq(skinAnalysisTransactions.conditionId, skinConditions.id),
+    )
+    .where(eq(skinAnalysisTransactions.id, transactionId))
+    .limit(1);
+
+  return result;
 }
 
 function checkResults(top1, top3, condition) {
@@ -53,12 +83,5 @@ function checkResults(top1, top3, condition) {
   const margin = top1.score - top3[2].score;
   if (margin < 0.15) return "out of scope";
   if (condition.canRecommend.toLowerCase() === "no") return "flagged";
-
   return "success";
-}
-
-export async function findCondtionById(condition_id) {
-  return await db.query.skinConditions.findFirst({
-    where: eq(skinConditions.id, condition_id),
-  });
 }

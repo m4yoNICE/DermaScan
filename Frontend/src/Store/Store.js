@@ -5,5 +5,7 @@ export const store = configureStore({
   reducer: {
     user: userReducer,
     journal: journalReducer,
+    skin: skinReducer,
+    product: productReducer,
   },
 });
