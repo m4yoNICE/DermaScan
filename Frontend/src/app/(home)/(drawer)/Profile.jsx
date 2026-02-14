@@ -10,8 +10,8 @@ import {
 import React, { useContext, useState, useCallback } from "react";
 import { useFocusEffect, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
-import Button from "src/components/Button";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Api from "@/services/Api";
 
@@ -83,7 +83,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields."
+        "Please fill out all required fields.",
       );
     }
 

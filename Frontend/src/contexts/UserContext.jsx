@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, useEffect, useState, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
 import { setLogoutCallback } from "@/services/logoutReference";
+
 export const UserContext = createContext();
 
-export function UserProvider({ children }) {
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
@@ -58,9 +59,12 @@ export function UserProvider({ children }) {
   useEffect(() => {
     setLogoutCallback(logout);
   }, []);
+
   return (
     <UserContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </UserContext.Provider>
   );
-}
+};
+
+export const useUser = () => useContext(UserContext);

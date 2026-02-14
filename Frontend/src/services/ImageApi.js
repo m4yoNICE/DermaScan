@@ -12,22 +12,15 @@ function createImageFormData(uri, fieldName = "image") {
 }
 
 async function uploadImage(endpoint, uri, fieldName = "image") {
-  console.log("Http object:", Http);
-  console.log("Http.post method:", typeof Http.post);
-  console.log("Uploading to:", endpoint);
-  console.log("URI:", uri);
-
   const formData = createImageFormData(uri, fieldName);
 
   try {
     const response = await Http.post(endpoint, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    console.log("Upload success:", response);
     return response;
   } catch (error) {
     console.error("Upload failed:", error);
-    console.error("Error details:", error.response?.data || error.message);
     throw error;
   }
 }

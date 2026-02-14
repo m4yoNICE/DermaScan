@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useState, useEffect, useCallback } from "react";
 import SkinCamera from "@/components/camera/SkinCamera";
+// import SkinCamera from "@/components/camera/MockCamera";
 import DirectionCameraModal from "@/components/camera/DirectionCameraModal";
 export default function CameraPage() {
   const [isActive, setIsActive] = useState(false);
@@ -15,7 +16,7 @@ export default function CameraPage() {
         setIsActive(false);
       }
       return cleanup;
-    }, [])
+    }, []),
   );
 
   const handleAgree = () => {
