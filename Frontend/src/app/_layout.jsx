@@ -1,10 +1,9 @@
 import { Stack } from "expo-router";
-import { Provider } from "react-redux";
 import { UserProvider } from "src/contexts/UserContext";
+import { AnalysisProvider } from "src/contexts/AnalysisContext";
 import Toast from "react-native-toast-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { store } from "src/Store/Store";
-import { toastConfig } from "src/config/ToastConfig";
+import { toastConfig } from "@/components/designs/ToastConfig";
 
 //a lot of contexts needs to enclose the root for it to work globally inside the app
 //since their usual code are <context.provider>{children}<context.provider
@@ -15,10 +14,10 @@ const RootLayout = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       {/*This is for the tracking of the token to work and the logout*/}
       <UserProvider>
-        <Provider store={store}>
+        <AnalysisProvider>
           <Stack screenOptions={{ headerShown: false }} />
           <Toast config={toastConfig} />
-        </Provider>
+        </AnalysisProvider>
       </UserProvider>
     </GestureHandlerRootView>
   );

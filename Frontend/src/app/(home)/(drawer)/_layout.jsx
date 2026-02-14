@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Drawer } from "expo-router/drawer";
-import Logo from "@/components/Logo";
+import Logo from "@/components/designs/Logo";
 import { DrawerItemList } from "@react-navigation/drawer";
 
 function CustomDrawerContent(props) {

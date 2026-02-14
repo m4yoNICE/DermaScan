@@ -14,12 +14,12 @@ import {
   View,
   Keyboard,
 } from "react-native";
-import Button from "src/components/Button";
-import LoadingModal from "@/components/LoadingModal";
+import Button from "@/components/designs/Button";
+import LoadingModal from "@/components/designs/LoadingModal";
 import { UserContext } from "src/contexts/UserContext";
 import Api from "src/services/Api.js";
 
-import { ToastMessage } from "@/components/ToastMessage";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 const Register = () => {

@@ -3,15 +3,15 @@ import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 // Pagers (you will create these next)
-import Aging from "@/components/modals/Braumman/Aging";
-import Hydration from "@/components/modals/Braumman/Hydration";
-import Pigmentation from "@/components/modals/Braumman/Pigmentation";
-import Sensitivity from "@/components/modals/Braumman/Sensitivity";
+import Aging from "@/components/SkinTypeQuestionnaire/Aging";
+import Hydration from "@/components/SkinTypeQuestionnaire/Hydration";
+import Pigmentation from "@/components/SkinTypeQuestionnaire/Pigmentation";
+import Sensitivity from "@/components/SkinTypeQuestionnaire/Sensitivity";
 
 //own UI and services
-import { ToastMessage } from "@/components/ToastMessage";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import Api from "@/services/Api";
-import LoadingModal from "@/components/LoadingModal";
+import LoadingModal from "@/components/designs/LoadingModal";
 
 const BaumannQuestionnaire = () => {
   const [loading, setLoading] = useState(false);
@@ -72,7 +72,7 @@ const BaumannQuestionnaire = () => {
       ToastMessage(
         "success",
         "Profile Completed",
-        "Your Baumann Skin Code is: " + code
+        "Your Baumann Skin Code is: " + code,
       );
 
       router.push("/Home");

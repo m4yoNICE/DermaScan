@@ -1,5 +1,5 @@
-import { findCondtionById } from "../services/skinAnalysisDBMapping.js";
-import { analyzeSkinOrchestrator } from "../services/skinAnalysisOrchestrator.js";
+// import { analyzeSkinOrchestrator } from "../services/skinAnalysisOrchestrator.js";
+import { analyzeSkinOrchestrator } from "../services/skinOrc.js";
 import { recommendOrchestrator } from "../services/productRecommendationOrchestrator.js";
 // === MAIN IMAGE PROCESSING LOGIC ===
 // Handles the full lifecycle of a skin analysis request
@@ -15,6 +15,7 @@ export async function skinAnalysis(req, res) {
     // if (result.payload.result === "success") {
     //   recommendation = await recommendOrchestrator(result);
     // }
+    console.log("return: ", result);
 
     return res.status(result.statusCode).json({
       analysis: result.payload,
@@ -23,29 +24,5 @@ export async function skinAnalysis(req, res) {
   } catch (err) {
     console.error("Error in skinAnalysisController:", err);
     return res.status(500).json({ error: "Server error" });
-  }
-}
-
-export async function getConditionNameByID(req, res) {
-  try {
-    const { id } = req.params;
-    const condition_id = id;
-    const condition = await findCondtionById(condition_id);
-
-    if (!condition) {
-      return res.status(404).json({
-        error: "Condition not found",
-      });
-    }
-
-    return res.status(200).json({
-      result: "success",
-      data: condition,
-    });
-  } catch (err) {
-    console.error("Error in getConditionNameByID:", err);
-    return res.status(500).json({
-      error: "Server error",
-    });
   }
 }

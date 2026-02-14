@@ -1,6 +1,6 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import Card from "@/components/designs/Card";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRef, useState } from "react";
 import {
@@ -14,17 +14,17 @@ import {
 
 const { width } = Dimensions.get("window");
 
-const Sensitivity = ({ onDone }) => {
+const Pigmentation = ({ onDone }) => {
   const flatRef = useRef(null);
   const [page, setPage] = useState(0);
   const [answers, setAnswers] = useState({});
 
   const questions = [
-    "My skin turns red or burns easily when using new products.",
-    "I often feel stinging or itching after applying creams or soaps.",
-    "My skin reacts to weather changes or stress.",
-    "I rarely have irritation, even with scented or strong products.",
-    "My skin feels comfortable after most skincare products.",
+    "I have freckles, dark spots, or uneven skin tone.",
+    "My skin tans easily after sun exposure.",
+    "I use sunscreen often because my skin darkens fast.",
+    "My skin tone is even and rarely changes in color.",
+    "I don’t notice any spots or discoloration.",
   ];
 
   const handleSelect = (index, value) => {
@@ -43,14 +43,14 @@ const Sensitivity = ({ onDone }) => {
       return;
     }
 
-    const sensCount = [answers[0], answers[1], answers[2]].filter(
-      Boolean
+    const pigmented = [answers[0], answers[1], answers[2]].filter(
+      Boolean,
     ).length;
-    const resistCount = [answers[3], answers[4]].filter(Boolean).length;
+    const nonpigmented = [answers[3], answers[4]].filter(Boolean).length;
 
-    const result = sensCount > resistCount ? "sensitive" : "resistant";
-
+    const result = pigmented > nonpigmented ? "pigmented" : "non-pigmented";
     console.log(result);
+
     onDone(result);
   };
 
@@ -147,7 +147,7 @@ const Sensitivity = ({ onDone }) => {
   );
 };
 
-export default Sensitivity;
+export default Pigmentation;
 
 const styles = StyleSheet.create({
   container: {
