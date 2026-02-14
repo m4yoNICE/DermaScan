@@ -1,6 +1,6 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import Card from "@/components/designs/Card";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRef, useState } from "react";
 import {
@@ -14,17 +14,17 @@ import {
 
 const { width } = Dimensions.get("window");
 
-const Aging = ({ onDone }) => {
+const Sensitivity = ({ onDone }) => {
   const flatRef = useRef(null);
   const [page, setPage] = useState(0);
   const [answers, setAnswers] = useState({});
 
   const questions = [
-    "I already see fine lines around my eyes or mouth.",
-    "I stay up late or smoke, and I notice my skin looks tired.",
-    "My skin feels firm and bounces back when I touch it.",
-    "I don’t see wrinkles or sagging yet.",
-    "My skin looks dull or less elastic than before.",
+    "My skin turns red or burns easily when using new products.",
+    "I often feel stinging or itching after applying creams or soaps.",
+    "My skin reacts to weather changes or stress.",
+    "I rarely have irritation, even with scented or strong products.",
+    "My skin feels comfortable after most skincare products.",
   ];
 
   const handleSelect = (index, value) => {
@@ -43,12 +43,12 @@ const Aging = ({ onDone }) => {
       return;
     }
 
-    const wrinkled = [answers[0], answers[1], answers[4]].filter(
-      Boolean
+    const sensCount = [answers[0], answers[1], answers[2]].filter(
+      Boolean,
     ).length;
-    const tight = [answers[2], answers[3]].filter(Boolean).length;
+    const resistCount = [answers[3], answers[4]].filter(Boolean).length;
 
-    const result = wrinkled > tight ? "wrinkled" : "tight";
+    const result = sensCount > resistCount ? "sensitive" : "resistant";
 
     console.log(result);
     onDone(result);
@@ -147,7 +147,7 @@ const Aging = ({ onDone }) => {
   );
 };
 
-export default Aging;
+export default Sensitivity;
 
 const styles = StyleSheet.create({
   container: {

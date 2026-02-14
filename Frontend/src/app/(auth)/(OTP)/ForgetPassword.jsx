@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import Api from "@/services/Api";
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import Card from "@/components/designs/Card";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import { router, Link } from "expo-router";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 

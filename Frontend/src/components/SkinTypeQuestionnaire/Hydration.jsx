@@ -1,6 +1,6 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import Card from "@/components/designs/Card";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRef, useState } from "react";
 import {
@@ -45,15 +45,15 @@ const Hydration = ({ onDone }) => {
 
     const dryCount = [answers[0], answers[2]].filter(Boolean).length;
     const oilyCount = [answers[1], answers[3], answers[4]].filter(
-      Boolean
+      Boolean,
     ).length;
 
     const result =
       dryCount === oilyCount
         ? "combination"
         : dryCount > oilyCount
-        ? "dry"
-        : "oily";
+          ? "dry"
+          : "oily";
     console.log(result);
     onDone(result);
   };

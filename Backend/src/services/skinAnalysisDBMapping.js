@@ -52,7 +52,7 @@ async function insertTransaction(userId, conditionId, score, status) {
   return inserted.id;
 }
 
-async function getTransactionWithCondition(transactionId) {
+export async function getTransactionWithCondition(transactionId) {
   const [result] = await db
     .select({
       id: skinAnalysisTransactions.id,

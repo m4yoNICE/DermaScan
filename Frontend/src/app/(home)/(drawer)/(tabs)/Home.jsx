@@ -9,8 +9,8 @@ import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
-import { ToastMessage } from "@/components/ToastMessage";
-import Button from "@/components/Button";
+import { ToastMessage } from "@/components/designs/ToastMessage";
+import Button from "@/components/designs/Button";
 
 const Home = () => {
   const [journals, setJournals] = useState({});

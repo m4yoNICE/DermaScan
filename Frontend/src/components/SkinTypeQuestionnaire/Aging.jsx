@@ -1,6 +1,6 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import Card from "@/components/designs/Card";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRef, useState } from "react";
 import {
@@ -14,17 +14,17 @@ import {
 
 const { width } = Dimensions.get("window");
 
-const Pigmentation = ({ onDone }) => {
+const Aging = ({ onDone }) => {
   const flatRef = useRef(null);
   const [page, setPage] = useState(0);
   const [answers, setAnswers] = useState({});
 
   const questions = [
-    "I have freckles, dark spots, or uneven skin tone.",
-    "My skin tans easily after sun exposure.",
-    "I use sunscreen often because my skin darkens fast.",
-    "My skin tone is even and rarely changes in color.",
-    "I don’t notice any spots or discoloration.",
+    "I already see fine lines around my eyes or mouth.",
+    "I stay up late or smoke, and I notice my skin looks tired.",
+    "My skin feels firm and bounces back when I touch it.",
+    "I don’t see wrinkles or sagging yet.",
+    "My skin looks dull or less elastic than before.",
   ];
 
   const handleSelect = (index, value) => {
@@ -43,14 +43,14 @@ const Pigmentation = ({ onDone }) => {
       return;
     }
 
-    const pigmented = [answers[0], answers[1], answers[2]].filter(
-      Boolean
+    const wrinkled = [answers[0], answers[1], answers[4]].filter(
+      Boolean,
     ).length;
-    const nonpigmented = [answers[3], answers[4]].filter(Boolean).length;
+    const tight = [answers[2], answers[3]].filter(Boolean).length;
 
-    const result = pigmented > nonpigmented ? "pigmented" : "non-pigmented";
+    const result = wrinkled > tight ? "wrinkled" : "tight";
+
     console.log(result);
-
     onDone(result);
   };
 
@@ -147,7 +147,7 @@ const Pigmentation = ({ onDone }) => {
   );
 };
 
-export default Pigmentation;
+export default Aging;
 
 const styles = StyleSheet.create({
   container: {

@@ -1,6 +1,6 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import Card from "@/components/designs/Card";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import Api from "@/services/Api";
 import { router, useLocalSearchParams, Link } from "expo-router";
 import { useState } from "react";

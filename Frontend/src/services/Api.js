@@ -23,7 +23,6 @@ const Api = {
 
   // Uploads & Images
   getUploadedAPI: (data) => Http.get("/api/uploads", data),
-  getConditionByIdAPI: (id) => Http.get("/api/condition/" + id),
   getImageByIdAPI: (id) => Http.get("/api/images/results/" + id),
   getImageAPI: (filename) => `${Http.defaults.baseURL}/uploads/${filename}`,
 };

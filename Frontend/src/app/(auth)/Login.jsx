@@ -15,18 +15,18 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 
 //own ui
-import Button from "@/components/Button";
+import Button from "@/components/designs/Button";
 import Landing4 from "@/components/landing/Landing4";
-import { ToastMessage } from "@/components/ToastMessage";
-import LoadingModal from "@/components/LoadingModal";
+import { ToastMessage } from "@/components/designs/ToastMessage";
+import LoadingModal from "@/components/designs/LoadingModal";
 import Api from "@/services/Api";
 //User Context
-import { UserContext } from "src/contexts/UserContext";
+import { useUser } from "src/contexts/UserContext";
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useContext(UserContext);
+  const { login } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
