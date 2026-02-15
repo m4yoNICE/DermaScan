@@ -1,11 +1,11 @@
 import { saveBufferImage } from "../utils/saveBufferImage.js";
 import { checkImgPython } from "../utils/python.checkImageQuality.js";
 import { skinAnalyze } from "../utils/python.serverSkinAnalysis.js";
-import { createStoredImage } from "./imagesServices.js";
+import { createStoredImage } from "../services/imagesServices.js";
 import {
   getTransactionWithCondition,
   mapSkinResultToCatalog,
-} from "./skinAnalysisDBMapping.js";
+} from "../services/skinAnalysisDBMapping.js";
 import { skinAnalysisTransactions } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
@@ -68,16 +68,18 @@ export async function analyzeSkinOrchestrator(userId, imageBuffer) {
     );
     let imageUrl = null;
 
+    //SAVING IMAGE LOGIC
     if (status === "flagged" || status === "success") {
       console.log(`[${Date.now() - startTime}ms] Saving image to storage...`);
+
       const savedImage = await saveImageLogic(userId, imageBuffer);
+
       console.log(
         `[${Date.now() - startTime}ms] Image saved. ID: ${savedImage.id}. Updating transaction...`,
       );
       await updateTransactionImage(transaction.id, savedImage.id);
+      imageUrl = savedImage.photoUrl;
       transaction = await getTransactionWithCondition(transaction.id);
-      imageUrl =
-        ENV.BASE_URL + "/uploads/" + path.basename(savedImage.photoUrl);
       console.log("Image URL: ", imageUrl);
     }
 

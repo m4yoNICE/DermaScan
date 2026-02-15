@@ -75,33 +75,35 @@ const SkinCamera = () => {
   };
 
   const handleUsePhoto = async () => {
+    console.log("MOCK CAMERA");
     if (!capturePic) return;
     setIsLoading(true);
     console.log("Analysing Image");
     try {
-      const mockAnalysis = {
-        analysis: {
+      const mockResponse = {
+        statusCode: 200,
+        payload: {
           result: "success",
           message: "Analysis complete",
           data: {
-            id: 9,
+            id: 16,
             userId: 2,
-            imageId: 9,
+            imageId: 16,
             conditionId: 12,
-            confidenceScores: 0.9999053055406494,
+            confidenceScores: 0.9999846490885632,
             status: "success",
             condition_name: "milia",
             canRecommend: "Yes",
-            createdAt: "2026-02-11 01:16:50.254",
-            updatedAt: "2026-02-11 01:16:50.273",
-            image_url: "file:///mock_images/milia_sample.jpg", // local mock image
+            createdAt: "2026-02-15 21:26:28.478",
+            updatedAt: "2026-02-15 21:26:28.644",
+            image_url:
+              "C:\\Codes\\Dermascan\\Backend\\skinUploads\\image-1771161988603-547843595.jpg",
           },
         },
-        recommendation: null,
       };
 
-      const res = mockAnalysis;
-      const { analysis, recommendation } = res.data;
+      const res = mockResponse;
+      const analysis = res.payload;
 
       if (analysis.result === "failed") {
         setCapturePic(null);
