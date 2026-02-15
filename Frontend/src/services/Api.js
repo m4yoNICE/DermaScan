@@ -22,9 +22,9 @@ const Api = {
   deleteJournalAPI: (id) => Http.delete("/api/journals/" + id),
 
   // Uploads & Images
-  getUploadedAPI: (data) => Http.get("/api/uploads", data),
-  getImageByIdAPI: (id) => Http.get("/api/images/results/" + id),
-  getImageAPI: (filename) => `${Http.defaults.baseURL}/uploads/${filename}`,
+  getSkinImage: (data) => {
+    return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
+  },
 };
 
 export default Api;
