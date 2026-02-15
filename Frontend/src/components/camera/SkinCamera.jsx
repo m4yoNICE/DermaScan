@@ -75,6 +75,7 @@ const SkinCamera = () => {
   };
 
   const handleUsePhoto = async () => {
+    console.log("SKIN CAMERA");
     if (!capturePic) return;
     setIsLoading(true);
     console.log("Analysing Image");

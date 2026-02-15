@@ -6,7 +6,6 @@ import { ENV } from "./config/env.js";
 //users routes imports
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
@@ -28,13 +27,16 @@ app.use(
 app.use(express.json());
 
 //static
-app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
+app.use(
+  "/api/uploads/skin-images",
+  express.static(path.join(process.cwd(), "skinUploads")),
+);
 
 //users
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/journals", journalRoutes);
-app.use("/api/images", imageRoutes);
+
 app.use("/api/condition", skinAnalysisRoutes);
 
 //admin

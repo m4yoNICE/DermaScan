@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View, Image } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "@/components/designs/Card";
 import { useAnalysis } from "src/contexts/AnalysisContext";
+import Api from "@/services/Api";
 
 const Results = () => {
   const { analysis } = useAnalysis();
-  console.log("Results Page: ", analysis);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  console.log("Results Page:", analysis);
 
   if (!analysis) {
     return (
@@ -15,13 +18,26 @@ const Results = () => {
     );
   }
 
+  useEffect(() => {
+    if (analysis?.image_url) {
+      const url = Api.getSkinImage(analysis.image_url);
+      console.log("Constructed image URL:", url);
+      setImageUrl(url);
+    }
+  }, [analysis]);
+
   return (
     <View style={styles.container}>
       <View style={styles.imgWrapper}>
-        <Image
-          source={{ uri: analysis.image_url }}
-          style={{ width: 200, height: 200 }}
-        />
+        {imageUrl ? (
+          <Image
+            source={{ uri: imageUrl }}
+            style={{ width: 200, height: 200 }}
+            onError={(e) => console.error("Image load failed:", e.nativeEvent)}
+          />
+        ) : (
+          <Text>Loading...</Text>
+        )}
       </View>
       <Card>
         <Text style={styles.title}>Skin Analysis Result</Text>
