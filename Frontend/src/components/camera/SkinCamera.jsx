@@ -1,5 +1,5 @@
-import { CameraView } from "expo-camera";
-import { useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import { useState, useRef } from "react";
 import {
   View,
@@ -20,7 +20,7 @@ import ImageApi from "@/services/ImageApi";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 
 const SkinCamera = () => {
-  const { setAnalysis } = useAnalysis();
+  const { setAnalysis, setRecommendation } = useAnalysis();
   const [failMessage, setFailMessage] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState("back");
@@ -86,9 +86,15 @@ const SkinCamera = () => {
       if (analysis.result === "failed") {
         setCapturePic(null);
         setFailMessage(analysis.message);
-        setIsLoading(false);
         return;
       }
+
+      if (analysis.result === "flagged") {
+        setAnalysis({ status: "flagged" });
+        router.push("/Results");
+        return;
+      }
+
       if (analysis.result === "success") {
         const analysisResults = {
           id: analysis.data.id,
@@ -106,12 +112,42 @@ const SkinCamera = () => {
         console.log("Analysis Results: ", analysisResults);
         setAnalysis(analysisResults);
 
+        const recommendationResults =
+          recommendation?.map((item) => ({
+            id: item.id,
+            productName: item.productName,
+            productImage: item.productImage,
+            ingredient: item.ingredient,
+            description: item.description,
+            productType: item.productType,
+            locality: item.locality,
+            skinType: item.skinType,
+            dermaTested: item.dermaTested,
+            timeRoutine: item.timeRoutine,
+            score: item.score,
+          })) ?? [];
+        console.log("Recommendation Results: ", recommendationResults);
+        setRecommendation(recommendationResults);
+
         router.push("/Results");
       }
     } catch (err) {
       console.log("UPLOAD FAILED →", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1], // Match your cameraBox aspect ratio
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setCapturePic({ uri: result.assets[0].uri });
     }
   };
 
@@ -131,44 +167,63 @@ const SkinCamera = () => {
           <Image source={{ uri: capturePic.uri }} style={styles.cameraBox} />
         )}
 
+        {/* FLASH/TORCH OVERLAY BUTTON */}
+        {!capturePic && (
+          <TouchableOpacity
+            style={styles.topUtilityBtn}
+            onPress={() => setEnableTorch(!enableTorch)}
+          >
+            <MaterialCommunityIcons
+              name={enableTorch ? "flashlight" : "flashlight-off"}
+              size={24}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
         {isLoading && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color="#fff" />
           </View>
         )}
+
+        {capturePic && !isLoading && (
+          <View style={styles.previewActionContainer}>
+            <TouchableOpacity
+              style={styles.previewActionBtn}
+              onPress={handleRetake}
+            >
+              <Text style={styles.previewActionText}>Retake</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.previewActionBtn, styles.usePhotoBtn]}
+              onPress={handleUsePhoto}
+            >
+              <Text style={styles.previewActionText}>Use Photo</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-      {capturePic && !isLoading && (
-        <View style={styles.previewActionContainer}>
-          <TouchableOpacity
-            style={styles.previewActionBtn}
-            onPress={handleRetake}
-          >
-            <Text style={styles.previewActionText}>Retake</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.previewActionBtn, styles.usePhotoBtn]}
-            onPress={handleUsePhoto}
-          >
-            <Text style={styles.previewActionText}>Use Photo</Text>
-          </TouchableOpacity>
-        </View>
-      )}
       {/* Tab bar style that encloses the buttons */}
       <View style={styles.bottomTabEnclosure}>
         <View style={styles.controls}>
-          <CircularButton
-            size={65}
-            onPress={() => setEnableTorch(!enableTorch)}
-          >
-            <MaterialCommunityIcons name="flashlight" size={28} color="#fff" />
+          {/* GALLERY BUTTON */}
+          <CircularButton size={65} onPress={pickImage}>
+            <MaterialCommunityIcons
+              name="image-multiple"
+              size={28}
+              color="#fff"
+            />
           </CircularButton>
 
+          {/* SHUTTER BUTTON */}
           <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
             <CircularButton size={95} onPress={handleCapture}>
               <FontAwesome6 name="camera" size={30} color="#fff" />
             </CircularButton>
           </Animated.View>
 
+          {/* CAMERA ROTATE BUTTON */}
           <CircularButton
             size={65}
             onPress={() => setFacing(facing === "back" ? "front" : "back")}
@@ -231,6 +286,15 @@ const styles = StyleSheet.create({
     borderTopColor: "#e0e0e0",
     justifyContent: "center",
     paddingBottom: 20,
+  },
+  topUtilityBtn: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    padding: 10,
+    borderRadius: 25,
+    zIndex: 10,
   },
   controls: {
     flexDirection: "row",

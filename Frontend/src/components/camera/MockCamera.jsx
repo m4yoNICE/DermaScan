@@ -86,18 +86,17 @@ const SkinCamera = () => {
           result: "success",
           message: "Analysis complete",
           data: {
-            id: 16,
+            id: 20,
             userId: 2,
             imageId: 16,
             conditionId: 12,
-            confidenceScores: 0.9999846490885632,
+            confidenceScores: 0.9998371188601858,
             status: "success",
             condition_name: "milia",
             canRecommend: "Yes",
-            createdAt: "2026-02-15 21:26:28.478",
-            updatedAt: "2026-02-15 21:26:28.644",
-            image_url:
-              "C:\\Codes\\Dermascan\\Backend\\skinUploads\\image-1771161988603-547843595.jpg",
+            createdAt: "2026-02-17 19:12:46.382",
+            updatedAt: "2026-02-17 19:12:46.489",
+            image_url: "image-1771326766461-1496338.jpg",
           },
         },
       };

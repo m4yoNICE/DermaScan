@@ -90,7 +90,7 @@ export async function analyzeSkinOrchestrator(userId, imageBuffer) {
       return {
         statusCode: 200,
         payload: {
-          result: "failed",
+          result: "flagged",
           message: "This concern may require professional consultation.",
         },
       };
