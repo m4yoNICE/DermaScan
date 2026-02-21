@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 
 const AnalysisContext = createContext();
 
@@ -17,12 +17,32 @@ export const AnalysisProvider = ({ children }) => {
     image_url: null,
   });
 
-  const [recommendation, setRecommendation] = useState(null);
-
+  const [recommendation, setRecommendation] = useState([
+    {
+      id: null,
+      productName: null,
+      productImage: null,
+      ingredient: null,
+      description: null,
+      productType: null,
+      locality: null,
+      skinType: null,
+      dermaTested: null,
+      timeRoutine: null,
+      score: null,
+    },
+  ]);
+  const value = useMemo(
+    () => ({
+      analysis,
+      setAnalysis,
+      recommendation,
+      setRecommendation,
+    }),
+    [analysis, recommendation],
+  );
   return (
-    <AnalysisContext.Provider
-      value={{ analysis, setAnalysis, recommendation, setRecommendation }}
-    >
+    <AnalysisContext.Provider value={value}>
       {children}
     </AnalysisContext.Provider>
   );
