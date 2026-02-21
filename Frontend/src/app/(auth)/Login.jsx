@@ -6,7 +6,7 @@ import {
   Keyboard,
 } from "react-native";
 import { Link, router } from "expo-router";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 //external ui
 import { Feather, Ionicons } from "@expo/vector-icons";
 import BottomSheet, {

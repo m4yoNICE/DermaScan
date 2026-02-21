@@ -7,18 +7,27 @@ export async function skinAnalysis(req, res) {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-    const result = await analyzeSkinOrchestrator(req.user.id, req.file.buffer);
-    let recommendation = null;
+    const analysisResult = await analyzeSkinOrchestrator(
+      req.user.id,
+      req.file.buffer,
+    );
+    let recommendationResult = null;
 
-    // commenting for now since im done with the return endpoint, will be bringing back if the orchestrator is finished
-    // if (result.payload.result === "success") {
-    //   recommendation = await recommendOrchestrator(result);
-    // }
-    console.log("return: ", result);
+    if (analysisResult.payload.result === "success") {
+      console.log("begin reccomendations");
+      recommendationResult = await recommendOrchestrator(
+        analysisResult.payload.data.id,
+        req.user.id,
+        analysisResult.payload.data.conditionId,
+      );
+    }
 
-    return res.status(result.statusCode).json({
-      analysis: result.payload,
-      recommendation: recommendation,
+    console.log("analysis Result: ", analysisResult);
+    console.log("Recommendation Result: ", recommendationResult);
+
+    return res.status(analysisResult.statusCode).json({
+      analysis: analysisResult.payload,
+      recommendation: recommendationResult,
     });
   } catch (err) {
     console.error("Error in skinAnalysisController:", err);

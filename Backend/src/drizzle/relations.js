@@ -8,6 +8,10 @@ import {
   storedImages,
   skinData,
   role,
+  productRecommendationsTransaction,
+  skinCareProducts,
+  conditionProducts,
+  routineNotifications,
 } from "./schema.js";
 
 export const journalsRelations = relations(journals, ({ one }) => ({
@@ -23,6 +27,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   skinAnalysisTransactions: many(skinAnalysisTransactions),
   skinData: many(skinData),
   storedImages: many(storedImages),
+  routineNotifications: many(routineNotifications),
   role: one(role, {
     fields: [users.roleId],
     references: [role.id],
@@ -38,7 +43,7 @@ export const otpRelations = relations(otp, ({ one }) => ({
 
 export const skinAnalysisTransactionsRelations = relations(
   skinAnalysisTransactions,
-  ({ one }) => ({
+  ({ one, many }) => ({
     skinCondition: one(skinConditions, {
       fields: [skinAnalysisTransactions.conditionId],
       references: [skinConditions.id],
@@ -51,6 +56,7 @@ export const skinAnalysisTransactionsRelations = relations(
       fields: [skinAnalysisTransactions.userId],
       references: [users.id],
     }),
+    recommendations: many(productRecommendationsTransaction),
   }),
 );
 
@@ -58,6 +64,7 @@ export const skinConditionsRelations = relations(
   skinConditions,
   ({ many }) => ({
     skinAnalysisTransactions: many(skinAnalysisTransactions),
+    conditionProducts: many(conditionProducts),
   }),
 );
 
@@ -82,3 +89,45 @@ export const skinDataRelations = relations(skinData, ({ one }) => ({
 export const roleRelations = relations(role, ({ many }) => ({
   users: many(users),
 }));
+
+export const skinCareProductsRelations = relations(
+  skinCareProducts,
+  ({ many }) => ({
+    conditionProducts: many(conditionProducts),
+    recommendations: many(productRecommendationsTransaction),
+    routineNotifications: many(routineNotifications),
+  }),
+);
+
+export const productRecommendationsTransactionRelations = relations(
+  productRecommendationsTransaction,
+  ({ one, many }) => ({
+    analysis: one(skinAnalysisTransactions, {
+      fields: [productRecommendationsTransaction.analysisId],
+      references: [skinAnalysisTransactions.id],
+    }),
+    product: one(skinCareProducts, {
+      fields: [productRecommendationsTransaction.productId],
+      references: [skinCareProducts.id],
+    }),
+    routineNotifications: many(routineNotifications),
+  }),
+);
+
+export const routineNotificationsRelations = relations(
+  routineNotifications,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [routineNotifications.userId],
+      references: [users.id],
+    }),
+    recommendation: one(productRecommendationsTransaction, {
+      fields: [routineNotifications.recommendationId],
+      references: [productRecommendationsTransaction.id],
+    }),
+    product: one(skinCareProducts, {
+      fields: [routineNotifications.productId],
+      references: [skinCareProducts.id],
+    }),
+  }),
+);
