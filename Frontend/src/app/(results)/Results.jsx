@@ -1,111 +1,158 @@
-import { StyleSheet, Text, View, ActivityIndicator, Image } from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Accordion from "@/components/designs/Accordian";
+import { useAnalysis } from "src/contexts/AnalysisContext";
 import Api from "@/services/Api";
-import Card from "@/components/Card";
+import RoutineView from "@/components/results/RoutineView";
+import LoadingModal from "@/components/designs/LoadingModal";
+import DermaAlert, {
+  dermaAlertTextStyle,
+} from "@/components/designs/DermaAlert";
 
 const Results = () => {
-  const { data } = useLocalSearchParams();
-  const response = JSON.parse(data);
-  // ADD THIS - Log what you're actually getting
-  console.log("RAW DATA:", data);
-  const result = response.data;
-  const conditionId = result.condition_id;
-  const imageId = result.image_id;
-
-  //holder of data to show in UI
-  const [conditionName, setConditionName] = useState(null);
-  const [uri, setUri] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { analysis } = useAnalysis();
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
-    fetchConditionAndImage(conditionId, imageId);
-  }, []);
-
-  const fetchConditionAndImage = async (conditionId, imageId) => {
-    // Fetch condition
-    try {
-      const res = await Api.getConditionByIdAPI(conditionId);
-      const condition = res.data.data;
-      setConditionName(condition.condition);
-    } catch (err) {
-      console.log("Error fetching condition:", err);
-      setConditionName("Unknown Condition");
+    if (analysis?.image_url) {
+      const url = Api.getSkinImage(analysis.image_url);
+      setImageUrl(url);
     }
-    // Fetch image
-    try {
-      const res = await Api.getImageByIdAPI(imageId);
-      const filename = res.data; // It's already just the filename string
-      const imageUri = Api.getImage(filename);
-      setUri(imageUri);
-    } catch (err) {
-      console.log("📷 Error:", err.response?.status, err.response?.data);
-      setUri(null);
-    }
-    setLoading(false);
-  };
+  }, [analysis]);
 
-  if (loading) {
+  if (!analysis) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#00CC99" />
-        <Text style={{ marginTop: 10 }}>Loading details...</Text>
+        <Text>No analysis data available.</Text>
       </View>
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.imgWrapper}>
-        <Image source={{ uri }} style={{ width: 200, height: 200 }} />
-      </View>
-      <Card>
-        <Text style={styles.title}>Skin Analysis Result</Text>
+  const getImageContent = () => {
+    if (analysis.status === "flagged") {
+      return (
+        <View style={styles.flaggedPlaceholder}>
+          <MaterialCommunityIcons
+            name="shield-check-outline"
+            size={48}
+            color="#b0bec5"
+          />
+          <Text style={styles.flaggedPlaceholderText}>Image not available</Text>
+        </View>
+      );
+    }
+    if (imageUrl) {
+      return (
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.image}
+          resizeMode="cover"
+          onError={(e) => console.error("Image load failed:", e.nativeEvent)}
+        />
+      );
+    }
 
-        {/* DO NOT NEST TEXT WITH VARIABLES INSIDE */}
-        <Text style={styles.value}>
-          The system has detected signs of
-          <Text style={styles.label}> {conditionName} </Text>
-          with a confidence level of
-          <Text style={styles.label}>
-            {" "}
-            {(Number(result.confidence_scores) * 100).toFixed(2)}%{" "}
-          </Text>
-        </Text>
-      </Card>
-    </View>
+    return <LoadingModal />;
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.imgWrapper}>{getImageContent()}</View>
+
+      {/* Analysis Accordion */}
+      <View style={styles.accordionWrapper}>
+        <Accordion title="Analysis">
+          {analysis.status === "flagged" ? (
+            <DermaAlert>
+              <Text style={dermaAlertTextStyle}>
+                Our system cannot detect this as it may be outside of scope or
+                it may need expert intervention.
+              </Text>
+              <Text style={dermaAlertTextStyle}>
+                Please see a dermatologist for proper care.
+              </Text>
+            </DermaAlert>
+          ) : (
+            <View style={styles.analysisContent}>
+              <Text style={styles.analysisText}>
+                The system has detected signs of
+                <Text style={styles.highlight}>{analysis.condition_name}</Text>
+                with a confidence level of
+                <Text style={styles.highlight}>
+                  {(Number(analysis.confidenceScores) * 100).toFixed(2)}%{" "}
+                </Text>
+              </Text>
+            </View>
+          )}
+        </Accordion>
+      </View>
+
+      {/* Recommendation Accordion */}
+      <View style={styles.accordionWrapper}>
+        <Accordion title="Recommendation">
+          {analysis.status === "flagged" || analysis.canRecommend === "No" ? (
+            <DermaAlert>
+              <Text style={dermaAlertTextStyle}>
+                This concern may require professional consultation. Please see a
+                dermatologist for proper care.
+              </Text>
+            </DermaAlert>
+          ) : (
+            <RoutineView />
+          )}
+        </Accordion>
+      </View>
+    </ScrollView>
   );
 };
 
 export default Results;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, alignItems: "center" },
+  container: { paddingBottom: 40, alignItems: "center" },
   imgWrapper: {
-    alignItems: "center",
-    marginBottom: 20,
+    width: "100%",
+    height: 300,
+    backgroundColor: "#f0f0f0",
+    marginBottom: 10,
   },
-  title: {
-    textAlign: "center",
-    fontSize: 20,
+  image: { width: "100%", height: "100%" },
+  accordionWrapper: {
+    width: "100%",
+    marginTop: 2,
+  },
+  analysisContent: {
+    padding: 10,
+  },
+  analysisText: {
+    fontSize: 18,
+    lineHeight: 26,
+    color: "#333",
+  },
+  highlight: {
     fontWeight: "700",
-    marginBottom: 12,
     color: "#00CC99",
   },
-  label: {
-    fontSize: 20,
-    marginTop: 8,
-    fontWeight: "600",
-    color: "#555",
+  standardContent: {
+    padding: 10,
   },
-  value: {
-    fontSize: 20,
-    fontWeight: "400",
-    color: "#000",
+  standardText: {
+    fontSize: 16,
+    color: "#444",
   },
-  centered: {
-    flex: 1,
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+
+  flaggedPlaceholder: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#f0f0f0",
     justifyContent: "center",
     alignItems: "center",
+    gap: 8,
+  },
+  flaggedPlaceholderText: {
+    fontSize: 13,
+    color: "#b0bec5",
   },
 });

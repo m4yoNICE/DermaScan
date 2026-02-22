@@ -9,8 +9,12 @@ export function verifyToken(req, res, next) {
   console.log("📌 Authorization header raw:", authHeader);
 
   if (!token) {
+<<<<<<< HEAD
     console.log("❌ No token provided");
     return res.status(401).json({ error: "Acess Denied" });
+=======
+    return res.status(401).json({ error: "Access Denied" });
+>>>>>>> 655f91e83bd85e6a53ce18599574e9051a541594
   }
 
   jwt.verify(token, ENV.JWT_SECRET, (err, decoded) => {

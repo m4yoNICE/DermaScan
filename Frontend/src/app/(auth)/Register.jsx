@@ -1,21 +1,25 @@
 import Landing4 from "@/components/landing/Landing4";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetTextInput, // ADD THIS
+} from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Link, router } from "expo-router";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Keyboard,
 } from "react-native";
-import Button from "src/components/Button";
-import LoadingModal from "@/components/LoadingModal";
+import Button from "@/components/designs/Button";
+import LoadingModal from "@/components/designs/LoadingModal";
 import { UserContext } from "src/contexts/UserContext";
 import Api from "src/services/Api.js";
 
-import { ToastMessage } from "@/components/ToastMessage";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 const Register = () => {
@@ -32,6 +36,19 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+
+  const sheetRef = useRef(null);
+  const snapPoints = ["80%", "100%"];
+
+  useEffect(() => {
+    const keyboardHide = Keyboard.addListener("keyboardDidHide", () => {
+      sheetRef.current?.snapToIndex(0);
+    });
+
+    return () => {
+      keyboardHide.remove();
+    };
+  }, []);
 
   const formatDate = (date) => {
     if (!date) return "Select Date of Birth";
@@ -51,7 +68,7 @@ const Register = () => {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields"
+        "Please fill out all required fields",
       );
     }
 
@@ -59,7 +76,7 @@ const Register = () => {
       return ToastMessage(
         "error",
         "Password Mismatch",
-        "Passwords do not match"
+        "Passwords do not match",
       );
     }
 
@@ -67,31 +84,27 @@ const Register = () => {
       return ToastMessage(
         "error",
         "Invalid Email",
-        "Please enter a valid email address"
+        "Please enter a valid email address",
       );
     }
-    const strongPasswordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    if (!strongPasswordRegex.test(password)) {
-      return ToastMessage(
-        "error",
-        "Weak Password",
-        "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
-      );
-    }
-
     if (dob > new Date()) {
       return ToastMessage(
         "error",
         "Invalid Date",
-        "Date of birth cannot be in the future"
+        "Date of birth cannot be in the future",
       );
     }
 
     try {
       setLoading(true);
-      const registerData = { email, firstname, dob, lastname, password };
+      const registerData = {
+        email,
+        firstname,
+        dob: dob.toISOString().split("T")[0],
+        lastname,
+        password,
+      };
+      console.log(registerData);
       const res = await Api.registerAccountAPI(registerData);
       const { token, user } = res.data;
       if (token && user) {
@@ -99,7 +112,7 @@ const Register = () => {
         ToastMessage(
           "success",
           "Registration Successful!",
-          "Welcome aboard 👋"
+          "Welcome aboard 👋",
         );
         router.push("/BaumannQuestionnaire");
       }
@@ -124,11 +137,16 @@ const Register = () => {
 
       {/* BottomSheet */}
       <BottomSheet
+        ref={sheetRef}
         index={0}
-        snapPoints={["90%"]}
+        snapPoints={snapPoints}
         enablePanDownToClose={false}
         handleComponent={null}
         enableContentPanningGesture={false}
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="restore"
+        android_keyboardInputMode="adjustResize"
+        animateOnMount={false}
         backgroundStyle={{
           backgroundColor: "white",
           borderRadius: 40,
@@ -155,7 +173,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Email address"
               value={email}
@@ -173,7 +191,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="First Name"
               value={firstname}
@@ -190,7 +208,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Last Name"
               value={lastname}
@@ -233,7 +251,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Password"
               value={password}
@@ -257,7 +275,7 @@ const Register = () => {
               color="#999"
               style={styles.inputIcon}
             />
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               placeholder="Confirm Password"
               value={confirmPassword}

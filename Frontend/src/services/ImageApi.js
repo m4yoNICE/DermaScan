@@ -1,27 +1,33 @@
 import { Http } from "./Http";
 
-const uploadImageAPI = async (uri) => {
-  console.log("URI IN API: ", uri);
+function createImageFormData(uri, fieldName = "image") {
   const filename = uri.split("/").pop() || "image.jpg";
   const formData = new FormData();
-  formData.append("image", {
+  formData.append(fieldName, {
     uri,
     type: "image/jpeg",
     name: filename,
   });
-  console.log("FORMDATA: ", formData);
+  return formData;
+}
+
+async function uploadImage(endpoint, uri, fieldName = "image") {
+  const formData = createImageFormData(uri, fieldName);
+
   try {
-    const response = await Http.post("/images/skin", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const response = await Http.post(endpoint, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
-    console.log("SUCCESS:", response.data);
     return response;
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.error("Upload failed:", error);
+    throw error;
   }
+}
+
+const ImageApi = {
+  uploadSkinImageAPI: (uri) => uploadImage("/api/condition/skin", uri),
+  uploadProfilePicAPI: (uri) => uploadImage("/api/profile/pic", uri),
 };
 
-const ImageApi = { uploadImageAPI };
 export default ImageApi;

@@ -1,5 +1,5 @@
-import { CameraView } from "expo-camera";
-import { useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import { useState, useRef } from "react";
 import {
   View,
@@ -13,11 +13,14 @@ import {
 } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import CircularButton from "../CircularButton";
+import CircularButton from "../designs/CircularButton";
+import Card from "../designs/Card";
 import { router } from "expo-router";
 import ImageApi from "@/services/ImageApi";
+import { useAnalysis } from "src/contexts/AnalysisContext";
 
 const SkinCamera = () => {
+  const { setAnalysis, setRecommendation } = useAnalysis();
   const [failMessage, setFailMessage] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState("back");
@@ -61,7 +64,6 @@ const SkinCamera = () => {
     ]).start();
   };
 
-  //handler of the pic before pushing to backend
   const handleCapture = async () => {
     try {
       animateShutter();
@@ -73,45 +75,79 @@ const SkinCamera = () => {
   };
 
   const handleUsePhoto = async () => {
+    console.log("SKIN CAMERA");
     if (!capturePic) return;
     setIsLoading(true);
-
+    console.log("Analysing Image");
     try {
-      const res = await ImageApi.uploadImageAPI(capturePic.uri);
-      const { result } = res.data;
+      const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
+      const { analysis, recommendation } = res.data;
 
-      if (result === "failed") {
+      if (analysis.result === "failed") {
         setCapturePic(null);
-        setFailMessage(res.data.message);
-        setIsLoading(false);
+        setFailMessage(analysis.message);
         return;
       }
 
-      router.push({
-        pathname: "/Results",
-        params: { data: JSON.stringify(res.data) },
-      });
-      // const mockData = {
-      //   data: {
-      //     condition_id: 9,
-      //     confidence_scores: 0.817634,
-      //     created_at: "2025-11-30T11:36:37.000Z",
-      //     id: 32,
-      //     image_id: 11,
-      //     status: "success",
-      //     user_id: 20,
-      //   },
-      //   message: "Analysis complete",
-      //   result: "success",
-      // };
-      // router.push({
-      //   pathname: "/Results",
-      //   params: { data: JSON.stringify(mockData) },
-      // });
+      if (analysis.result === "flagged") {
+        setAnalysis({ status: "flagged" });
+        router.push("/Results");
+        return;
+      }
+
+      if (analysis.result === "success") {
+        const analysisResults = {
+          id: analysis.data.id,
+          userId: analysis.data.userId,
+          imageId: analysis.data.imageId,
+          conditionId: analysis.data.conditionId,
+          confidenceScores: analysis.data.confidenceScores,
+          status: analysis.data.status,
+          condition_name: analysis.data.condition_name,
+          canRecommend: analysis.data.canRecommend,
+          createdAt: analysis.data.createdAt,
+          updatedAt: analysis.data.updatedAt,
+          image_url: analysis.data.image_url,
+        };
+        console.log("Analysis Results: ", analysisResults);
+        setAnalysis(analysisResults);
+
+        const recommendationResults =
+          recommendation?.map((item) => ({
+            id: item.id,
+            productName: item.productName,
+            productImage: item.productImage,
+            ingredient: item.ingredient,
+            description: item.description,
+            productType: item.productType,
+            locality: item.locality,
+            skinType: item.skinType,
+            dermaTested: item.dermaTested,
+            timeRoutine: item.timeRoutine,
+            score: item.score,
+          })) ?? [];
+        console.log("Recommendation Results: ", recommendationResults);
+        setRecommendation(recommendationResults);
+
+        router.push("/Results");
+      }
     } catch (err) {
-      console.log("UPLOAD FAILED →", err?.message || err);
+      console.log("UPLOAD FAILED →", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1], // Match your cameraBox aspect ratio
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setCapturePic({ uri: result.assets[0].uri });
     }
   };
 
@@ -119,96 +155,88 @@ const SkinCamera = () => {
 
   return (
     <View style={styles.container}>
-      {/* CAMERA + UI ONLY WHEN NO FAIL MESSAGE */}
-      {!failMessage && (
-        <>
-          {/* CAMERA MASK */}
-          <View style={styles.cameraMask}>
-            {!capturePic && (
-              <CameraView
-                ref={cameraRef}
-                style={styles.cameraBox}
-                facing={facing}
-                enableTorch={enableTorch}
-              />
-            )}
+      <View style={styles.cameraContainer}>
+        {!capturePic ? (
+          <CameraView
+            ref={cameraRef}
+            style={styles.cameraBox}
+            facing={facing}
+            enableTorch={enableTorch}
+          />
+        ) : (
+          <Image source={{ uri: capturePic.uri }} style={styles.cameraBox} />
+        )}
+
+        {/* FLASH/TORCH OVERLAY BUTTON */}
+        {!capturePic && (
+          <TouchableOpacity
+            style={styles.topUtilityBtn}
+            onPress={() => setEnableTorch(!enableTorch)}
+          >
+            <MaterialCommunityIcons
+              name={enableTorch ? "flashlight" : "flashlight-off"}
+              size={24}
+              color="#fff"
+            />
+          </TouchableOpacity>
+        )}
+
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#fff" />
           </View>
+        )}
 
-          {/* FRAME OUTLINE */}
-          <View pointerEvents="none" style={styles.frameOutline} />
-
-          {/* CONTROLS */}
-          <View style={styles.controls}>
-            <CircularButton
-              size={65}
-              onPress={() => setEnableTorch(!enableTorch)}
+        {capturePic && !isLoading && (
+          <View style={styles.previewActionContainer}>
+            <TouchableOpacity
+              style={styles.previewActionBtn}
+              onPress={handleRetake}
             >
-              <MaterialCommunityIcons
-                name="flashlight"
-                size={28}
-                color="#fff"
-              />
-            </CircularButton>
-
-            <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
-              <CircularButton size={95} onPress={handleCapture}>
-                <FontAwesome6 name="camera" size={30} color="#fff" />
-              </CircularButton>
-            </Animated.View>
-
-            <CircularButton
-              size={65}
-              onPress={() => setFacing(facing === "back" ? "front" : "back")}
+              <Text style={styles.previewActionText}>Retake</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.previewActionBtn, styles.usePhotoBtn]}
+              onPress={handleUsePhoto}
             >
-              <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
-            </CircularButton>
+              <Text style={styles.previewActionText}>Use Photo</Text>
+            </TouchableOpacity>
           </View>
+        )}
+      </View>
+      {/* Tab bar style that encloses the buttons */}
+      <View style={styles.bottomTabEnclosure}>
+        <View style={styles.controls}>
+          {/* GALLERY BUTTON */}
+          <CircularButton size={65} onPress={pickImage}>
+            <MaterialCommunityIcons
+              name="image-multiple"
+              size={28}
+              color="#fff"
+            />
+          </CircularButton>
 
-          {/* PREVIEW MODAL */}
-          <Modal visible={!!capturePic} transparent animationType="fade">
-            <View style={styles.modalContainer}>
-              {isLoading ? (
-                <View style={styles.loadingCard}>
-                  <ActivityIndicator size="large" color="#00CC99" />
-                  <Text style={styles.loadingText}>Analyzing skin...</Text>
-                </View>
-              ) : (
-                <View style={styles.previewCard}>
-                  <Image
-                    source={{ uri: capturePic?.uri }}
-                    style={styles.previewImg}
-                  />
-                  <Text style={styles.previewTitle}>Use this image?</Text>
+          {/* SHUTTER BUTTON */}
+          <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
+            <CircularButton size={95} onPress={handleCapture}>
+              <FontAwesome6 name="camera" size={30} color="#fff" />
+            </CircularButton>
+          </Animated.View>
 
-                  <View style={styles.actionRow}>
-                    <TouchableOpacity
-                      style={styles.cancelBtn}
-                      onPress={handleRetake}
-                    >
-                      <Text style={styles.cancelText}>Cancel</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.okayBtn}
-                      onPress={handleUsePhoto}
-                    >
-                      <Text style={styles.okayText}>Okay</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            </View>
-          </Modal>
-        </>
-      )}
-
-      {/* ERROR MODAL - ALWAYS OUTSIDE CAMERA BLOCK */}
+          {/* CAMERA ROTATE BUTTON */}
+          <CircularButton
+            size={65}
+            onPress={() => setFacing(facing === "back" ? "front" : "back")}
+          >
+            <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
+          </CircularButton>
+        </View>
+      </View>
       <Modal visible={!!failMessage} transparent animationType="fade">
         <View style={styles.failOverlay}>
-          <View style={styles.failCard}>
+          <Card>
             <Text style={styles.failTitle}>Alert</Text>
             <Text style={styles.failMsg}>{failMessage}</Text>
-
             <TouchableOpacity
               style={styles.failBtn}
               onPress={() => {
@@ -218,7 +246,7 @@ const SkinCamera = () => {
             >
               <Text style={styles.failBtnText}>Okay</Text>
             </TouchableOpacity>
-          </View>
+          </Card>
         </View>
       </Modal>
     </View>
@@ -227,199 +255,122 @@ const SkinCamera = () => {
 
 export default SkinCamera;
 
-const FRAME_SIZE = 280;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0F0F0F",
+    backgroundColor: "#fff",
   },
-
-  cameraMask: {
-    marginTop: 90,
-    width: FRAME_SIZE,
-    height: FRAME_SIZE,
-    alignSelf: "center",
-    borderRadius: FRAME_SIZE / 2,
-    overflow: "hidden",
+  cameraContainer: {
+    width: "100%",
+    aspectRatio: 1,
+    marginTop: 60,
     backgroundColor: "#000",
-    elevation: 10,
+    overflow: "hidden",
   },
-
   cameraBox: {
-    width: "100%",
-    height: "100%",
-  },
-
-  frameOutline: {
-    position: "absolute",
-    top: 90,
-    alignSelf: "center",
-    width: FRAME_SIZE,
-    height: FRAME_SIZE,
-    borderRadius: FRAME_SIZE / 2,
-    borderWidth: 4,
-    borderColor: "#00CC99",
-  },
-
-  controls: {
-    position: "absolute",
-    bottom: 45,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 40,
-  },
-
-  modalContainer: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
-
-  previewCard: {
-    width: "88%",
-    borderRadius: 18,
-    backgroundColor: "rgba(255,255,255,0.95)",
-    padding: 25,
-    alignItems: "center",
-  },
-
-  previewImg: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    marginBottom: 20,
-  },
-
-  previewTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginTop: 10,
-    color: "#222",
-  },
-
-  actionRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  bottomTabEnclosure: {
+    position: "absolute",
+    bottom: 0,
     width: "100%",
-    marginTop: 25,
-  },
-
-  cancelBtn: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 12,
-    borderWidth: 1.5,
-    borderColor: "#000",
-    marginRight: 10,
-  },
-
-  cancelText: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-
-  okayBtn: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 12,
-    backgroundColor: "#000",
-    marginLeft: 10,
-  },
-
-  okayText: {
-    textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#fff",
-  },
-
-  loadingCard: {
+    height: 180, // Height to sufficiently enclose controls
     backgroundColor: "#fff",
-    padding: 40,
-    borderRadius: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0",
+    justifyContent: "center",
+    paddingBottom: 20,
+  },
+  topUtilityBtn: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    padding: 10,
+    borderRadius: 25,
+    zIndex: 10,
+  },
+  controls: {
+    flexDirection: "row",
+    justifyContent: "space-around",
     alignItems: "center",
+    paddingHorizontal: 20,
   },
-
-  loadingText: {
-    marginTop: 18,
-    fontSize: 16,
-    color: "#00CC99",
+  previewActionContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 20,
   },
-
+  previewActionBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+  usePhotoBtn: {
+    backgroundColor: "#00CC99",
+    borderColor: "#00CC99",
+  },
+  previewActionText: {
+    fontWeight: "600",
+  },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#fff",
   },
-
   permissionText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#000",
     textAlign: "center",
     marginBottom: 20,
   },
-
   permissionBtn: {
     paddingHorizontal: 30,
     paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: "#00CC99",
   },
-
   permissionBtnText: {
     fontSize: 16,
     color: "#fff",
     fontWeight: "600",
   },
-
-  /* ERROR MODAL STYLES */
   failOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
   },
-
-  failCard: {
-    width: "85%",
-    backgroundColor: "white",
-    padding: 25,
-    borderRadius: 15,
-    alignItems: "center",
-  },
-
   failTitle: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "bold",
     marginBottom: 10,
   },
-
   failMsg: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: 15,
+    color: "#444",
     textAlign: "center",
     marginBottom: 20,
   },
-
   failBtn: {
-    backgroundColor: "#00CC99",
+    backgroundColor: "#1e7d64",
     width: "100%",
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 8,
   },
-
   failBtnText: {
     color: "white",
     textAlign: "center",
-    fontSize: 16,
     fontWeight: "600",
   },
 });

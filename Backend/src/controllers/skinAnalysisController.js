@@ -1,6 +1,5 @@
-import { findCondtionById } from "../services/skinAnalysisDBMapping.js";
-import { analyzeSkin } from "../services/skinAnalysisOrchestrator.js";
-
+import { analyzeSkinOrchestrator } from "../application/skinAnalysisOrchestrator.js";
+import { recommendOrchestrator } from "../application/productRecommendationOrchestrator.js";
 // === MAIN IMAGE PROCESSING LOGIC ===
 // Handles the full lifecycle of a skin analysis request
 
@@ -8,34 +7,30 @@ export async function skinAnalysis(req, res) {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-    const result = await analyzeSkin(req.user.id, req.file.buffer);
-    return res.status(result.statusCode).json(result.payload);
+    const analysisResult = await analyzeSkinOrchestrator(
+      req.user.id,
+      req.file.buffer,
+    );
+    let recommendationResult = null;
+
+    if (analysisResult.payload.result === "success") {
+      console.log("begin reccomendations");
+      recommendationResult = await recommendOrchestrator(
+        analysisResult.payload.data.id,
+        req.user.id,
+        analysisResult.payload.data.conditionId,
+      );
+    }
+
+    console.log("analysis Result: ", analysisResult);
+    console.log("Recommendation Result: ", recommendationResult);
+
+    return res.status(analysisResult.statusCode).json({
+      analysis: analysisResult.payload,
+      recommendation: recommendationResult,
+    });
   } catch (err) {
     console.error("Error in skinAnalysisController:", err);
     return res.status(500).json({ error: "Server error" });
-  }
-}
-
-export async function getConditionNameByID(req, res) {
-  try {
-    const { id } = req.params;
-    const condition_id = id;
-    const condition = await findCondtionById(condition_id);
-
-    if (!condition) {
-      return res.status(404).json({
-        error: "Condition not found",
-      });
-    }
-
-    return res.status(200).json({
-      result: "success",
-      data: condition,
-    });
-  } catch (err) {
-    console.error("Error in getConditionNameByID:", err);
-    return res.status(500).json({
-      error: "Server error",
-    });
   }
 }

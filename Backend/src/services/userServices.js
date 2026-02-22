@@ -2,6 +2,8 @@ import { db } from "../config/db.js";
 import { users, skinData } from "../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+
+//update User
 export async function updateUser(
   userId,
   firstname,
@@ -31,13 +33,28 @@ export async function updateUser(
   return { success: true };
 }
 
-export async function deleteUser(id) {
+export async function deleteUser(userId) {
   const result = await db.delete(users).where(eq(users.id, userId));
   return result.affectedRows > 0;
 }
 
-export async function getUserId(id) {
-  return await db.query.users.findFirst({ where: eq(users.id, userId) });
+export async function getUserWithSkinData(userId) {
+  const result = await db
+    .select({
+      userId: users.id,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      email: users.email,
+      skinType: skinData.skinType,
+      skinSensitivity: skinData.skinSensitivity,
+      pigmentation: skinData.pigmentation,
+      aging: skinData.aging,
+    })
+    .from(users)
+    .leftJoin(skinData, eq(skinData.userId, users.id))
+    .where(eq(users.id, userId));
+
+  return result[0] || null;
 }
 
 export async function createSkinData(

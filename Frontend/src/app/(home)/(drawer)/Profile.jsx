@@ -10,8 +10,8 @@ import {
 import React, { useContext, useState, useCallback } from "react";
 import { useFocusEffect, router } from "expo-router";
 import { UserContext } from "src/contexts/UserContext";
-import Button from "src/components/Button";
-import { ToastMessage } from "@/components/ToastMessage";
+import Button from "@/components/designs/Button";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Api from "@/services/Api";
 
@@ -19,18 +19,22 @@ const Profile = () => {
   const { user, logout } = useContext(UserContext);
 
   // Editable fields
-  const [firstname, setFirstname] = useState(user?.firstname || "");
-  const [lastname, setLastname] = useState(user?.lastname || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [dob, setDob] = useState(null);
-  const [skinType, setSkinType] = useState(null);
-  const [skinSensitive, setSkinSensitive] = useState(null);
+  const [userData, setUserData] = useState({
+    firstname: null,
+    lastname: null,
+    email: null,
+    dob: null,
+    skinType: null,
+    skinSensitive: null,
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    current: "",
+    new: "",
+    confirm: "",
+  });
 
   const [showPicker, setShowPicker] = useState(false);
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   // delete account
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -62,7 +66,7 @@ const Profile = () => {
       ToastMessage(
         "error",
         "Fetch Failed",
-        "Unable to retrieve your profile data."
+        "Unable to retrieve your profile data.",
       );
     }
   };
@@ -70,16 +74,16 @@ const Profile = () => {
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
-    }, [])
+    }, []),
   );
 
   // Update User Profile
   const handleUpdate = async () => {
-    if (!firstname || !lastname || !email) {
+    if (!userData.firstname || !userData.lastname || !userData.email) {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields."
+        "Please fill out all required fields.",
       );
     }
 
@@ -87,7 +91,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Missing Current Password",
-        "Enter your current password to change it."
+        "Enter your current password to change it.",
       );
     }
 
@@ -95,7 +99,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Password Mismatch",
-        "New passwords do not match."
+        "New passwords do not match.",
       );
     }
 
@@ -103,28 +107,30 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Invalid Date",
-        "Date of birth cannot be in the future."
+        "Date of birth cannot be in the future.",
       );
     }
 
     try {
       const updateData = {
-        firstname,
-        lastname,
-        birthdate: dob ? dob.toISOString().split("T")[0] : null,
-        currentPassword,
-        newPassword: newPassword || null,
-        skin_type: skinType,
-        skin_sensitivity: skinSensitive,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
+        birthdate: userData.dob
+          ? userData.dob.toISOString().split("T")[0]
+          : null,
+        currentPassword: passwordData.current,
+        newPassword: passwordData.new || null,
+        skin_type: userData.skinType,
+        skin_sensitivity: userData.skinSensitive,
       };
 
-      const response = await Api.editUserAPI(updateData);
-      console.log("Profile updated:", response.data);
+      await Api.editUserAPI(updateData);
+      ToastMessage("success", "Profile Updated", "Changes saved.");
 
       ToastMessage(
         "success",
         "Profile Updated",
-        "Your changes have been saved."
+        "Your changes have been saved.",
       );
     } catch (error) {
       console.error("Update Error:", error);
@@ -132,7 +138,7 @@ const Profile = () => {
         ToastMessage(
           "error",
           "Server Error",
-          error.response.data?.error || "Something went wrong."
+          error.response.data?.error || "Something went wrong.",
         );
       } else if (error.request) {
         ToastMessage("error", "Network Error", "Unable to reach the server.");
@@ -150,7 +156,7 @@ const Profile = () => {
       return ToastMessage(
         "error",
         "Password Required",
-        "Enter your password to delete."
+        "Enter your password to delete.",
       );
     }
 
@@ -179,7 +185,7 @@ const Profile = () => {
               ToastMessage(
                 "success",
                 "Skin Data Cleared",
-                "Your skin type has been reset."
+                "Your skin type has been reset.",
               );
               router.push("/BaumannQuestionnaire");
             } catch (error) {
@@ -187,12 +193,12 @@ const Profile = () => {
               ToastMessage(
                 "error",
                 "Failed",
-                "Unable to reset your skin data."
+                "Unable to reset your skin data.",
               );
             }
           },
         },
-      ]
+      ],
     );
   };
   return (
@@ -207,29 +213,33 @@ const Profile = () => {
       <Text style={styles.text}>Email</Text>
       <TextInput
         style={[styles.input, { backgroundColor: "#f0f0f0", color: "gray" }]}
-        value={email}
+        value={userData.email}
         editable={false}
       />
 
       <Text style={styles.text}>First Name</Text>
       <TextInput
         style={styles.input}
-        value={firstname}
-        onChangeText={setFirstname}
+        value={userData.firstname}
+        onChangeText={(text) =>
+          setUserData((prev) => ({ ...prev, firstname: text }))
+        }
         placeholder="First Name"
       />
 
       <Text style={styles.text}>Last Name</Text>
       <TextInput
         style={styles.input}
-        value={lastname}
-        onChangeText={setLastname}
+        value={userData.lastname}
+        onChangeText={(text) =>
+          setUserData((prev) => ({ ...prev, lastname: text }))
+        }
         placeholder="Last Name"
       />
 
       <Text style={styles.text}>Date Of Birth</Text>
       <Button
-        title={dob ? formatDate(dob) : "Select Date of Birth"}
+        title={userData.dob ? formatDate(userData.dob) : "Select Date of Birth"}
         onPress={() => setShowPicker(true)}
         style={{
           backgroundColor: "#f9f9f9",
@@ -243,12 +253,13 @@ const Profile = () => {
 
       {showPicker && (
         <DateTimePicker
-          value={dob || new Date()}
+          value={userData.dob || new Date()}
           mode="date"
           display="default"
           onChange={(_, selectedDate) => {
             setShowPicker(false);
-            if (selectedDate) setDob(selectedDate);
+            if (selectedDate)
+              setUserData((prev) => ({ ...prev, dob: selectedDate }));
           }}
         />
       )}
@@ -257,8 +268,10 @@ const Profile = () => {
       <TextInput
         style={styles.input}
         placeholder="Current Password"
-        value={currentPassword}
-        onChangeText={setCurrentPassword}
+        value={passwordData.current}
+        onChangeText={(text) =>
+          setPasswordData((prev) => ({ ...prev, current: text }))
+        }
         secureTextEntry
       />
 
@@ -266,8 +279,10 @@ const Profile = () => {
       <TextInput
         style={styles.input}
         placeholder="New Password (optional)"
-        value={newPassword}
-        onChangeText={setNewPassword}
+        value={passwordData.new}
+        onChangeText={(text) =>
+          setPasswordData((prev) => ({ ...prev, new: text }))
+        }
         secureTextEntry
       />
 
@@ -275,8 +290,10 @@ const Profile = () => {
       <TextInput
         style={styles.input}
         placeholder="Confirm New Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        value={passwordData.confirm}
+        onChangeText={(text) =>
+          setPasswordData((prev) => ({ ...prev, confirm: text }))
+        }
         secureTextEntry
       />
 

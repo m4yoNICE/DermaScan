@@ -1,39 +1,33 @@
 import { db } from "../config/db.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { users } from "../drizzle/schema.js";
+import { otp } from "../drizzle/schema.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { ENV } from "../config/env.js";
 
-/**
- * Processes user login business logic.
- *
- * @async
- * @function processLogin
- * @param {string} email - User email
- * @param {string} password - Plain-text password
- * @returns {Promise<{ user: Object, token: string }>}
- * @throws {Error} If credentials are invalid
- */
+import { createAccessToken } from "../utils/createAccessToken.js";
+import { sendEmail } from "../utils/sendOTP.js";
+
+//Processes user login business logic.
 export async function processLogin(email, password) {
+  console.log(email, password);
   const user = await findUserByEmail(email);
 
   if (!user) {
     throw new Error("INVALID_CREDENTIALS");
   }
-
+  console.log(user);
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) {
     throw new Error("INVALID_CREDENTIALS");
   }
 
-  //for tokenization
   const payload = { id: user.id, email: user.email };
   const token = await createAccessToken(payload);
 
   return { user, token };
 }
 
+//Processes user registration business logic
 export async function processRegister(
   email,
   firstname,
@@ -45,6 +39,7 @@ export async function processRegister(
   if (existingUser) {
     throw new Error("EMAIL_ALREADY_REGISTERED");
   }
+  //id 2 is for users; id 1 is for admin
   const role = 2;
   const newUser = await createUser(
     email,
@@ -56,23 +51,13 @@ export async function processRegister(
   );
   if (!newUser) throw new Error("REGISTER_FAILED");
 
-  // Immediately issue token (same as login)
   const payload = { id: newUser.id, email: newUser.email };
   const token = await createAccessToken(payload);
 
   return { token, newUser };
 }
 
-/**
- * Handles forgot-password flow.
- *
- * @async
- * @function forgetPasswordProcess
- * @param {string} email
- * @returns {Promise<void>}
- * @throws {Error} EMAIL_NOT_FOUND
- * @throws {Error} EMAIL_SEND_FAILED
- */
+//Handles forgot-password business logic
 export async function forgetPasswordProcess(email) {
   const user = await findUserByEmail(email);
   if (!user) {
@@ -82,7 +67,8 @@ export async function forgetPasswordProcess(email) {
   const otp = String(Math.floor(100000 + Math.random() * 900000));
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
-  await usedOTP(user.id);
+  console.log("user id: ", user.id);
+  await usedOTP(user.id, otp);
   await saveOTP(user.id, otp, expiresAt);
 
   const sent = await sendEmail(email, otp);
@@ -91,67 +77,42 @@ export async function forgetPasswordProcess(email) {
   }
 }
 
-/**
- * Verifies OTP for a user.
- *
- * @async
- * @function checkOtpProcess
- * @param {string} email
- * @param {string} otp
- * @returns {Promise<number>} userId
- * @throws {Error} OTP_INVALID
- * @throws {Error} OTP_EXPIRED
- */
-export async function checkOtpProcess(email, otp) {
+// Verifies OTP business logic
+export async function checkOtpProcess(email, otp_code) {
   const user = await findUserByEmail(email);
-  if (!user) {
-    throw new Error("OTP_INVALID");
-  }
+  if (!user) throw new Error("OTP_INVALID");
 
-  const storedOTP = await findOTP(user.id, otp);
-  if (!storedOTP) {
-    throw new Error("OTP_INVALID");
-  }
+  const storedOTP = await findOTP(user.id, otp_code);
+  if (!storedOTP) throw new Error("OTP_INVALID");
 
   if (Date.now() > new Date(storedOTP.expiresAt).getTime()) {
     throw new Error("OTP_EXPIRED");
   }
 
-  storedOTP.isUsed = true;
-  await storedOTP.save();
+  await db.update(otp).set({ isUsed: true }).where(eq(otp.id, storedOTP.id));
 
   return user.id;
 }
 
-/**
- * Resets user password.
- *
- * @async
- * @function resetPasswordProcess
- * @param {string} email
- * @param {string} newPassword
- * @returns {Promise<void>}
- * @throws {Error} PASSWORD_REUSED
- */
+// Resets user password busines logic
 export async function resetPasswordProcess(email, newPassword) {
   const user = await findUserByEmail(email);
-  if (!user) {
-    throw new Error("USER_NOT_FOUND");
-  }
+  if (!user) throw new Error("USER_NOT_FOUND");
 
   const isSame = await bcrypt.compare(newPassword, user.password);
-  if (isSame) {
-    throw new Error("PASSWORD_REUSED");
-  }
+  if (isSame) throw new Error("PASSWORD_REUSED");
 
   const hashedPassword = await bcrypt.hash(newPassword, 10);
-  return await prisma.user.update({
-    where: { email },
-    data: { password: hashedPassword },
-  });
+
+  await db
+    .update(users)
+    .set({ password: hashedPassword })
+    .where(eq(users.email, email));
+
+  return true;
 }
 
-/**
+/**---------------------------------------------------------------------------------------------------------
  * Helper Functions
  *
  */
@@ -176,59 +137,56 @@ export async function createUser(
   password,
   role,
 ) {
+  console.log("role value:", role);
+
   const passwordHash = await bcrypt.hash(password, 10);
-  const [registered] = await db
-    .insert(users)
-    .values({
-      email,
-      first_name,
-      last_name,
-      birthdate,
-      password: passwordHash,
-      role_id: role,
-    })
-    .$returningId();
+  await db.insert(users).values({
+    email,
+    firstName: first_name,
+    lastName: last_name,
+    birthdate,
+    password: passwordHash,
+    roleId: role,
+  });
 
   return await db.query.users.findFirst({
-    where: eq(users.id, registered.id),
+    where: eq(users.email, email),
   });
-}
-
-export async function createAccessToken(payload, expiresIn = "15m") {
-  return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn });
 }
 
 export async function saveOTP(user_id, otp_code, expiresAt) {
-  const [inserted] = await db
-    .insert(otp)
-    .values({
-      user_id,
-      otp_code,
-      isUsed: false,
-      expiresAt,
-    })
-    .$returningId();
-
-  return await db.query.otp.findFirst({
-    where: eq(otp.id, inserted.id),
+  await db.insert(otp).values({
+    userId: user_id,
+    otpCode: otp_code,
+    isUsed: false,
+    expiresAt,
   });
-}
 
-export async function usedOTP(user_id) {
-  return await db
-    .update(otp)
-    .set({ isUsed: true })
-    .where(and(eq(otp.user_id, user_id), eq(otp.isUsed, false)));
-}
-
-export async function findOTP(user_id, otp) {
   return await db.query.otp.findFirst({
     where: and(
       eq(otp.userId, user_id),
       eq(otp.otpCode, otp_code),
       eq(otp.isUsed, false),
     ),
-    orderBy: otp.createdAt.desc(),
+    orderBy: desc(otp.createdAt),
+  });
+}
+
+export async function usedOTP(userId) {
+  return await db
+    .update(otp)
+    .set({ isUsed: true })
+    .where(and(eq(otp.userId, userId), eq(otp.isUsed, false)));
+}
+
+export async function findOTP(user_id, otp_code) {
+  return await db.query.otp.findFirst({
+    where: and(
+      eq(otp.userId, user_id),
+      eq(otp.otpCode, otp_code),
+      eq(otp.isUsed, false),
+    ),
+    orderBy: desc(otp.createdAt),
   });
 }
 

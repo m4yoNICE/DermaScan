@@ -1,7 +1,7 @@
 import joblib
 import io
 import numpy as np
-from embedder_lite import get_embedding
+from embedder import get_embedding
 from preprocessing.preprocess_image import ImagePreprocessingError, MAX_IMAGE_BYTES
 import sys
 import json

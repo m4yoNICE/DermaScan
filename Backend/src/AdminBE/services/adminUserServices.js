@@ -22,8 +22,11 @@ export async function getAllUsersProcess() {
       email: users.email,
       firstName: users.firstName,
       lastName: users.lastName,
+      password: users.password,
       roleId: users.roleId,
       roleName: role.roleName,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
     })
     .from(users)
     .leftJoin(role, eq(users.roleId, role.id));
@@ -33,6 +36,7 @@ export async function getAllUsersProcess() {
     email: row.email,
     firstName: row.firstName,
     lastName: row.lastName,
+    password: row.password,
     roleId: row.roleId,
     role: row.roleName
       ? {
@@ -40,6 +44,8 @@ export async function getAllUsersProcess() {
           roleName: row.roleName,
         }
       : null,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
   }));
 }
 

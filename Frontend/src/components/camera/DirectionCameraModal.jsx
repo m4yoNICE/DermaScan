@@ -14,43 +14,43 @@ const DirectionCameraModal = ({ visible, onClose }) => {
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.box}>
-          {/* Close Button */}
           <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-            <AntDesign name="close" size={22} color="#444" />
+            <View style={styles.closeCircle}>
+              <AntDesign name="close" size={18} color="#000" />
+            </View>
           </TouchableOpacity>
 
           <ScrollView showsVerticalScrollIndicator={false}>
-            {/* Title */}
             <Text style={styles.title}>Camera</Text>
 
-            {/* Instructions */}
-            <Text style={styles.text}>
+            <Text style={styles.subtitle}>
               To help us analyze your skin, please follow these simple steps:
             </Text>
 
-            <Text style={styles.text}>
-              1. <Text style={styles.bold}>Clean, Clear & Steady:</Text> Make
-              sure your face is clean and there’s no makeup on.
-            </Text>
+            <View style={styles.instructionContainer}>
+              <Text style={styles.text}>
+                <Text style={styles.bold}>1. Clean, Clear & Steady:</Text> Make
+                sure your face is clean and there’s no makeup on.
+              </Text>
 
-            <Text style={styles.text}>
-              2. <Text style={styles.bold}>Good Lighting:</Text> Stand in
-              natural light or use a well-lit space. Avoid shadows and harsh
-              light.
-            </Text>
+              <Text style={styles.text}>
+                <Text style={styles.bold}>2. Good Lighting:</Text> Stand in
+                natural light or use a well-lit space. Avoid shadows and harsh
+                light.
+              </Text>
 
-            <Text style={styles.text}>
-              3. <Text style={styles.bold}>Close-up Shot:</Text> Take a close-up
-              picture of your face, ensuring we can clearly see your skin
-              texture and any areas of concern.
-            </Text>
+              <Text style={styles.text}>
+                <Text style={styles.bold}>3. Close-up Shot:</Text> Take a
+                close-up picture of your face, ensuring we can clearly see your
+                skin texture and any areas of concern.
+              </Text>
 
-            <Text style={styles.text}>
-              4. <Text style={styles.bold}>Stay Still:</Text> Hold your phone
-              steady for a clear, focused image.
-            </Text>
+              <Text style={styles.text}>
+                <Text style={styles.bold}>4. Stay Still:</Text> Hold your phone
+                steady for a clear, focused image.
+              </Text>
+            </View>
 
-            {/* Agree Button */}
             <TouchableOpacity style={styles.agreeButton} onPress={onClose}>
               <Text style={styles.agreeText}>I agree</Text>
             </TouchableOpacity>
@@ -68,61 +68,67 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   box: {
-    width: "90%",
+    width: "95%", // Increased width to reach near edges
     backgroundColor: "white",
-    borderRadius: 16,
-    padding: 20,
-    paddingTop: 30,
-    maxHeight: "90%",
+    borderRadius: 20,
+    paddingHorizontal: 25,
+    paddingVertical: 30,
+    maxHeight: "85%",
   },
   closeBtn: {
     position: "absolute",
-    top: 12,
-    right: 12,
+    top: 15,
+    right: 15,
     zIndex: 10,
   },
+  closeCircle: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 15,
+    width: 28,
+    height: 28,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   title: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: "#111",
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: "#777",
+    lineHeight: 20,
     marginBottom: 15,
   },
+  instructionContainer: {
+    width: "100%",
+  },
   text: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 12,
-    lineHeight: 22,
-  },
-  bold: {
-    fontWeight: "700",
-  },
-  warningBox: {
-    marginTop: 15,
-    padding: 12,
-    backgroundColor: "#ffe5e5",
-    borderWidth: 1,
-    borderColor: "#ff9999",
-    borderRadius: 6,
-  },
-  warningText: {
-    color: "#a10000",
-    fontSize: 14,
+    fontSize: 15,
+    color: "#666",
+    marginBottom: 10,
     lineHeight: 20,
   },
+  bold: {
+    fontWeight: "bold",
+    color: "#444",
+  },
   agreeButton: {
-    backgroundColor: "#1e7d64",
-    padding: 14,
+    backgroundColor: "#4E8474",
+    paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
-    marginTop: 25,
-    marginBottom: 10,
+    marginTop: 20,
+    alignSelf: "center",
+    width: "60%",
   },
   agreeText: {
     color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "500",
   },
 });
