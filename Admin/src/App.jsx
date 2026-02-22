@@ -6,7 +6,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import UsersPage from "./pages/admin/UserPage.jsx";
 import Analytics from "./pages/admin/Analytics.jsx";
 import Main from "./pages/Main.jsx";
-import Product from "./pages/admin/Product.jsx";
+import Product from "./pages/admin/product-table/Product.jsx";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
