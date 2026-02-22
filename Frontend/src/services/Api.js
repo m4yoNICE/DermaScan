@@ -25,6 +25,9 @@ const Api = {
   getSkinImage: (data) => {
     return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
   },
+  getProductImage: (data) => {
+    return Http.defaults.baseURL + "/api/uploads/product-images/" + data;
+  },
 };
 
 export default Api;
