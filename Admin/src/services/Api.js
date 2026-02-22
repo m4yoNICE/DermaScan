@@ -28,6 +28,27 @@ const Api = {
   deleteUserAPI: (id) => {
     return Http.delete("/api/admin/users/delete/" + id);
   },
+
+  //skin products api endpoints
+  getSkinProducts: (config = {}) => {
+    return Http.get("api/admin/products/getSkinProducts", config)
+  },
+
+  getProductById: (id) => {
+    return Http.get("/api/admin/products/getSkinProductsById/" + id);
+  },
+
+  createProductAPI: (data) => {
+    return Http.post("/api/admin/products/createSkinProduct", data);
+  },
+
+  updateProductAPI: (id, data) => {
+    return Http.put("/api/admin/products/updateSkinProduct/" + id, data);
+  },
+
+  deleteProductAPI: (id) => {
+    return Http.delete("/api/admin/products/deleteSkinProduct/" + id);
+  },
 };
 
 export default Api;
