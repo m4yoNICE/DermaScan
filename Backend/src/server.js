@@ -11,6 +11,7 @@ import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
+import skinCareProduct from "./AdminBE/routes/skinCareProductsRoutes.js";
 
 const app = express();
 const PORT = ENV.PORT || 6969;
@@ -43,6 +44,7 @@ app.use("/api/condition", skinAnalysisRoutes);
 //admin
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/admin/products", skinCareProduct);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
