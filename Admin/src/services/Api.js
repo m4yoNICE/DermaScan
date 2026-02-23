@@ -28,6 +28,10 @@ const Api = {
   deleteUserAPI: (id) => {
     return Http.delete("/api/admin/users/delete/" + id);
   },
+
+  getOutofScopeData: (id) => {
+    return Http.get("/api/admin/users/stats/out-of-scope/" + id);
+  },
 };
 
 export default Api;

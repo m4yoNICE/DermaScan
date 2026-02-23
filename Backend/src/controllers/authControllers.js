@@ -107,21 +107,8 @@ export async function register(req, res) {
 export async function forgetPassword(req, res) {
   try {
     const { email } = req.body;
-<<<<<<< HEAD
     const user = await findUserByEmail(email);
     if (!user) {
-=======
-    console.log(email);
-
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-    await forgetPasswordProcess(email);
-    return res.status(200).json({ message: "OTP sent to your email." });
-  } catch (error) {
-    console.error("Forget password error:", error);
-    if (error.message === "EMAIL_NOT_FOUND") {
->>>>>>> 655f91e83bd85e6a53ce18599574e9051a541594
       return res.status(404).json({ error: "Email not found" });
     }
     // Here you would typically generate a password reset token and send an email
