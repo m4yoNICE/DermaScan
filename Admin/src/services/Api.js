@@ -29,10 +29,9 @@ const Api = {
     return Http.delete("/api/admin/users/delete/" + id);
   },
 
-<<<<<<< HEAD
   getOutofScopeData: (id) => {
     return Http.get("/api/admin/users/stats/out-of-scope/" + id);
-=======
+  },
   //skin products api endpoints
   getSkinProducts: (config = {}) => {
     return Http.get("api/admin/products/getSkinProducts", config)
@@ -52,7 +51,6 @@ const Api = {
 
   deleteProductAPI: (id) => {
     return Http.delete("/api/admin/products/deleteSkinProduct/" + id);
->>>>>>> 5e1c5c251a3e6ab5aeed7c48adaecd65d27e4ce6
   },
 };
 
