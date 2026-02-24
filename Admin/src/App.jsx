@@ -7,6 +7,7 @@ import UsersPage from "./pages/admin/UserPage.jsx";
 import Analytics from "./pages/admin/Analytics.jsx";
 import Main from "./pages/Main.jsx";
 import Product from "./pages/admin/product-table/Product.jsx";
+import OutOfScopePage from "./pages/admin/OutOfScopePage.jsx";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/users" element={<UsersPage />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/products" element={<Product />} />
+        <Route path="/out-of-scope" element={<OutOfScopePage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" />} />

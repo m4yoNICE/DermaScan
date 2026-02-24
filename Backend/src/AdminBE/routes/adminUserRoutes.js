@@ -9,10 +9,6 @@ import {
   getAllUsers,
   deleteUser,
 } from "../controllers/adminUsersController.js";
-import { 
-  getScanPerDay,
-  getOutOfScopeStatistics
-} from "../services/adminAnalysisLog.js";
 const router = express.Router();
 
 router.get("/admin", verifyToken, checkAdmin, getAdminData);
@@ -21,7 +17,5 @@ router.get("/getById/:id", verifyToken, checkAdmin, getUserById);
 router.post("/", verifyToken, checkAdmin, createUsers);
 router.put("/:id", verifyToken, checkAdmin, updateUser);
 router.delete("/:id", verifyToken, checkAdmin, deleteUser);
-router.get("/stats/scans", verifyToken, checkAdmin, getScanPerDay);
-router.get("/stats/out-of-scope", verifyToken, checkAdmin, getOutOfScopeStatistics);
 
 export default router;
