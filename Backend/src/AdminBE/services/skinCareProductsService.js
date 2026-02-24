@@ -16,7 +16,12 @@ export const getProductById = async (id) => {
 
 export const createProduct = async (data) => {
   const result = await db.insert(skinCareProducts).values(data);
-  return result;
+  const insertId = result[0].insertId;
+  const [product] = await db
+    .select()
+    .from(skinCareProducts)
+    .where(eq(skinCareProducts.id, insertId));
+  return product;
 };
 
 export const updateProduct = async (id, data) => {

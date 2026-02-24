@@ -1,54 +1,44 @@
 // @/components/designs/RoutineView.js
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
-import ProductCard from "../designs/ProductCard";
 import { useAnalysis } from "src/contexts/AnalysisContext";
-const RoutineSection = ({ title, importance, description, products }) => (
-  <View style={styles.sectionContainer}>
-    <View style={styles.headerRow}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View
-        style={[
-          styles.badge,
-          { backgroundColor: importance === "High" ? "#D32F2F" : "#4CAF50" },
-        ]}
-      >
-        <Text style={styles.badgeText}>Importance: {importance}</Text>
-      </View>
-    </View>
-    <Text style={styles.descriptionText}>{description}</Text>
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.productScroll}
-    >
-      {products.map((item, index) => (
-        <ProductCard key={index} product={item} />
-      ))}
-    </ScrollView>
-  </View>
-);
+import { RoutineSection } from "./RoutineSection";
 
-const RoutineView = ({ analysis }) => {
+const RoutineView = () => {
+  const { recommendation } = useAnalysis();
+  const typeText = {
+    Cleanser:
+      "A cleanser removes dirt, oil, makeup, and impurities from your skin. It's the first and most essential step in any skincare routine, helping keep pores clear and preventing breakouts.",
+    Toner:
+      "A toner balances your skin's pH after cleansing and preps it to absorb the next products better. It can also hydrate, exfoliate, or soothe depending on the formula.",
+    Serum:
+      "A serum delivers concentrated active ingredients deep into the skin to target specific concerns like acne, dark spots, or dehydration.",
+    Moisturizer:
+      "A moisturizer hydrates the skin, locks in moisture, and strengthens the skin barrier to keep it soft, smooth, and protected from dryness or irritation.",
+    Sunscreen:
+      "Sunscreen protects your skin from UV damage, preventing premature aging, dark spots, and skin cancer. It's the most important step in your morning routine.",
+  };
+
+  const groupByType = (products) =>
+    products.reduce((acc, product) => {
+      const type = product.productType ?? "Other";
+      if (!acc[type]) acc[type] = [];
+      acc[type].push(product);
+      return acc;
+    }, {});
+
+  const grouped = groupByType(recommendation);
+
   return (
     <View style={styles.container}>
-      <View style={styles.routineHeader}>
-        <Text style={styles.routineTypeText}>☀️ Morning Routine</Text>
-      </View>
-
-      {/* These would eventually be mapped from your database/catalog */}
-      <RoutineSection
-        title="Cleanser"
-        importance="High"
-        description="A cleanser removes dirt, oil, and impurities from your skin. It's the first and most essential step..."
-        products={[
-          { name: "Glycolic Acid 7%", match: "98%", brand: "Dermorep" },
-          { name: "Niacinamide", match: "88%", brand: "Dermorep" },
-          { name: "AHA/BHA", match: "78%", brand: "Luxe Organix" },
-        ]}
-      />
-
-      {/* Repeat for Toner, Serum, etc. */}
+      {Object.entries(grouped).map(([type, products]) => (
+        <RoutineSection
+          key={type}
+          title={type}
+          description={typeText[type] ?? ""}
+          products={products}
+        />
+      ))}
     </View>
   );
 };
@@ -63,21 +53,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   routineTypeText: { fontSize: 22, fontWeight: "700", color: "#1e7d64" },
-  sectionContainer: { marginBottom: 25 },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  sectionTitle: { fontSize: 20, fontWeight: "700", color: "#333" },
-  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
-  badgeText: { color: "#fff", fontSize: 10, fontWeight: "700" },
-  descriptionText: {
-    fontSize: 14,
-    color: "#666",
-    lineHeight: 20,
-    marginBottom: 15,
-  },
-  productScroll: { paddingLeft: 5 },
 });
