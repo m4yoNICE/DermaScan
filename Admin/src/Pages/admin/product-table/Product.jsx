@@ -21,19 +21,9 @@ const Product = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedEditProduct, setSelectedEditProduct] = useState(null);
 
-  const {
-    products,
-    loading,
-    error,
-    createLoading,
-    createError,
-    updateLoading,
-    updateError,
-    deleteLoading,
-    deleteError,
-    productByIdLoading,
-    productByIdError,
-  } = useSelector((state) => state.products);
+  const { products, loading, error, deleteLoading, deleteError } = useSelector(
+    (state) => state.products,
+  );
 
   //fetch data when component mount
   useEffect(() => {

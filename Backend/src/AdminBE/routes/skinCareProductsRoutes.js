@@ -1,14 +1,43 @@
 import express from "express";
-import * as skinCareController from "../controllers/skinCareProductController.js"
+import * as skinCareController from "../controllers/skinCareProductController.js";
 import { verifyToken } from "../../middleware/verifyToken.js";
 import { checkAdmin } from "../../middleware/checkAdmin.js";
+import { diskSaveMulter } from "../../middleware/DiskSaveMulter.js";
 
 const router = express.Router();
+const upload = diskSaveMulter();
 
-router.get("/getSkinProducts", verifyToken, checkAdmin, skinCareController.getAllProducts);
-router.get("/getSkinProductsById/:id", verifyToken, checkAdmin, skinCareController.getProductById);
-router.post("/createSkinProduct", verifyToken, checkAdmin, skinCareController.createProduct);
-router.put("/updateSkinProduct/:id", verifyToken, checkAdmin, skinCareController.updateProduct);
-router.delete("/deleteSkinProduct/:id", verifyToken, checkAdmin, skinCareController.deleteProduct);
+router.get(
+  "/getSkinProducts",
+  verifyToken,
+  checkAdmin,
+  skinCareController.getAllProducts,
+);
+router.get(
+  "/getSkinProductsById/:id",
+  verifyToken,
+  checkAdmin,
+  skinCareController.getProductById,
+);
+router.post(
+  "/createSkinProduct",
+  verifyToken,
+  checkAdmin,
+  upload.single("productImage"),
+  skinCareController.createProduct,
+);
+router.put(
+  "/updateSkinProduct/:id",
+  verifyToken,
+  checkAdmin,
+  upload.single("productImage"),
+  skinCareController.updateProduct,
+);
+router.delete(
+  "/deleteSkinProduct/:id",
+  verifyToken,
+  checkAdmin,
+  skinCareController.deleteProduct,
+);
 
 export default router;

@@ -34,7 +34,7 @@ app.use(
 );
 app.use(
   "/api/uploads/product-images",
-  express.static(path.join(process.cwd(), "products_images")),
+  express.static(path.join(process.cwd(), "productUploads")),
 );
 
 //users

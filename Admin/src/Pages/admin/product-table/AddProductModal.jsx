@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createProduct } from "@/redux/slices/skinProductSlice";
 import { X } from "lucide-react";
+import { buildProductFormData } from "@/utils/Forms";
 
 const AddProductModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -41,7 +42,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await dispatch(createProduct(formData));
+    const data = buildProductFormData(formData);
+    console.log(data);
+    await dispatch(createProduct(data));
+
     onClose();
   };
 
@@ -56,6 +60,9 @@ const AddProductModal = ({ isOpen, onClose }) => {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
       onClick={handleBackdropClick}
+      role="presentation"
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      tabIndex={-1}
     >
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         {/* header */}
@@ -93,12 +100,16 @@ const AddProductModal = ({ isOpen, onClose }) => {
               Product Image
             </label>
             <input
-              type="text"
+              type="file"
               name="productImage"
-              value={formData.productImage}
-              onChange={handleChange}
-              placeholder="Enter image filename (e.g. yun1.jpg)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
+              accept="image/*"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productImage: e.target.files[0],
+                }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
           </div>
 

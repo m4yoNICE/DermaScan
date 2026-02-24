@@ -1,3 +1,4 @@
+import { FormsData } from "src/utils/FormData";
 import { Http } from "./Http";
 
 const Api = {
@@ -28,6 +29,10 @@ const Api = {
   getProductImage: (data) => {
     return Http.defaults.baseURL + "/api/uploads/product-images/" + data;
   },
+
+  //FormData
+  uploadSkinImageAPI: (formData) => FormsData("/api/condition/skin", formData),
+  uploadProfilePicAPI: (formData) => FormsData("/api/profile/pic", formData),
 };
 
 export default Api;
