@@ -6,16 +6,14 @@ import { ENV } from "./config/env.js";
 //users routes imports
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
-
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
+import skinCareProduct from "./AdminBE/routes/skinCareProductsRoutes.js";
 
 const app = express();
-
 const PORT = ENV.PORT || 6969;
 
 //8081 is for mobile, while 5173 is for admin web
@@ -30,17 +28,26 @@ app.use(
 app.use(express.json());
 
 //static
-app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
+app.use(
+  "/api/uploads/skin-images",
+  express.static(path.join(process.cwd(), "skinUploads")),
+);
+app.use(
+  "/api/uploads/product-images",
+  express.static(path.join(process.cwd(), "productUploads")),
+);
+
 //users
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/journals", journalRoutes);
-app.use("/images", imageRoutes);
-app.use("/condition", skinAnalysisRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/journals", journalRoutes);
+
+app.use("/api/condition", skinAnalysisRoutes);
 
 //admin
-app.use("/admin/auth", adminAuthRoutes);
-app.use("/admin/users", adminUserRoutes);
+app.use("/api/admin/auth", adminAuthRoutes);
+app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/admin/products", skinCareProduct);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

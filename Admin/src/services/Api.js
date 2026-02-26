@@ -1,36 +1,54 @@
 import { Http } from "./Http";
 
-const loginAccountAPI = (data) => {
-  return Http.post("/admin/auth/login", data);
-};
-
-const fetchUsersAPI = () => {
-  return Http.get("/admin/users/");
-};
-
-const CreateUsersAPI = (formData) => {
-  return Http.post("/admin/users/", formData);
-};
-
-const getUserById = (id) => {
-  return Http.get(`admin/users/${id}`);
-};
-
-const editUserAPI = (id, userData) => {
-  return Http.put(`/admin/users/${id}`, userData);
-};
-
-const deleteUserAPI = (id) => {
-  return Http.delete(`/admin/users/${id}`);
-};
-
 const Api = {
-  loginAccountAPI,
-  fetchUsersAPI,
-  deleteUserAPI,
-  editUserAPI,
-  CreateUsersAPI,
-  getUserById,
+  loginAccountAPI: (data) => {
+    return Http.post("/api/admin/auth/login", data);
+  },
+
+  fetchUsersAPI: () => {
+    return Http.get("/api/admin/users/");
+  },
+
+  getUsersData: (config = {}) => {
+    return Http.get("/api/admin/users/getData", config);
+  },
+
+  CreateUsersAPI: (formData) => {
+    return Http.post("/api/admin/users/", formData);
+  },
+
+  getUserById: (id) => {
+    return Http.get("/api/admin/users/getById/" + id);
+  },
+
+  editUserAPI: (id, userData) => {
+    return Http.put("/api/admin/users/" + id, userData);
+  },
+
+  deleteUserAPI: (id) => {
+    return Http.delete("/api/admin/users/delete/" + id);
+  },
+
+  //skin products api endpoints
+  getSkinProducts: (config = {}) => {
+    return Http.get("api/admin/products/getSkinProducts", config)
+  },
+
+  getProductById: (id) => {
+    return Http.get("/api/admin/products/getSkinProductsById/" + id);
+  },
+
+  createProductAPI: (data) => {
+    return Http.post("/api/admin/products/createSkinProduct", data);
+  },
+
+  updateProductAPI: (id, data) => {
+    return Http.put("/api/admin/products/updateSkinProduct/" + id, data);
+  },
+
+  deleteProductAPI: (id) => {
+    return Http.delete("/api/admin/products/deleteSkinProduct/" + id);
+  },
 };
 
 export default Api;

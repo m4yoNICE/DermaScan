@@ -5,21 +5,22 @@ import { loginProcess } from "../services/adminAuthServices.js";
  *
  * @async
  * @function login
- * @param {Object} req 
- * @param {string} req.body.email 
- * @param {string} req.body.password 
- * @param {Object} res 
+ * @param {Object} req
+ * @param {string} req.body.email
+ * @param {string} req.body.password
+ * @param {Object} res
  * @returns {Promise<void>}
  */
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
     const result = await loginProcess(email, password);
+    if (!result) return res.status(500).json({ error: "Database Error" });
 
     return res.status(200).json({
       message: "Login successful",
@@ -27,7 +28,6 @@ export async function login(req, res) {
       token: result.token,
     });
   } catch (err) {
-    console.error("Admin login error:", err);
 
     if (err.message === "INVALID_CREDENTIALS") {
       return res.status(401).json({ error: "Invalid credentials" });

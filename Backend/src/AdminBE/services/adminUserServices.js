@@ -1,40 +1,61 @@
-import prisma from "../../config/prisma.js";
+import { users, role } from "../../drizzle/schema.js";
+import { db } from "../../config/db.js";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 /**
  * Get admin data by user ID
  */
 export async function getAdminDataProcess(userId) {
-  return await prisma.user.findUnique({
-    where: { id: userId },
+  return await db.query.users.findFirst({
+    where: eq(users.id, userId),
   });
 }
 
 /**
- * Get all users with role information
+ * Get all users (with role fetched separately)
  */
 export async function getAllUsersProcess() {
-  return await prisma.user.findMany({
-    select: {
-      id: true,
-      email: true,
-      first_name: true,
-      last_name: true,
-      role: {
-        select: {
-          id: true,
-          role_name: true,
-        },
-      },
-    },
-  });
+  const result = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      password: users.password,
+      roleId: users.roleId,
+      roleName: role.roleName,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    })
+    .from(users)
+    .leftJoin(role, eq(users.roleId, role.id));
+
+  return result.map((row) => ({
+    id: row.id,
+    email: row.email,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    password: row.password,
+    roleId: row.roleId,
+    role: row.roleName
+      ? {
+          id: row.roleId,
+          roleName: row.roleName,
+        }
+      : null,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  }));
 }
 
 /**
  * Get user by ID
  */
 export async function getUserByIdProcess(id) {
-  return await prisma.user.findUnique({ where: { id } });
+  return await db.query.users.findFirst({
+    where: eq(users.id, id),
+  });
 }
 
 /**
@@ -52,41 +73,43 @@ export async function createUsersProcess(
     throw new Error("INCOMPLETE_FIELDS");
   }
 
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-
-  if (existingUser) {
-    throw new Error("EMAIL_FOUND");
-  }
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, email),
+  });
+  if (existingUser) throw new Error("EMAIL_FOUND");
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  return await prisma.user.create({
-    data: {
+  const [result] = await db
+    .insert(users)
+    .values({
       email,
-      first_name,
-      last_name,
+      firstName: first_name,
+      lastName: last_name,
       password: hashedPassword,
-      role_id,
-      birthdate: birthdate ? new Date(birthdate) : null,
-    },
-  });
+      roleId: role_id,
+      birthdate: birthdate || null,
+    })
+    .$returningId();
+
+  return await db.query.users.findFirst({ where: eq(users.id, result.id) });
 }
 
 /**
- * Delete user by ID
+ * Delete user
  */
 export async function deleteUserProcess(id) {
-  const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, Number(id)),
+  });
+  if (!user) throw new Error("ACCOUNT_NOT_FOUND");
 
-  if (!user) {
-    throw new Error("ACCOUNT_NOT_FOUND");
-  }
-
-  return await prisma.user.delete({ where: { id: Number(id) } });
+  await db.delete(users).where(eq(users.id, Number(id)));
+  return user;
 }
 
 /**
- * Update user information
+ * Update user
  */
 export async function updateUserProcess(
   id,
@@ -97,36 +120,44 @@ export async function updateUserProcess(
   role_id,
   birthdate,
 ) {
-  const user = await prisma.user.findUnique({ where: { id: Number(id) } });
-
-  if (!user) {
-    throw new Error("USER_NOT_FOUND");
-  }
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, Number(id)),
+  });
+  if (!user) throw new Error("USER_NOT_FOUND");
 
   const hashedPassword = password
     ? await bcrypt.hash(password, 10)
     : user.password;
 
-  return await prisma.user.update({
-    where: { id: Number(id) },
-    data: {
-      first_name,
-      last_name,
+  await db
+    .update(users)
+    .set({
+      firstName: first_name,
+      lastName: last_name,
       email,
       password: hashedPassword,
-      role_id,
-      birthdate: birthdate ? new Date(birthdate) : undefined,
-    },
-    include: { role: true },
-  });
+      roleId: role_id,
+      birthdate: birthdate || null,
+    })
+    .where(eq(users.id, Number(id)));
+
+  return await db.query.users.findFirst({ where: eq(users.id, Number(id)) });
 }
 
 /**
- * Find admin by email (used in auth)
+ * Find admin by email
  */
 export async function findAdminByEmail(email) {
-  return await prisma.user.findUnique({
-    where: { email },
-    include: { role: true },
+  const user = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
+  if (!user) return null;
+
+  const roleData = await db.query.role.findFirst({
+    where: eq(role.id, user.roleId),
+  });
+  return {
+    ...user,
+    role: roleData || null,
+  };
 }
