@@ -42,12 +42,11 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = buildProductFormData(formData);
-    console.log(data);
-    await dispatch(createProduct(data));
-
+    await dispatch(createProduct(formData)).unwrap();
+    await dispatch(fetchProducts(formData));
     onClose();
   };
+
 
   // close when clicking outside the modal
   const handleBackdropClick = (e) => {
