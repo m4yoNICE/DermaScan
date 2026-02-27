@@ -38,6 +38,18 @@ export async function deleteUser(userId) {
   return result.affectedRows > 0;
 }
 
+export async function matchPassword(password, userId) {
+  const [user] = await db
+    .select({ password: users.password })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  if (!user) return false;
+
+  return await bcrypt.compare(password, user.password);
+}
+
 export async function getUserWithSkinData(userId) {
   const result = await db
     .select({

@@ -29,8 +29,12 @@ export const updateProduct = async (id, data) => {
     .update(skinCareProducts)
     .set(data)
     .where(eq(skinCareProducts.id, id));
-
-  return result;
+  const insertId = result[0].insertId;
+  const [product] = await db
+    .select()
+    .from(skinCareProducts)
+    .where(eq(skinCareProducts.id, insertId));
+  return product;
 };
 
 export const deleteProduct = async (id) => {

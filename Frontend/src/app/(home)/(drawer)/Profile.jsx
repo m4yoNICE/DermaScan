@@ -162,7 +162,8 @@ const Profile = () => {
 
     try {
       setShowDeleteModal(false);
-      await Api.deleteUserAPI();
+      await Api.deleteUserAPI(deletePassword);
+      
       ToastMessage("success", "Deleted", "Your account has been removed.");
       await logout();
     } catch (error) {

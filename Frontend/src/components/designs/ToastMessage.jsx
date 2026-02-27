@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import Toast from "react-native-toast-message";
 
 export const ToastMessage = (type, message, description) => {

@@ -2,7 +2,6 @@ import { StyleSheet, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
 import SkinCamera from "@/components/camera/SkinCamera";
-// import SkinCamera from "@/components/camera/MockCamera";
 
 import DirectionCameraModal from "@/components/camera/DirectionCameraModal";
 export default function CameraPage() {

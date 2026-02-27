@@ -1,6 +1,6 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 
 export function diskSaveMulter() {
   const uploadDir = path.join(process.cwd(), "productUploads");
