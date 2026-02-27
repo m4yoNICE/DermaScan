@@ -3,7 +3,7 @@ import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
 
 export async function mapSkinResultToCatalog(user_id, skinResult) {
-  if (!skinResult || !skinResult.top3) return null;
+  if (!skinResult?.top3) return null;
 
   const top1 = skinResult.top3[0];
   const top3 = skinResult.top3;

@@ -47,6 +47,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     onClose();
   };
 
+
   // close when clicking outside the modal
   const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {

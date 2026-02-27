@@ -5,6 +5,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import ProductCard from "../designs/ProductCard";
 import { useProduct } from "src/contexts/ProductContext";
 import { useState } from "react";
 import ProductSheet from "../designs/ProductSheet";

@@ -35,9 +35,13 @@ export async function checkImgPython(imageBuffer) {
     python.on("close", (code) => {
       try {
         const result = JSON.parse(output.trim());
-        resolve(result); // ← Resolve even if code !== 0
+        resolve(result);
       } catch (e) {
-        reject(new Error(`Invalid JSON. Output: ${output}`, { cause: e }));
+        reject(
+          new Error(
+            `Invalid JSON. Output: ${output}. Parse error: ${e.message}`,
+          ),
+        );
       }
     });
 
