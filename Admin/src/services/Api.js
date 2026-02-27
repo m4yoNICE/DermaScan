@@ -29,6 +29,9 @@ const Api = {
     return Http.delete("/api/admin/users/delete/" + id);
   },
 
+  getOutofScopeData: (signal) => {
+    return Http.get("/api/admin/stats/out-of-scope" , { signal });
+  },
   //skin products api endpoints
   getSkinProducts: (config = {}) => {
     return Http.get("api/admin/products/getSkinProducts", config)

@@ -9,6 +9,7 @@ import userRoutes from "./routes/userRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
+import outofScopeRoutes from "./AdminBE/routes/outOfScopeRoutes.js";
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
 import skinCareProduct from "./AdminBE/routes/skinCareProductsRoutes.js";
@@ -25,6 +26,7 @@ app.use(
     credentials: true,
   }),
 );
+
 app.use(express.json());
 
 //static
@@ -48,7 +50,9 @@ app.use("/api/condition", skinAnalysisRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/products", skinCareProduct);
+app.use("/api/admin/stats", outofScopeRoutes);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
 });
+

@@ -144,9 +144,15 @@ export async function updateUserProcess(
   return await db.query.users.findFirst({ where: eq(users.id, Number(id)) });
 }
 
-/**
- * Find admin by email
- */
+export async function findUserById  (userId) {
+  try {
+    return await prisma.user.findUnique({ where: { id: userId } });
+  } catch (error) {
+    console.error("Error finding user by ID:", error);
+    throw error;
+  }
+}
+
 export async function findAdminByEmail(email) {
   const user = await db.query.users.findFirst({
     where: eq(users.email, email),
