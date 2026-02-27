@@ -4,6 +4,7 @@ import {
   getUserWithSkinData,
   createSkinData,
   deleteSkinData,
+  matchPassword,
 } from "../services/userServices.js";
 
 export async function getuserid(req, res) {
@@ -50,10 +51,12 @@ export async function edituser(req, res) {
 export async function deleteuser(req, res) {
   try {
     const userId = req.user.id;
+    const { password } = req.body;
+    const isMatch = await matchPassword(password, userId);
+    if (!isMatch) return res.status(404).json({ error: "Password Mismatch" });
     const deleted = await deleteUser(userId);
-    if (!deleted) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    if (!deleted) return res.status(404).json({ error: "User not found" });
+
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: "Server error" });

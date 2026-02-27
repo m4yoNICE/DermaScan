@@ -29,6 +29,7 @@ const Product = () => {
   useEffect(() => {
     const abortController = new AbortController();
     dispatch(fetchProducts());
+    
 
     return () => {
       abortController.abort();

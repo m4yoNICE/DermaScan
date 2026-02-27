@@ -31,7 +31,10 @@ const Api = {
 
   //skin products api endpoints
   getSkinProducts: (config = {}) => {
-    return Http.get("api/admin/products/getSkinProducts", config)
+    return Http.get("api/admin/products/getSkinProducts", config);
+  },
+  getSkinImage: (config = {}) => {
+    return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
   },
 
   getProductById: (id) => {
