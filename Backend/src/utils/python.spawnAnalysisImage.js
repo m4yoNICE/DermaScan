@@ -23,13 +23,13 @@ export async function checkImgPython(imageBuffer) {
 
     python.stdout.on("data", (data) => {
       const text = data.toString();
-      console.log("Python stdout:", text); 
+      console.log("Python stdout:", text);
       output += text;
     });
 
     python.stderr.on("data", (data) => {
       const error = data.toString();
-      console.error("Python stderr:", error); 
+      console.error("Python stderr:", error);
       errorOutput += error;
     });
     python.on("close", (code) => {
@@ -37,12 +37,12 @@ export async function checkImgPython(imageBuffer) {
         const result = JSON.parse(output.trim());
         resolve(result); // ← Resolve even if code !== 0
       } catch (e) {
-        reject(`Invalid JSON. Output: ${output}`);
+        reject(new Error(`Invalid JSON. Output: ${output}`, { cause: e }));
       }
     });
 
     python.on("error", (err) => {
-      reject(`Failed to spawn: ${err.message}`);
+      reject(new Error(`Failed to spawn: ${err.message}`));
     });
   });
 }
