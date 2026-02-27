@@ -25,7 +25,14 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const result = await skinCareService.createProduct(req.body);
+    const data = {
+      ...req.body,
+      productImage: req.file ? req.file.filename : null,
+      dermaTested: req.body.dermaTested === "true",
+    };
+    console.log(data);
+    const result = await skinCareService.createProduct(data);
+    console.log(result);
     res.status(201).json({
       success: true,
       message: "Product created successfully.",
@@ -44,11 +51,18 @@ export const updateProduct = async (req, res) => {
     if (!product) {
       return res
         .status(404)
-        .json({ success: false, message: "Product not found. " });
+        .json({ success: false, message: "Product not found." });
     }
+
+    const data = {
+      ...req.body,
+      productImage: req.file ? req.file.filename : product.productImage,
+      dermaTested: req.body.dermaTested === "true",
+    };
+
     const result = await skinCareService.updateProduct(
       Number(req.params.id),
-      req.body,
+      data,
     );
     res.status(200).json({
       success: true,

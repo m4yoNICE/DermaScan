@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 export function verifyToken(req, res, next) {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = authHeader?.split(" ")[1];
 
   console.log("📌 Incoming token:", token);
   console.log("📌 Authorization header raw:", authHeader);

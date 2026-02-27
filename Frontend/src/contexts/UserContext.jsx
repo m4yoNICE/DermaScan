@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
-import { setLogoutCallback } from "@/services/logoutReference";
+import { setLogoutCallback } from "src/utils/logoutReference";
 
 export const UserContext = createContext();
 

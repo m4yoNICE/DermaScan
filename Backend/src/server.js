@@ -34,6 +34,10 @@ app.use(
   "/api/uploads/skin-images",
   express.static(path.join(process.cwd(), "skinUploads")),
 );
+app.use(
+  "/api/uploads/product-images",
+  express.static(path.join(process.cwd(), "productUploads")),
+);
 
 //users
 app.use("/api/auth", authRoutes);

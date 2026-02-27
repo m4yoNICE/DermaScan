@@ -16,7 +16,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CircularButton from "../designs/CircularButton";
 import Card from "../designs/Card";
 import { router } from "expo-router";
-import ImageApi from "@/services/ImageApi";
+import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 
 const SkinCamera = () => {
@@ -80,7 +80,7 @@ const SkinCamera = () => {
     setIsLoading(true);
     console.log("Analysing Image");
     try {
-      const res = await ImageApi.uploadSkinImageAPI(capturePic.uri);
+      const res = await Api.uploadSkinImageAPI(capturePic.uri);
       const { analysis, recommendation } = res.data;
 
       if (analysis.result === "failed") {

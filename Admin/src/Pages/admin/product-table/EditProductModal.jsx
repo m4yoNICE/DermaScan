@@ -58,7 +58,8 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await dispatch(updateProduct({ id: product.id, data: formData }));
+    const data = buildProductFormData(formData);
+    await dispatch(updateProduct({ id: product.id, data }));
     await dispatch(fetchProducts());
     onClose();
   };
@@ -73,6 +74,9 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
       onClick={handleBackdropClick}
+      role="presentation"
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      tabIndex={-1}
     >
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
         {/* header */}
@@ -110,13 +114,23 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
               Product Image
             </label>
             <input
-              type="text"
+              type="file"
               name="productImage"
-              value={formData.productImage}
-              onChange={handleChange}
-              placeholder="Enter image filename (e.g. yun1.jpg)"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
+              accept="image/*"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  productImage: e.target.files[0],
+                }))
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             />
+            {formData.productImage &&
+              typeof formData.productImage === "string" && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Current: {formData.productImage}
+                </p>
+              )}
           </div>
 
           {/* Product Type */}
