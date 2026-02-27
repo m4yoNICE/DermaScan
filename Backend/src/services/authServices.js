@@ -122,6 +122,13 @@ export async function findUserByEmail(email) {
   });
 }
 
+export async function findAdminByEmail(email) {
+   return await User.findOne({
+    where: { email },
+    include: [Role],
+  });
+}
+
 export async function createUser(
   email,
   first_name,

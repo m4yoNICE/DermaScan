@@ -1,5 +1,4 @@
 import { loginProcess } from "../services/adminAuthServices.js";
-
 /**
  * Handles admin login endpoint
  *
