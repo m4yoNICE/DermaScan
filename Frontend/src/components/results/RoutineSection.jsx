@@ -9,7 +9,6 @@ import ProductCard from "../designs/ProductCard";
 import { useProduct } from "src/contexts/ProductContext";
 import { useState } from "react";
 import ProductSheet from "../designs/ProductSheet";
-
 export const RoutineSection = ({ title, description, products }) => {
   const { setProduct } = useProduct();
   const [selectedProduct, setSelectedProduct] = useState(null);

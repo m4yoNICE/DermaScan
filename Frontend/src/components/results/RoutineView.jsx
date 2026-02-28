@@ -1,13 +1,11 @@
-// @/components/designs/RoutineView.js
 import React, { useState } from "react";
+import { router } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import { RoutineSection } from "./RoutineSection";
 import Button from "../designs/Button";
-import RoutineCheckout from "./RoutineCheckout";
 const RoutineView = () => {
   const { recommendation } = useAnalysis();
-  const [showCheckout, setShowCheckout] = useState(false);
   const typeText = {
     Cleanser:
       "A cleanser removes dirt, oil, makeup, and impurities from your skin. It's the first and most essential step in any skincare routine, helping keep pores clear and preventing breakouts.",
@@ -45,13 +43,8 @@ const RoutineView = () => {
       {/* put the button here */}
       <Button
         title="View My Routine"
-        onPress={() => setShowCheckout(true)}
+        onPress={() => router.push("/Checkout")}
         style={{ margin: 10 }}
-      />
-
-      <RoutineCheckout
-        visible={showCheckout}
-        onClose={() => setShowCheckout(false)}
       />
     </View>
   );
