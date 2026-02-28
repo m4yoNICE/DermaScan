@@ -110,7 +110,11 @@ const Results = () => {
 export default Results;
 
 const styles = StyleSheet.create({
-  container: { paddingBottom: 40, alignItems: "center" },
+  container: {
+    paddingBottom: 40,
+    alignItems: "center",
+  },
+
   imgWrapper: {
     width: "100%",
     height: 300,

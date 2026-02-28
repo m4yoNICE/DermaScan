@@ -168,7 +168,7 @@ const Login = () => {
           />
 
           <Text style={styles.signUp}>
-            Don't have an account?{" "}
+            Don't have an account?
             <Link href="/Register" style={styles.signUpLink}>
               Sign Up
             </Link>

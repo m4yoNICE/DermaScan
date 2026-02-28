@@ -1,9 +1,9 @@
-// @/components/designs/RoutineView.js
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import React, { useState } from "react";
+import { router } from "expo-router";
+import { View, StyleSheet } from "react-native";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import { RoutineSection } from "./RoutineSection";
-
+import Button from "../designs/Button";
 const RoutineView = () => {
   const { recommendation } = useAnalysis();
   const typeText = {
@@ -39,6 +39,13 @@ const RoutineView = () => {
           products={products}
         />
       ))}
+
+      {/* put the button here */}
+      <Button
+        title="View My Routine"
+        onPress={() => router.push("/Checkout")}
+        style={{ margin: 10 }}
+      />
     </View>
   );
 };

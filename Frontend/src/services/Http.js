@@ -46,9 +46,8 @@ const handleExpiryToken = async (error) => {
     triggerLogout();
   }
 
-  return Promise.reject(error);
+  throw error;
 };
-
 
 Http.interceptors.request.use(addAuthToken);
 Http.interceptors.response.use((res) => res, handleExpiryToken);

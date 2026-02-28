@@ -1,3 +1,4 @@
+import { users, role } from "../../drizzle/schema.js";
 import { db } from "../../config/db.js";
 import { eq } from "drizzle-orm";
 import { sql } from "drizzle-orm";
@@ -41,21 +42,4 @@ export async function getOutOfScopeStatistics(req, res) {
         console.error("Get out of scope statistics error:", err);
         return res.status(500).json({ error: "Server error" });
     }
-}
-
-export async function deleteOutOfScope(req, res) {
-  try {
-    const { id } = req.params;
-
-    const deleted = await db
-      .delete(skinConditions)
-      .where(eq(skinConditions.id, Number(id)));
-
-    return res.status(200).json({
-      message: "Condition deleted successfully",
-    });
-  } catch (err) {
-    console.error("Delete out of scope error:", err);
-    return res.status(500).json({ error: "Server error" });
-  }
 }
