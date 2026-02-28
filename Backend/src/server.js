@@ -8,9 +8,11 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
-import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
+import reccommendRoutes from "./routes/recommendRoutes.js";
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
+import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
+
 import skinCareProduct from "./AdminBE/routes/skinCareProductsRoutes.js";
 
 const app = express();
@@ -41,9 +43,8 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/journals", journalRoutes);
-
-app.use("/api/condition", skinAnalysisRoutes);
-
+app.use("/api/conditions", skinAnalysisRoutes);
+app.use("/api/recommendations", reccommendRoutes);
 //admin
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/users", adminUserRoutes);
