@@ -6,6 +6,7 @@ import {
   skinData,
   skinCareProducts,
   conditionProducts,
+  skinAnalysisTransactions,
 } from "./schema.js";
 import bcrypt from "bcryptjs";
 import { inArray } from "drizzle-orm";
@@ -285,6 +286,34 @@ export async function main() {
     { conditionId: 14, productId: 9, createdAt: now, updatedAt: now },
     { conditionId: 14, productId: 10, createdAt: now, updatedAt: now },
   ]);
+
+  await db.insert(skinAnalysisTransactions).values([
+  {
+    userId: 2,
+    conditionId: 1,
+    status: "moderate",
+    confidenceScores: 0.85, 
+    createdAt: now,
+    updatedAt: now,
+  },
+  {
+    userId: 2,
+    conditionId: 2,
+    status: "moderate",
+    confidenceScores: 0.60, 
+    createdAt: now,
+    updatedAt: now,
+  },
+  {
+    userId: 2,
+    conditionId: 9,
+    status: "severe",
+    confidenceScores: 0.95, 
+    createdAt: now,
+    updatedAt: now,
+  }
+]);
+
   console.log("Seeding completed!");
 }
 

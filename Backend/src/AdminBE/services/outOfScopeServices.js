@@ -4,7 +4,8 @@ import { sql } from "drizzle-orm";
 import 
 { 
     skinAnalysisTransactions,
-    skinConditions
+    skinConditions,
+    users
 } from "../../drizzle/schema.js";
 
 export async function getScanPerDay(req, res) {
@@ -27,16 +28,27 @@ export async function getScanPerDay(req, res) {
 
 export async function getOutOfScopeStatistics(req, res) {  
     try {
-        const conditionCounts = await db
+        const result = await db
         .select({
-        id: skinConditions.id,
+        skinAnalysisTransactionsId: skinAnalysisTransactions.id,
+        skinConditionsId: skinConditions.id,
+        email: users.email,
         conditionName: skinConditions.condition,
         canRecommend: skinConditions.canRecommend,
+        createdAt: skinAnalysisTransactions.createdAt,
+        updatedAt: skinAnalysisTransactions.updatedAt,
         })
-        .from(skinConditions)
+        .from(skinAnalysisTransactions)
+        .leftJoin(
+        skinConditions,
+          eq(skinAnalysisTransactions.conditionId, skinConditions.id)
+        )
+        .leftJoin(
+          users, 
+          eq(skinAnalysisTransactions.userId, users.id))
         .where(eq(skinConditions.canRecommend, "no"));
 
-        return res.status(200).json(conditionCounts);
+        return res.status(200).json(result);
     }catch (err) {
         console.error("Get out of scope statistics error:", err);
         return res.status(500).json({ error: "Server error" });
