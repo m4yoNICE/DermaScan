@@ -25,8 +25,7 @@ const outOfScope = () => {
         <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border px-4 py-2">Skin Transaction ID</th>
-              <th className="border px-4 py-2">Condition ID</th>
+              <th className="border px-4 py-2">ID</th>
               <th className="border px-4 py-2">email</th>
               <th className="border px-4 py-2">Condition Name</th>
               <th className="border px-4 py-2">Can Recommend</th>
@@ -38,7 +37,6 @@ const outOfScope = () => {
             {data.map((item) => (
               <tr key={item.skinAnalysisTransactionsId}>
                 <td className="border px-4 py-2">{item.skinAnalysisTransactionsId}</td>
-                <td className="border px-4 py-2">{item.skinConditionsId}</td>
                 <td className="border px-4 py-2">{item.email}</td>
                 <td className="border px-4 py-2">{item.conditionName}</td>
                 <td className="border px-4 py-2">{item.canRecommend}</td>
