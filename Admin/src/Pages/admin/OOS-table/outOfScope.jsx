@@ -27,6 +27,7 @@ const outOfScope = () => {
             <tr>
               <th className="border px-4 py-2">Skin Transaction ID</th>
               <th className="border px-4 py-2">Condition ID</th>
+              <th className="border px-4 py-2">email</th>
               <th className="border px-4 py-2">Condition Name</th>
               <th className="border px-4 py-2">Can Recommend</th>
               <th className="border px-4 py-2">Created At</th>
@@ -38,6 +39,7 @@ const outOfScope = () => {
               <tr key={item.skinAnalysisTransactionsId}>
                 <td className="border px-4 py-2">{item.skinAnalysisTransactionsId}</td>
                 <td className="border px-4 py-2">{item.skinConditionsId}</td>
+                <td className="border px-4 py-2">{item.email}</td>
                 <td className="border px-4 py-2">{item.conditionName}</td>
                 <td className="border px-4 py-2">{item.canRecommend}</td>
                 <td className="border px-4 py-2">{item.createdAt}</td>

@@ -4,7 +4,8 @@ import { sql } from "drizzle-orm";
 import 
 { 
     skinAnalysisTransactions,
-    skinConditions
+    skinConditions,
+    users
 } from "../../drizzle/schema.js";
 
 export async function getScanPerDay(req, res) {
@@ -31,6 +32,7 @@ export async function getOutOfScopeStatistics(req, res) {
         .select({
         skinAnalysisTransactionsId: skinAnalysisTransactions.id,
         skinConditionsId: skinConditions.id,
+        email: users.email,
         conditionName: skinConditions.condition,
         canRecommend: skinConditions.canRecommend,
         createdAt: skinConditions.createdAt,
@@ -39,7 +41,11 @@ export async function getOutOfScopeStatistics(req, res) {
         .from(skinAnalysisTransactions)
         .leftJoin(
         skinConditions,
-          eq(skinAnalysisTransactions.conditionId, skinConditions.id))
+          eq(skinAnalysisTransactions.conditionId, skinConditions.id)
+        )
+        .leftJoin(
+          users, 
+          eq(skinAnalysisTransactions.userId, users.id))
         .where(eq(skinConditions.canRecommend, "no"));
 
         return res.status(200).json(result);
