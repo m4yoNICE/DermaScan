@@ -100,6 +100,12 @@ export const skinConditions = mysqlTable("skin_conditions", {
   id: int().autoincrement().primaryKey().notNull(),
   condition: varchar({ length: 255 }).notNull(),
   canRecommend: varchar("can_recommend", { length: 255 }).notNull(),
+  createdAt: datetime("created_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3)`)
+    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
 });
 
 export const conditionProducts = mysqlTable("condition_products", {

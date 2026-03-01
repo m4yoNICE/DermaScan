@@ -50,7 +50,7 @@ app.use("/api/recommendations", reccommendRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/products", skinCareProduct);
-app.use("/api/admin/out-of-scope", outOfScopeRoutes);
+app.use("/api/admin/scope", outOfScopeRoutes);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

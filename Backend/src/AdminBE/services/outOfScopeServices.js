@@ -33,6 +33,8 @@ export async function getOutOfScopeStatistics(req, res) {
         skinConditionsId: skinConditions.id,
         conditionName: skinConditions.condition,
         canRecommend: skinConditions.canRecommend,
+        createdAt: skinConditions.createdAt,
+        updatedAt: skinConditions.updatedAt,
         })
         .from(skinAnalysisTransactions)
         .leftJoin(
