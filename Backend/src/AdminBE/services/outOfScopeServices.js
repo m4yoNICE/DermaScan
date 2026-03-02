@@ -35,6 +35,8 @@ export async function getOutOfScopeStatistics(req, res) {
         email: users.email,
         conditionName: skinConditions.condition,
         canRecommend: skinConditions.canRecommend,
+        status: skinAnalysisTransactions.status,
+        confidenceScores: skinAnalysisTransactions.confidenceScores,
         createdAt: skinAnalysisTransactions.createdAt,
         updatedAt: skinAnalysisTransactions.updatedAt,
         })
