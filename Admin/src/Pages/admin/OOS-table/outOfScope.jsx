@@ -1,27 +1,22 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Table from "@/components/Table"; 
 import { fetchOutOfScope } from "../../../redux/slices/outOfScopeSlice.js"; 
 
 const outOfScope = () => {
   const dispatch = useDispatch();
   const { data = [], loading, error } = useSelector((state) => state.outOfScope);
-  const [sortConfig, setSortConfig] = useState({ 
-    key: null, direction: "asc" 
-  });
-
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     dispatch(fetchOutOfScope());
   }, [dispatch]);
 
-  const processedData = useMemo(() => {
-  let updated = [...data];
+  const filteredData = useMemo(() => {
+    if (!searchQuery) return data;
 
-  // 🔍 filter
-  if (searchQuery) {
     const searchLower = searchQuery.toLowerCase();
-    updated = updated.filter((item) =>
+    return data.filter((item) =>
       [
         item.email,
         item.conditionName,
@@ -33,41 +28,94 @@ const outOfScope = () => {
           field.toString().toLowerCase().includes(searchLower)
         )
     );
-  }
+  }, [data, searchQuery]);
 
-  // ↕ sort
-  if (sortConfig.key) {
-    updated.sort((a, b) => {
-      const aValue = a[sortConfig.key];
-      const bValue = b[sortConfig.key];
+  const tableData = useMemo(() => {
+  return filteredData.map((item) => ({
+    ...item,
+    canRecommend: false,
+  }));
+}, [filteredData]);
 
-      if (aValue == null) return 1;
-      if (bValue == null) return -1;
-
-      if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
-    });
-  }
-
-  return updated;
-}, [data, searchQuery, sortConfig]);
-
-  const handleSort = (key) => {
-    setSortConfig((prev) => ({
-      key,
-      direction:
-        prev.key === key && prev.direction === "asc" 
-        ? "desc" 
-        : "asc",
-    }))
-  }
+  const columns = [
+    {
+      key: "skinAnalysisTransactionsId",
+      label: "ID",
+      width: "80px",
+    },
+    {
+      key: "email",
+      label: "Email",
+      width: "200px",
+      render: (value) => (
+        <span className="block truncate max-w-[180px]" title={value}>
+          {value || "N/A"}
+        </span>
+      ),
+    },
+    {
+      key: "conditionName",
+      label: "Condition Name",
+      width: "160px",
+      render: (value) => (
+        <span className="block truncate max-w-[140px]" title={value}>
+          {value || "N/A"}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      width: "120px",
+      render: (value) => (
+        <span className="block truncate max-w-[100px]" title={value}>
+          {value || "N/A"}
+        </span>
+      ),
+    },
+    {
+      key: "confidenceScores",
+      label: "Confidence Scores",
+      width: "140px",
+      render: (value) => (
+        <span className="block truncate max-w-[120px]" title={value}>
+          {value || "N/A"}
+        </span>
+      ),
+    },
+    {
+      key: "canRecommend",
+      label: "Can Recommend",
+      width: "120px",
+      render: (value) => (
+        <span
+          className={`px-2 py-1 text-xs font-medium rounded-full ${
+            value ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+          }`}
+        >
+          {value ? "Yes" : "No"}
+        </span>
+      ),
+    },
+    {
+      key: "createdAt",
+      label: "Created At",
+      width: "120px",
+      render: (value) => value || "-",
+    },
+    {
+      key: "updatedAt",
+      label: "Updated At",
+      width: "120px",
+      render: (value) => value || "-",
+    },
+  ];
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
       <h1 className="text-3xl font-bold mb-6">Out of Scope Analysis</h1>
 
-      {/* 🔍 search input */}
+      {/* search bar */}
       <div className="mb-4">
         <input
           type="text"
@@ -78,82 +126,20 @@ const outOfScope = () => {
         />
       </div>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {!loading && !error && processedData.length === 0 && (
-        <p>No out-of-scope records found.</p>
+      {loading && (
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
+        </div>
       )}
 
-      {!loading && !error && processedData.length > 0 && (
-        <table className="min-w-full border border-gray-200">
-          <thead className="bg-gray-100">
-              <tr>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("skinAnalysisTransactionsId")}
-                >
-                  ID {sortConfig.key === "skinAnalysisTransactionsId" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("email")}
-                >
-                  Email {sortConfig.key === "email" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("conditionName")}
-                >
-                  Condition Name {sortConfig.key === "conditionName" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("status")}
-                >
-                  Status {sortConfig.key === "status" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("confidenceScores")}
-                >
-                  Confidence Scores {sortConfig.key === "confidenceScores" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("canRecommend")}
-                >
-                  Can Recommend {sortConfig.key === "canRecommend" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("createdAt")}
-                >
-                  Created At {sortConfig.key === "createdAt" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-                <th
-                  className="border px-4 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleSort("updatedAt")}
-                >
-                  Updated At {sortConfig.key === "updatedAt" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                </th>
-              </tr>
-            </thead>
-          <tbody>
-            {processedData.map((item) => (
-              <tr key={item.skinAnalysisTransactionsId}>
-                <td className="border px-4 py-2">{item.skinAnalysisTransactionsId}</td>
-                <td className="border px-4 py-2">{item.email}</td>
-                <td className="border px-4 py-2">{item.conditionName}</td>
-                <td className="border px-4 py-2">{item.status}</td>
-                <td className="border px-4 py-2">{item.confidenceScores}</td>
-                <td className="border px-4 py-2">{item.canRecommend}</td>
-                <td className="border px-4 py-2">{item.createdAt}</td>
-                <td className="border px-4 py-2">{item.updatedAt}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {error && (
+        <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && (
+        <Table data={tableData} columns={columns} itemsPerPage={10} />
       )}
     </div>
   );
