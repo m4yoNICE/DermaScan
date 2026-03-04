@@ -40,13 +40,11 @@ export const UserProvider = ({ children }) => {
   const login = async (data) => {
     console.log("UserContext login called with:", data);
     const { token, user } = data;
-    console.log("Setting token:", token);
-    console.log("Setting user:", user);
+
     setToken(token);
     setUser(user);
     await AsyncStorage.setItem("authToken", token);
     await AsyncStorage.setItem("user", JSON.stringify(user));
-    console.log("Login complete - token set");
   };
   //clear everything here
   const logout = async () => {

@@ -22,6 +22,9 @@ const Api = {
   updateJournalAPI: (id, data) => Http.put("/api/journals/" + id, data),
   deleteJournalAPI: (id) => Http.delete("/api/journals/" + id),
 
+  //recommendation
+  saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
+
   // Uploads & Images
   getSkinImage: (data) => {
     return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
@@ -31,7 +34,7 @@ const Api = {
   },
 
   //FormData
-  uploadSkinImageAPI: (formData) => FormsData("/api/condition/skin", formData),
+  uploadSkinImageAPI: (formData) => FormsData("/api/conditions/skin", formData),
   uploadProfilePicAPI: (formData) => FormsData("/api/profile/pic", formData),
 };
 

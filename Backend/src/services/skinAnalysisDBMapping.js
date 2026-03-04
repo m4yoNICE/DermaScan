@@ -1,9 +1,9 @@
-import { skinConditions, skinAnalysisTransactions } from "../drizzle/schema.js";
+import { skinConditions, skinAnalysis } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
 
 export async function mapSkinResultToCatalog(user_id, skinResult) {
-  if (!skinResult || !skinResult.top3) return null;
+  if (!skinResult?.top3) return null;
 
   const top1 = skinResult.top3[0];
   const top3 = skinResult.top3;
@@ -38,7 +38,7 @@ async function findConditionByLabel(label) {
 
 async function insertTransaction(userId, conditionId, score, status) {
   const [inserted] = await db
-    .insert(skinAnalysisTransactions)
+    .insert(skinAnalysis)
     .values({
       userId,
       //image id will be updated after checking status
@@ -55,24 +55,21 @@ async function insertTransaction(userId, conditionId, score, status) {
 export async function getTransactionWithCondition(transactionId) {
   const [result] = await db
     .select({
-      id: skinAnalysisTransactions.id,
-      userId: skinAnalysisTransactions.userId,
+      id: skinAnalysis.id,
+      userId: skinAnalysis.userId,
       //image id will be updated after checking status
-      imageId: skinAnalysisTransactions.imageId,
-      conditionId: skinAnalysisTransactions.conditionId,
-      confidenceScores: skinAnalysisTransactions.confidenceScores,
-      status: skinAnalysisTransactions.status,
-      createdAt: skinAnalysisTransactions.createdAt,
-      updatedAt: skinAnalysisTransactions.updatedAt,
+      imageId: skinAnalysis.imageId,
+      conditionId: skinAnalysis.conditionId,
+      confidenceScores: skinAnalysis.confidenceScores,
+      status: skinAnalysis.status,
+      createdAt: skinAnalysis.createdAt,
+      updatedAt: skinAnalysis.updatedAt,
       condition_name: skinConditions.condition,
       canRecommend: skinConditions.canRecommend,
     })
-    .from(skinAnalysisTransactions)
-    .leftJoin(
-      skinConditions,
-      eq(skinAnalysisTransactions.conditionId, skinConditions.id),
-    )
-    .where(eq(skinAnalysisTransactions.id, transactionId))
+    .from(skinAnalysis)
+    .leftJoin(skinConditions, eq(skinAnalysis.conditionId, skinConditions.id))
+    .where(eq(skinAnalysis.id, transactionId))
     .limit(1);
 
   return result;

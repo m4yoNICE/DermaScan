@@ -1,8 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Stack } from "expo-router";
-import { StatusBar } from "react-native-web";
-
+import { StatusBar } from "react-native";
 const AuthLayout = () => {
   return (
     <>
@@ -13,5 +11,3 @@ const AuthLayout = () => {
 };
 
 export default AuthLayout;
-
-const styles = StyleSheet.create({});

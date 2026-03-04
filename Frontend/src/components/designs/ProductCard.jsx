@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Api from "@/services/Api";
-
 const ProductCard = ({ item }) => {
   const [imageUrl, setImageUrl] = useState(null);
 

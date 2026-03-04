@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 export async function saveBufferImage(buffer) {
   const uploadsDir = path.join(process.cwd(), "skinUploads");

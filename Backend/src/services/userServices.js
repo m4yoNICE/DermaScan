@@ -1,5 +1,5 @@
 import { db } from "../config/db.js";
-import { users, skinData } from "../drizzle/schema.js";
+import { users, skinProfile } from "../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
@@ -16,10 +16,9 @@ export async function updateUser(
   if (!user) return { success: false, message: "User not found" };
 
   const data = {};
-  if (firstname) data.first_name = firstname;
-  if (lastname) data.last_name = lastname;
+  if (firstname) data.firstName = firstname;
+  if (lastname) data.lastName = lastname;
   if (birthdate) data.birthdate = birthdate;
-
   if (newPassword) {
     if (!currentPassword)
       return { success: false, message: "Current password required" };
@@ -45,13 +44,14 @@ export async function getUserWithSkinData(userId) {
       firstName: users.firstName,
       lastName: users.lastName,
       email: users.email,
-      skinType: skinData.skinType,
-      skinSensitivity: skinData.skinSensitivity,
-      pigmentation: skinData.pigmentation,
-      aging: skinData.aging,
+      birthdate: users.birthdate,
+      skinType: skinProfile.skinType,
+      skinSensitivity: skinProfile.skinSensitivity,
+      pigmentation: skinProfile.pigmentation,
+      aging: skinProfile.aging,
     })
     .from(users)
-    .leftJoin(skinData, eq(skinData.userId, users.id))
+    .leftJoin(skinProfile, eq(skinProfile.userId, users.id))
     .where(eq(users.id, userId));
 
   return result[0] || null;
@@ -65,7 +65,7 @@ export async function createSkinData(
   aging,
 ) {
   const [inserted] = await db
-    .insert(skinData)
+    .insert(skinProfile)
     .values({
       userId,
       skinType: skin_type,
@@ -75,12 +75,14 @@ export async function createSkinData(
     })
     .$returningId();
 
-  return await db.query.skinData.findFirst({
-    where: eq(skinData.id, inserted.id),
+  return await db.query.skinProfile.findFirst({
+    where: eq(skinProfile.id, inserted.id),
   });
 }
 
 export async function deleteSkinData(userId) {
-  const result = await db.delete(skinData).where(eq(skinData.userId, userId));
+  const result = await db
+    .delete(skinProfile)
+    .where(eq(skinProfile.userId, userId));
   return result.affectedRows > 0;
 }

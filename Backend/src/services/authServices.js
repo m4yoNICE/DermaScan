@@ -9,13 +9,11 @@ import { sendEmail } from "../utils/sendOTP.js";
 
 //Processes user login business logic.
 export async function processLogin(email, password) {
-  console.log(email, password);
   const user = await findUserByEmail(email);
 
   if (!user) {
     throw new Error("INVALID_CREDENTIALS");
   }
-  console.log(user);
   const isValid = await bcrypt.compare(password, user.password);
   if (!isValid) {
     throw new Error("INVALID_CREDENTIALS");
