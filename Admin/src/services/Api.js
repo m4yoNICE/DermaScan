@@ -49,6 +49,11 @@ const Api = {
   deleteProductAPI: (id) => {
     return Http.delete("/api/admin/products/deleteSkinProduct/" + id);
   },
+
+  // out of scope api endpoints
+  getOutOfScopeData : (config = {}) => {
+    return Http.get("/api/admin/scope/out-of-scope", config);
+  },
 };
 
 export default Api;
