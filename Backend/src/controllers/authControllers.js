@@ -21,7 +21,6 @@ import {
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
-    console.log("controller: ", email, password);
 
     const { user, token } = await processLogin(email, password);
 

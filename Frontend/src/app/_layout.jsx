@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { toastConfig } from "@/components/designs/ToastConfig";
 import { ProductProvider } from "src/contexts/ProductContext";
-
+import { UserDataProvider } from "@/contexts/UserDataContext";
 //a lot of contexts needs to enclose the root for it to work globally inside the app
 //since their usual code are <context.provider>{children}<context.provider
 //given that the root layout should be the children
@@ -17,12 +17,14 @@ const RootLayout = () => {
       <BottomSheetModalProvider>
         {/*This is for the tracking of the token to work and the logout*/}
         <UserProvider>
-          <AnalysisProvider>
-            <ProductProvider>
-              <Stack screenOptions={{ headerShown: false }} />
-              <Toast config={toastConfig} />
-            </ProductProvider>
-          </AnalysisProvider>
+          <UserDataProvider>
+            <AnalysisProvider>
+              <ProductProvider>
+                <Stack screenOptions={{ headerShown: false }} />
+                <Toast config={toastConfig} />
+              </ProductProvider>
+            </AnalysisProvider>
+          </UserDataProvider>
         </UserProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { router } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import { useAnalysis } from "src/contexts/AnalysisContext";

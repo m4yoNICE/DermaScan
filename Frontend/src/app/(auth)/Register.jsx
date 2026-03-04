@@ -9,7 +9,6 @@ import { useContext, useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Keyboard,
@@ -183,59 +182,53 @@ const Register = () => {
             />
           </View>
 
-          {/* FIRST NAME */}
-          <View style={styles.inputGroup}>
-            <Feather
-              name="user"
-              size={20}
-              color="#999"
-              style={styles.inputIcon}
-            />
-            <BottomSheetTextInput
-              style={styles.input}
-              placeholder="First Name"
-              value={firstname}
-              onChangeText={setfirstname}
-              autoCapitalize="words"
-            />
+          {/* NAME ROW (First & Last) */}
+          <View style={styles.row}>
+            <View style={[styles.inputGroup, { flex: 1, marginRight: 15 }]}>
+              <Feather
+                name="user"
+                size={20}
+                color="#999"
+                style={styles.inputIcon}
+              />
+              <BottomSheetTextInput
+                style={styles.input}
+                placeholder="First Name"
+                value={firstname}
+                onChangeText={setfirstname}
+              />
+            </View>
+            <View style={[styles.inputGroup, { flex: 1 }]}>
+              <BottomSheetTextInput
+                style={styles.input}
+                placeholder="Last Name"
+                value={lastname}
+                onChangeText={setlastname}
+              />
+            </View>
           </View>
 
-          {/* LAST NAME */}
-          <View style={styles.inputGroup}>
-            <Feather
-              name="user"
-              size={20}
-              color="#999"
-              style={styles.inputIcon}
-            />
-            <BottomSheetTextInput
-              style={styles.input}
-              placeholder="Last Name"
-              value={lastname}
-              onChangeText={setlastname}
-              autoCapitalize="words"
-            />
-          </View>
-
-          {/* DOB */}
           <TouchableOpacity
             style={styles.inputGroup}
             onPress={() => setShowPicker(true)}
+            activeOpacity={0.7}
           >
             <Feather
               name="calendar"
               size={20}
               color="#999"
-              style={([styles.inputIcon], { paddingVertical: 10 })}
+              style={styles.inputIcon}
             />
-            <Text style={styles.input}>{formatDate(dob)}</Text>
+            <Text style={[styles.input, !dob && { color: "#999" }]}>
+              {formatDate(dob)}
+            </Text>
           </TouchableOpacity>
-
           {showPicker && (
             <DateTimePicker
               mode="date"
               value={dob || new Date()}
               display="default"
+              maximumDate={new Date()}
               onChange={(_, date) => {
                 setShowPicker(false);
                 if (date) setdob(date);
@@ -270,7 +263,7 @@ const Register = () => {
           {/* CONFIRM PASSWORD */}
           <View style={styles.inputGroup}>
             <Feather
-              name="lock"
+              name="shield"
               size={20}
               color="#999"
               style={styles.inputIcon}
@@ -297,7 +290,7 @@ const Register = () => {
           <Button
             title="Register"
             onPress={registerAccount}
-            icon={<Feather name="arrow-right-circle" size={20} color="white" />}
+            style={styles.regBtn}
           />
         </BottomSheetView>
       </BottomSheet>
@@ -312,28 +305,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#05d6b2",
   },
-
   backgroundWrapper: {
-    height: "50%",
+    height: "40%",
     justifyContent: "center",
     alignItems: "center",
   },
-
   landingScale: {
     transform: [{ scale: 0.6 }],
   },
-
   sheetContent: {
     paddingHorizontal: 30,
     paddingTop: 20,
-    paddingBottom: 40,
+    paddingBottom: 50,
   },
-
   backRow: {
     width: "100%",
     marginBottom: 10,
   },
-
   title: {
     textAlign: "center",
     fontSize: 30,
@@ -341,28 +329,37 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: "#00CC99",
   },
-
   subtitle: {
     textAlign: "center",
     fontSize: 14,
     color: "#868585ff",
     marginBottom: 20,
   },
-
+  row: {
+    flexDirection: "row",
+    width: "100%",
+  },
   inputGroup: {
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 1.5,
     borderBottomColor: "#ccc",
-    paddingVertical: 5,
+    paddingVertical: 10,
+    marginBottom: 20,
   },
-
   inputIcon: {
     marginRight: 10,
   },
-
   input: {
     flex: 1,
     fontSize: 16,
+    color: "#333",
+  },
+  regBtn: {
+    width: "100%",
+    height: 55,
+    backgroundColor: "#00CC99",
+    borderRadius: 12,
+    marginTop: 10,
   },
 });

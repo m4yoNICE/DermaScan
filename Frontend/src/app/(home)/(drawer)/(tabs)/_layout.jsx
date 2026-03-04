@@ -29,9 +29,6 @@ const HomeLayout = () => {
         tabBarIconStyle: {
           marginTop: 7,
         },
-        headerStyle: {
-          backgroundColor: "#00CC99",
-        },
         headerTintColor: "fff",
         headerTitle: () => null,
         headerLeft: () => (

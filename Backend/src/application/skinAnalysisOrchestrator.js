@@ -6,7 +6,7 @@ import {
   getTransactionWithCondition,
   mapSkinResultToCatalog,
 } from "../services/skinAnalysisDBMapping.js";
-import { skinAnalysisTransactions } from "../drizzle/schema.js";
+import { skinAnalysis } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
 import { ENV } from "../config/env.js";
@@ -150,7 +150,7 @@ async function saveImageLogic(userId, imageBuffer) {
 
 async function updateTransactionImage(transactionId, imageId) {
   await db
-    .update(skinAnalysisTransactions)
+    .update(skinAnalysis)
     .set({ imageId })
-    .where(eq(skinAnalysisTransactions.id, transactionId));
+    .where(eq(skinAnalysis.id, transactionId));
 }

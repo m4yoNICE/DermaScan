@@ -3,7 +3,7 @@ import {
   role,
   skinConditions,
   users,
-  skinData,
+  skinProfile,
   skinCareProducts,
   conditionProducts,
   skinAnalysisTransactions,
@@ -87,7 +87,7 @@ export async function main() {
     .where(inArray(users.email, ["user@a.c"]));
   const targetUserId = userList[0].id;
 
-  await db.insert(skinData).values([
+  await db.insert(skinProfile).values([
     {
       userId: targetUserId,
       skinType: "oily",
