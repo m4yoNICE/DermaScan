@@ -22,11 +22,12 @@ import LoadingModal from "@/components/designs/LoadingModal";
 import Api from "@/services/Api";
 //User Context
 import { useUser } from "src/contexts/UserContext";
-
+import { useUserData } from "@/contexts/UserDataContext";
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useUser();
+  const { fetchUserData } = useUserData();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -64,6 +65,7 @@ const Login = () => {
       const res = await Api.loginAccountAPI(loginData);
 
       await login(res.data);
+      await fetchUserData();
       ToastMessage("success", "Login Successful", "Welcome back 👋");
 
       router.replace("/");

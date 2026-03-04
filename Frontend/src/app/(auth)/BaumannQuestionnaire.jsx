@@ -12,8 +12,10 @@ import Sensitivity from "@/components/SkinTypeQuestionnaire/Sensitivity";
 import { ToastMessage } from "@/components/designs/ToastMessage";
 import Api from "@/services/Api";
 import LoadingModal from "@/components/designs/LoadingModal";
+import { useUserData } from "@/contexts/UserDataContext";
 
 const BaumannQuestionnaire = () => {
+  const { fetchUserData } = useUserData();
   const [loading, setLoading] = useState(false);
 
   const [oil, setOil] = useState(null);
@@ -36,45 +38,43 @@ const BaumannQuestionnaire = () => {
       return;
     }
 
-    // Save section result
     sections[index].setter(value);
 
-    // Move to next section or finish
     if (index < sections.length - 1) {
       setIndex(index + 1);
     } else {
-      finishAll();
+      finishAll(value); // pass the last value directly
     }
   };
 
-  const finishAll = async () => {
-    if (!oil || !sensitive || !pigment || !aging) {
+  const finishAll = async (lastValue) => {
+    const results = [oil, sensitive, pigment, lastValue]; // use lastValue instead of aging
+
+    if (results.some((v) => !v)) {
       ToastMessage("error", "Incomplete", "Please complete all sections.");
       return;
     }
 
     try {
       setLoading(true);
+      const [skinType, skinSensitivity, pigmentation, agingResult] = results;
 
       const skinData = {
-        skin_type: oil,
-        skin_sensitivity: sensitive,
-        pigmentation: pigment,
-        aging,
+        skin_type: skinType,
+        skin_sensitivity: skinSensitivity,
+        pigmentation,
+        aging: agingResult,
       };
 
       await Api.updateSkinDataAPI(skinData);
-
-      const code = [oil, sensitive, pigment, aging]
-        .map((v) => v.charAt(0).toUpperCase())
-        .join("");
+      await fetchUserData();
+      const code = results.map((v) => v.charAt(0).toUpperCase()).join("");
 
       ToastMessage(
         "success",
         "Profile Completed",
         "Your Baumann Skin Code is: " + code,
       );
-
       router.push("/Home");
     } catch (err) {
       console.error(err);

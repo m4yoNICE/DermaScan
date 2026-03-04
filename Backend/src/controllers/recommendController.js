@@ -19,3 +19,14 @@ export async function saveRecommendation(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
+export async function getHistory(req, res) {
+  try {
+    const userId = req.user.id;
+    const history = await recommendationService.fetchHistory(userId);
+    res.status(200).json(history);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+}

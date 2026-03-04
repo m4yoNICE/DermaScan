@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useProduct } from "@/contexts/ProductContext";
 import { useAnalysis } from "@/contexts/AnalysisContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

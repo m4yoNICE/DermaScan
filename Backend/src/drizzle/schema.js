@@ -48,34 +48,31 @@ export const role = mysqlTable("role", {
   roleName: varchar("role_name", { length: 255 }).notNull(),
 });
 
-export const skinAnalysisTransactions = mysqlTable(
-  "skin_analysis_transactions",
-  {
-    id: int().autoincrement().primaryKey().notNull(),
-    imageId: int("image_id").references(() => storedImages.id, {
-      onDelete: "set null",
-      onUpdate: "cascade",
-    }),
-    userId: int("user_id")
-      .notNull()
-      .references(() => users.id, {
-        onDelete: "restrict",
-        onUpdate: "cascade",
-      }),
-    status: varchar({ length: 255 }).notNull(),
-    conditionId: int("condition_id").references(() => skinConditions.id, {
+export const skinAnalysis = mysqlTable("skin_analysis", {
+  id: int().autoincrement().primaryKey().notNull(),
+  imageId: int("image_id").references(() => storedImages.id, {
+    onDelete: "set null",
+    onUpdate: "cascade",
+  }),
+  userId: int("user_id")
+    .notNull()
+    .references(() => users.id, {
       onDelete: "restrict",
       onUpdate: "cascade",
     }),
-    confidenceScores: double("confidence_scores"),
-    createdAt: datetime("created_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-  },
-);
+  status: varchar({ length: 255 }).notNull(),
+  conditionId: int("condition_id").references(() => skinConditions.id, {
+    onDelete: "restrict",
+    onUpdate: "cascade",
+  }),
+  confidenceScores: double("confidence_scores"),
+  createdAt: datetime("created_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3)`)
+    .notNull(),
+  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
+    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
+    .notNull(),
+});
 
 export const skinCareProducts = mysqlTable("skin_care_products", {
   id: int().autoincrement().primaryKey().notNull(),
@@ -126,8 +123,8 @@ export const conditionProducts = mysqlTable("condition_products", {
     .notNull(),
 });
 
-export const productRecommendationsTransaction = mysqlTable(
-  "product_recommendations_transaction",
+export const productRecommendations = mysqlTable(
+  "product_recommendations",
   {
     id: int().autoincrement().primaryKey().notNull(),
     analysisId: int("analysis_id").notNull(),
@@ -140,7 +137,7 @@ export const productRecommendationsTransaction = mysqlTable(
     foreignKey({
       name: "prt_analysis_fk",
       columns: [table.analysisId],
-      foreignColumns: [skinAnalysisTransactions.id],
+      foreignColumns: [skinAnalysis.id],
     })
       .onDelete("cascade")
       .onUpdate("cascade"),
@@ -154,8 +151,8 @@ export const productRecommendationsTransaction = mysqlTable(
   ],
 );
 
-export const skinData = mysqlTable(
-  "skin_data",
+export const skinProfile = mysqlTable(
+  "skin_profile",
   {
     id: int().autoincrement().primaryKey().notNull(),
     userId: int("user_id")
@@ -229,7 +226,7 @@ export const routineNotifications = mysqlTable(
     foreignKey({
       name: "rn_rec_fk",
       columns: [table.recommendationId],
-      foreignColumns: [productRecommendationsTransaction.id],
+      foreignColumns: [productRecommendations.id],
     })
       .onDelete("cascade")
       .onUpdate("cascade"),

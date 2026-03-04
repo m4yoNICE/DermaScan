@@ -2,6 +2,7 @@
   "expo": {
     "name": "Frontend",
     "slug": "Frontend",
+    "scheme": "dermascan",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo/Logo3.png",

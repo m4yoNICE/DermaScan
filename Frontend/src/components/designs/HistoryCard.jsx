@@ -1,122 +1,111 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
-import Api from "@/services/Api";
+import { StyleSheet, Text, View, Image } from "react-native";
 
-const { width } = Dimensions.get("window");
-
-const HistoryCard = ({ date, conditions, products }) => {
+const HistoryCard = ({ item }) => {
   return (
     <View style={styles.card}>
-      <View style={styles.topSection}>
-        {/* User Skin Snapshot */}
-        <Image
-          source={{ uri: Api.getSkinImage(products[0]?.analysisImage) }} // Logic for scan image
-          style={styles.skinSnapshot}
-        />
-
-        <View style={styles.headerText}>
-          <Text style={styles.dateText}>{date}</Text>
-          <Text style={styles.conditionText}>{conditions}</Text>
+      {/* Header Section */}
+      <View style={styles.headerRow}>
+        <Image source={{ uri: item.userSkinImage }} style={styles.avatar} />
+        <View style={styles.titleContainer}>
+          <Text style={styles.dateText}>{item.date}</Text>
+          <Text style={styles.concernsText}>{item.concerns.join(", ")}</Text>
         </View>
       </View>
 
-      <View style={styles.productSection}>
-        <Text style={styles.label}>Selected Product</Text>
+      <Text style={styles.selectedProductTitle}>Selected Product</Text>
 
-        <View style={styles.productList}>
-          {products.map((product, index) => (
-            <View key={index} style={styles.productItem}>
-              <Text style={styles.productType}>{product.productType}</Text>
-              <Image
-                source={{ uri: Api.getProductImage(product.productImage) }}
-                style={styles.productImage}
-                resizeMode="contain"
-              />
-              <Text style={styles.productName} numberOfLines={2}>
-                {product.productName}
-              </Text>
-            </View>
-          ))}
-        </View>
+      {/* Product Grid */}
+      <View style={styles.productRow}>
+        {item.products.map((product, index) => (
+          <View key={index} style={styles.productColumn}>
+            <Text style={styles.categoryLabel}>{product.category}</Text>
+            <Image
+              source={{ uri: product.image }}
+              style={styles.productImage}
+            />
+            <Text style={styles.productName} numberOfLines={3}>
+              {product.name}
+            </Text>
+          </View>
+        ))}
       </View>
     </View>
   );
 };
-
-export default HistoryCard;
 
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 20,
-    width: width * 0.9,
-    alignSelf: "center",
-    marginBottom: 20,
-    // Elevation/Shadow
-    elevation: 8,
+    marginHorizontal: 20,
+    marginVertical: 12,
+    // Soft shadow logic
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.12,
+    shadowRadius: 15,
+    elevation: 8,
   },
-  topSection: {
+  headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 12,
   },
-  skinSnapshot: {
+  avatar: {
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#eee",
   },
-  headerText: {
+  titleContainer: {
     marginLeft: 15,
+    flex: 1,
   },
   dateText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#1e7d64", // Using your primary dark green
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#4A7c6d", // That specific muted emerald green
   },
-  conditionText: {
-    fontSize: 14,
-    color: "#888",
+  concernsText: {
+    fontSize: 13,
+    color: "#8e8e93",
     fontStyle: "italic",
     marginTop: 2,
   },
-  productSection: {
-    marginTop: 10,
-  },
-  label: {
+  selectedProductTitle: {
     fontSize: 15,
     fontWeight: "700",
     color: "#333",
     marginBottom: 10,
   },
-  productList: {
+  productRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 15,
   },
-  productItem: {
+  productColumn: {
     alignItems: "center",
-    width: 80,
+    width: 90,
+    marginRight: 15,
   },
-  productType: {
-    fontSize: 11,
+  categoryLabel: {
+    fontSize: 12,
     color: "#666",
-    marginBottom: 5,
+    marginBottom: 8,
   },
   productImage: {
-    width: 40,
-    height: 60,
-    marginBottom: 5,
+    width: 45,
+    height: 70,
+    resizeMode: "contain",
+    marginBottom: 8,
   },
   productName: {
     fontSize: 9,
     textAlign: "center",
     color: "#444",
-    lineHeight: 11,
+    lineHeight: 12,
   },
 });
+
+export default HistoryCard;

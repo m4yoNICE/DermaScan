@@ -1,7 +1,7 @@
 import {
   conditionProducts,
   skinCareProducts,
-  skinData,
+  skinProfile,
 } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
@@ -9,13 +9,13 @@ import { eq } from "drizzle-orm";
 export async function getSkinData(user_id) {
   const [result] = await db
     .select({
-      skinType: skinData.skinType,
-      skinSensitivity: skinData.skinSensitivity,
-      pigmentation: skinData.pigmentation,
-      aging: skinData.aging,
+      skinType: skinProfile.skinType,
+      skinSensitivity: skinProfile.skinSensitivity,
+      pigmentation: skinProfile.pigmentation,
+      aging: skinProfile.aging,
     })
-    .from(skinData)
-    .where(eq(skinData.userId, user_id))
+    .from(skinProfile)
+    .where(eq(skinProfile.userId, user_id))
     .limit(1);
 
   return result;
@@ -45,8 +45,8 @@ export async function matchProductByCondition(condition_id) {
   return results;
 }
 
-export function filterBySkinType(products, userSkinData) {
-  const { skinType, skinSensitivity, pigmentation, aging } = userSkinData;
+export function filterBySkinType(products, userskinProfile) {
+  const { skinType, skinSensitivity, pigmentation, aging } = userskinProfile;
   console.log("getted skin data in filter by skin type: ", {
     skinType,
     skinSensitivity,
