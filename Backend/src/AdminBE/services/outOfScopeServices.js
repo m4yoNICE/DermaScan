@@ -1,9 +1,8 @@
 import { db } from "../../config/db.js";
-import { eq } from "drizzle-orm";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import 
 { 
-    skinAnalysisTransactions,
+    skinAnalysis,
     skinConditions,
     users
 } from "../../drizzle/schema.js";
@@ -12,12 +11,12 @@ export async function getScanPerDay(req, res) {
   try {
     const scansPerDay = await db
       .select({
-        date: sql`DATE(${skinAnalysisTransactions.createdAt})`,
+        date: sql`DATE(${skinAnalysis.createdAt})`,
         count: sql`COUNT(*)`,
       })
-      .from(skinAnalysisTransactions)
-      .groupBy(sql`DATE(${skinAnalysisTransactions.createdAt})`)
-      .orderBy(sql`DATE(${skinAnalysisTransactions.createdAt})`);
+      .from(skinAnalysis)
+      .groupBy(sql`DATE(${skinAnalysis.createdAt})`)
+      .orderBy(sql`DATE(${skinAnalysis.createdAt})`);
 
     return res.status(200).json(scansPerDay);
   } catch (err) {
@@ -30,24 +29,24 @@ export async function getOutOfScopeStatistics(req, res) {
     try {
         const result = await db
         .select({
-        skinAnalysisTransactionsId: skinAnalysisTransactions.id,
+        skinAnalysisId: skinAnalysis.id,
         skinConditionsId: skinConditions.id,
         email: users.email,
         conditionName: skinConditions.condition,
         canRecommend: skinConditions.canRecommend,
-        status: skinAnalysisTransactions.status,
-        confidenceScores: skinAnalysisTransactions.confidenceScores,
-        createdAt: skinAnalysisTransactions.createdAt,
-        updatedAt: skinAnalysisTransactions.updatedAt,
+        status: skinAnalysis.status,
+        confidenceScores: skinAnalysis.confidenceScores,
+        createdAt: skinAnalysis.createdAt,
+        updatedAt: skinAnalysis.updatedAt,
         })
-        .from(skinAnalysisTransactions)
+        .from(skinAnalysis)
         .leftJoin(
         skinConditions,
-          eq(skinAnalysisTransactions.conditionId, skinConditions.id)
+          eq(skinAnalysis.conditionId, skinConditions.id)
         )
         .leftJoin(
           users, 
-          eq(skinAnalysisTransactions.userId, users.id))
+          eq(skinAnalysis.userId, users.id))
         .where(eq(skinConditions.canRecommend, "no"));
 
         return res.status(200).json(result);

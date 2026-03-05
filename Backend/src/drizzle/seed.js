@@ -6,7 +6,7 @@ import {
   skinProfile,
   skinCareProducts,
   conditionProducts,
-  skinAnalysisTransactions,
+  skinAnalysis,
 } from "./schema.js";
 import bcrypt from "bcryptjs";
 import { inArray } from "drizzle-orm";
@@ -287,7 +287,7 @@ export async function main() {
     { conditionId: 14, productId: 10, createdAt: now, updatedAt: now },
   ]);
 
-  await db.insert(skinAnalysisTransactions).values([
+  await db.insert(skinAnalysis).values([
   {
     userId: 2,
     conditionId: 1,
