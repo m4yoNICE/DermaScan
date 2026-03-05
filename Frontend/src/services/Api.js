@@ -24,6 +24,7 @@ const Api = {
 
   //recommendation
   saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
+  getHistoryAPI: () => Http.get("/api/recommendations"),
 
   // Uploads & Images
   getSkinImage: (data) => {

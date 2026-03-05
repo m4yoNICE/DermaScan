@@ -1,31 +1,35 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
+import Api from "@/services/Api";
 
 const HistoryCard = ({ item }) => {
   return (
     <View style={styles.card}>
-      {/* Header Section */}
       <View style={styles.headerRow}>
-        <Image source={{ uri: item.userSkinImage }} style={styles.avatar} />
+        <Image
+          source={{ uri: Api.getSkinImage(item.photoUrl) }}
+          style={styles.avatar}
+        />
         <View style={styles.titleContainer}>
-          <Text style={styles.dateText}>{item.date}</Text>
-          <Text style={styles.concernsText}>{item.concerns.join(", ")}</Text>
+          <Text style={styles.dateText}>{item.createdAt}</Text>
+          <Text style={styles.concernsText}>
+            {item.condition ?? "Unknown"}
+          </Text>
         </View>
       </View>
 
       <Text style={styles.selectedProductTitle}>Selected Product</Text>
 
-      {/* Product Grid */}
       <View style={styles.productRow}>
         {item.products.map((product, index) => (
           <View key={index} style={styles.productColumn}>
-            <Text style={styles.categoryLabel}>{product.category}</Text>
+            <Text style={styles.categoryLabel}>{product.productType}</Text>
             <Image
-              source={{ uri: product.image }}
+              source={{ uri: Api.getProductImage(product.productImage) }}
               style={styles.productImage}
             />
             <Text style={styles.productName} numberOfLines={3}>
-              {product.name}
+              {product.productName}
             </Text>
           </View>
         ))}
@@ -34,6 +38,8 @@ const HistoryCard = ({ item }) => {
   );
 };
 
+export default HistoryCard;
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
@@ -41,7 +47,6 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginVertical: 12,
-    // Soft shadow logic
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.12,
@@ -66,7 +71,7 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 17,
     fontWeight: "600",
-    color: "#4A7c6d", // That specific muted emerald green
+    color: "#4A7c6d",
   },
   concernsText: {
     fontSize: 13,
@@ -108,4 +113,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HistoryCard;

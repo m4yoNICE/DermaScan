@@ -6,6 +6,7 @@ import {
   skinCareProducts,
 } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
+import { eq, desc } from "drizzle-orm";
 
 export async function insertRecommendations(analysisId, productIds) {
   const values = productIds.map((productId) => ({
@@ -15,6 +16,7 @@ export async function insertRecommendations(analysisId, productIds) {
 
   await db.insert(productRecommendations).values(values);
 }
+
 export async function fetchHistory(userId) {
   const rows = await db
     .select({
@@ -49,8 +51,13 @@ export async function fetchHistory(userId) {
   for (const row of rows) {
     if (!grouped[row.analysisId]) {
       grouped[row.analysisId] = {
-        analysisId: row.analysisId,
-        createdAt: row.createdAt,
+        id: row.analysisId,
+        createdAt: new Date(row.createdAt).toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
         status: row.status,
         confidenceScores: row.confidenceScores,
         condition: row.condition,
