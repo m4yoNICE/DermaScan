@@ -23,11 +23,13 @@ import Api from "@/services/Api";
 //User Context
 import { useUser } from "src/contexts/UserContext";
 import { useUserData } from "@/contexts/UserDataContext";
+import { useHomeData } from "@/contexts/HomeDataContext";
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useUser();
   const { fetchUserData } = useUserData();
+  const { fetchAll } = useHomeData();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -66,6 +68,7 @@ const Login = () => {
 
       await login(res.data);
       await fetchUserData();
+      await fetchAll();
       ToastMessage("success", "Login Successful", "Welcome back 👋");
 
       router.replace("/");

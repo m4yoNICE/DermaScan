@@ -83,13 +83,3 @@ export function scoreProducts(products, userLocality = "Philippines") {
 
   return scored.sort((a, b) => b.score - a.score);
 }
-
-export function saveRecommendations(analysis_id, scoredProducts) {
-  if (!scoredProducts.length) return null;
-
-  const values = scoredProducts.map((product) => ({
-    analysisId: shit,
-  }));
-
-  return values;
-}

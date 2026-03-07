@@ -34,3 +34,14 @@ export async function skinAnalysis(req, res) {
     return res.status(500).json({ error: "Server error" });
   }
 }
+
+export async function getAnalysisLogsByUser(req, res) {
+  try {
+    const userId = req.user.id;
+    const logs = await fetchAnalysisLogsByUser(userId);
+    return res.status(200).json(logs);
+  } catch (err) {
+    console.error("Error fetching all journal:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+}

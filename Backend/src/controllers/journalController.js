@@ -34,9 +34,9 @@ export async function getalljournal(req, res) {
 export async function createjournal(req, res) {
   try {
     const userId = req.user.id;
-    const { date, journal_text } = req.body;
-    console.log(date, journal_text, userId);
-    const journal = await createJournal(userId, journal_text, date);
+    const { journalDate, journalText } = req.body;
+    console.log(journalDate, journalText, userId);
+    const journal = await createJournal(userId, journalText, journalDate);
     if (!journal) {
       return res.status(400).json({ error: journal });
     }
@@ -46,17 +46,13 @@ export async function createjournal(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
 export async function updatejournal(req, res) {
   try {
     const userId = req.user.id;
     const journalId = req.params.id;
-    const { journal_text } = req.body;
-    console.log("userId:", userId);
-    console.log("journalId:", journalId);
-    console.log("journal_text:", journal_text);
-    const updated = await updateJournal(userId, journalId, journal_text);
-    console.log("updated result:", updated);
-
+    const { journalText } = req.body;
+    const updated = await updateJournal(userId, journalId, journalText);
     if (!updated) {
       return res.status(404).json({ error: "Journal not found" });
     }
@@ -66,6 +62,7 @@ export async function updatejournal(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+
 export async function deletejournal(req, res) {
   try {
     const userId = req.user.id;

@@ -12,6 +12,11 @@ import {
   skinCareProducts,
   conditionProducts,
   routineNotifications,
+  routineLogs,
+  userRoutine,
+  ingredients,
+  conditionIngredients,
+  productIngredients,
 } from "./schema.js";
 
 export const journalsRelations = relations(journals, ({ one }) => ({
@@ -28,6 +33,11 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   skinProfile: many(skinProfile),
   storedImages: many(storedImages),
   routineNotifications: many(routineNotifications),
+  routineLogs: many(routineLogs),
+  userRoutine: one(userRoutine, {
+    fields: [users.id],
+    references: [userRoutine.userId],
+  }),
   role: one(role, {
     fields: [users.roleId],
     references: [role.id],
@@ -57,6 +67,7 @@ export const skinAnalysisRelations = relations(
       references: [users.id],
     }),
     recommendations: many(productRecommendations),
+    routineNotifications: many(routineNotifications),
   }),
 );
 
@@ -65,6 +76,7 @@ export const skinConditionsRelations = relations(
   ({ many }) => ({
     skinAnalysis: many(skinAnalysis),
     conditionProducts: many(conditionProducts),
+    conditionIngredients: many(conditionIngredients),
   }),
 );
 
@@ -95,7 +107,7 @@ export const skinCareProductsRelations = relations(
   ({ many }) => ({
     conditionProducts: many(conditionProducts),
     recommendations: many(productRecommendations),
-    routineNotifications: many(routineNotifications),
+    productIngredients: many(productIngredients),
   }),
 );
 
@@ -116,17 +128,83 @@ export const productRecommendationsRelations = relations(
 
 export const routineNotificationsRelations = relations(
   routineNotifications,
-  ({ one }) => ({
+  ({ one, many }) => ({
     user: one(users, {
       fields: [routineNotifications.userId],
       references: [users.id],
+    }),
+    analysis: one(skinAnalysis, {
+      fields: [routineNotifications.analysisId],
+      references: [skinAnalysis.id],
     }),
     recommendation: one(productRecommendations, {
       fields: [routineNotifications.recommendationId],
       references: [productRecommendations.id],
     }),
+    routineLogs: many(routineLogs),
+  }),
+);
+
+export const routineLogsRelations = relations(routineLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [routineLogs.userId],
+    references: [users.id],
+  }),
+  notification: one(routineNotifications, {
+    fields: [routineLogs.notificationId],
+    references: [routineNotifications.id],
+  }),
+}));
+
+export const userRoutineRelations = relations(userRoutine, ({ one }) => ({
+  user: one(users, {
+    fields: [userRoutine.userId],
+    references: [users.id],
+  }),
+}));
+
+export const ingredientsRelations = relations(ingredients, ({ many }) => ({
+  conditionIngredients: many(conditionIngredients),
+  productIngredients: many(productIngredients),
+}));
+
+export const conditionIngredientsRelations = relations(
+  conditionIngredients,
+  ({ one }) => ({
+    condition: one(skinConditions, {
+      fields: [conditionIngredients.conditionId],
+      references: [skinConditions.id],
+    }),
+    ingredient: one(ingredients, {
+      fields: [conditionIngredients.ingredientId],
+      references: [ingredients.id],
+    }),
+  }),
+);
+
+export const productIngredientsRelations = relations(
+  productIngredients,
+  ({ one }) => ({
     product: one(skinCareProducts, {
-      fields: [routineNotifications.productId],
+      fields: [productIngredients.productId],
+      references: [skinCareProducts.id],
+    }),
+    ingredient: one(ingredients, {
+      fields: [productIngredients.ingredientId],
+      references: [ingredients.id],
+    }),
+  }),
+);
+
+export const conditionProductsRelations = relations(
+  conditionProducts,
+  ({ one }) => ({
+    condition: one(skinConditions, {
+      fields: [conditionProducts.conditionId],
+      references: [skinConditions.id],
+    }),
+    product: one(skinCareProducts, {
+      fields: [conditionProducts.productId],
       references: [skinCareProducts.id],
     }),
   }),
