@@ -1,9 +1,8 @@
-import { useContext, useEffect } from "react";
-import { UserContext } from "src/contexts/UserContext";
-import { router } from "expo-router";
+import { useEffect } from "react";
+import { useUser } from "src/contexts/UserContext";
 
 const Logout = () => {
-  const { logout } = useContext(UserContext);
+  const { logout } = useUser();
 
   useEffect(() => {
     logout();

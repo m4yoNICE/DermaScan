@@ -6,19 +6,25 @@ import {
   TextInput,
   Modal,
   Alert,
+  TouchableOpacity,
 } from "react-native";
-import React, { useContext, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useFocusEffect, router } from "expo-router";
-import { UserContext } from "src/contexts/UserContext";
-import Button from "src/components/Button";
-import { ToastMessage } from "@/components/ToastMessage";
+import { useUser } from "@/contexts/UserContext";
+import { useUserData } from "@/contexts/UserDataContext";
+import { ToastMessage } from "@/components/designs/ToastMessage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import Logo from "@/components/designs/Logo";
 import Api from "@/services/Api";
 
 const Profile = () => {
-  const { user, logout } = useContext(UserContext);
+  const { logout } = useUser();
+  const {
+    userData: globalUser,
+    setUserData: setGlobalUser,
+    fetchUserData,
+  } = useUserData();
 
-  // Editable fields
   const [userData, setUserData] = useState({
     firstname: null,
     lastname: null,
@@ -35,12 +41,25 @@ const Profile = () => {
   });
 
   const [showPicker, setShowPicker] = useState(false);
-
-  // delete account
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deletePassword, setDeletePassword] = useState("");
 
-  // format date helper
+  useFocusEffect(
+    useCallback(() => {
+      if (globalUser) {
+        setUserData({
+          firstname: globalUser.firstName || "",
+          lastname: globalUser.lastName || "",
+          email: globalUser.email || "",
+          dob: globalUser.birthdate ? new Date(globalUser.birthdate) : null,
+          skinType: globalUser.skinType || null,
+          skinSensitive: globalUser.skinSensitivity || null,
+        });
+      } else {
+        fetchUserData();
+      }
+    }, [globalUser]),
+  );
+
   const formatDate = (date) => {
     if (!date) return "No date selected";
     const d = date instanceof Date ? date : new Date(date);
@@ -51,59 +70,29 @@ const Profile = () => {
     });
   };
 
-  // fetch latest user data
-  const fetchUserData = async () => {
-    try {
-      const res = await Api.getUserbyTokenAPI();
-      setFirstname(res.data.first_name || "");
-      setLastname(res.data.last_name || "");
-      setEmail(res.data.email || "");
-      setDob(res.data.birthdate ? new Date(res.data.birthdate) : null);
-      setSkinType(res.data.skin_type || null);
-      setSkinSensitive(res.data.skin_sensitivity || null);
-    } catch (error) {
-      console.error("Fetch user error:", error);
-      ToastMessage(
-        "error",
-        "Fetch Failed",
-        "Unable to retrieve your profile data.",
-      );
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchUserData();
-    }, []),
-  );
-
-  // Update User Profile
   const handleUpdate = async () => {
     if (!userData.firstname || !userData.lastname || !userData.email) {
       return ToastMessage(
         "error",
         "Missing Fields",
-        "Please fill out all required fields."
+        "Please fill out all required fields.",
       );
     }
-
-    if (newPassword && !currentPassword) {
+    if (passwordData.new && !passwordData.current) {
       return ToastMessage(
         "error",
         "Missing Current Password",
         "Enter your current password to change it.",
       );
     }
-
-    if (newPassword && newPassword !== confirmPassword) {
+    if (passwordData.new && passwordData.new !== passwordData.confirm) {
       return ToastMessage(
         "error",
         "Password Mismatch",
         "New passwords do not match.",
       );
     }
-
-    if (dob && dob > new Date()) {
+    if (userData.dob && userData.dob > new Date()) {
       return ToastMessage(
         "error",
         "Invalid Date",
@@ -120,20 +109,15 @@ const Profile = () => {
           : null,
         currentPassword: passwordData.current,
         newPassword: passwordData.new || null,
-        skin_type: userData.skinType,
-        skin_sensitivity: userData.skinSensitive,
       };
-
-      await Api.editUserAPI(updateData);
-      ToastMessage("success", "Profile Updated", "Changes saved.");
-
+      const res = await Api.editUserAPI(updateData);
+      setGlobalUser(res.data.user);
       ToastMessage(
         "success",
         "Profile Updated",
         "Your changes have been saved.",
       );
     } catch (error) {
-      console.error("Update Error:", error);
       if (error.response) {
         ToastMessage(
           "error",
@@ -148,32 +132,27 @@ const Profile = () => {
     }
   };
 
-  // Delete User Account
   const handleDelete = () => setShowDeleteModal(true);
 
   const confirmDelete = async () => {
-    if (!deletePassword) {
-      return ToastMessage(
-        "error",
-        "Password Required",
-        "Enter your password to delete.",
-      );
-    }
-
     try {
       setShowDeleteModal(false);
       await Api.deleteUserAPI();
       ToastMessage("success", "Deleted", "Your account has been removed.");
       await logout();
     } catch (error) {
-      ToastMessage("error", "Delete Failed", error.message);
+      ToastMessage(
+        "error",
+        "Delete Failed",
+        error.response?.data?.error || error.message,
+      );
     }
   };
-  //SKIN RESET
+
   const handleResetSkinType = () => {
     Alert.alert(
       "Reset Skin Type",
-      "Are you sure you want to reset your skin type data? This will remove your current skin analysis results.",
+      "Are you sure you want to reset your skin type data?",
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -189,7 +168,6 @@ const Profile = () => {
               );
               router.push("/BaumannQuestionnaire");
             } catch (error) {
-              console.error("Reset error:", error);
               ToastMessage(
                 "error",
                 "Failed",
@@ -201,127 +179,125 @@ const Profile = () => {
       ],
     );
   };
+
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ paddingVertical: 30 }}
+      style={{ flex: 1, backgroundColor: "white" }}
+      contentContainerStyle={styles.scrollContent}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={styles.title}>Profile</Text>
+      {/* Top Section */}
+      <View style={styles.topRow}>
+        <View style={styles.avatarPlaceholder}>
+          <Logo style={{ width: 80, height: 80 }} />
+        </View>
+        <View style={styles.nameContainer}>
+          <TextInput
+            style={styles.nameInput}
+            value={userData.firstname}
+            onChangeText={(text) =>
+              setUserData((prev) => ({ ...prev, firstname: text }))
+            }
+            placeholder="First Name"
+          />
+          <TextInput
+            style={styles.nameInput}
+            value={userData.lastname}
+            onChangeText={(text) =>
+              setUserData((prev) => ({ ...prev, lastname: text }))
+            }
+            placeholder="Last Name"
+          />
+        </View>
+        <TouchableOpacity onPress={handleUpdate}>
+          <Text style={styles.saveIcon}>✓</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* ====== Basic Info ====== */}
-      <Text style={styles.text}>Email</Text>
-      <TextInput
-        style={[styles.input, { backgroundColor: "#f0f0f0", color: "gray" }]}
-        value={userData.email}
-        editable={false}
-      />
-
-      <Text style={styles.text}>First Name</Text>
-      <TextInput
-        style={styles.input}
-        value={userData.firstname}
-        onChangeText={(text) =>
-          setUserData((prev) => ({ ...prev, firstname: text }))
-        }
-        placeholder="First Name"
-      />
-
-      <Text style={styles.text}>Last Name</Text>
-      <TextInput
-        style={styles.input}
-        value={userData.lastname}
-        onChangeText={(text) =>
-          setUserData((prev) => ({ ...prev, lastname: text }))
-        }
-        placeholder="Last Name"
-      />
-
-      <Text style={styles.text}>Date Of Birth</Text>
-      <Button
-        title={userData.dob ? formatDate(userData.dob) : "Select Date of Birth"}
-        onPress={() => setShowPicker(true)}
-        style={{
-          backgroundColor: "#f9f9f9",
-          padding: 20,
-          marginVertical: 3,
-          borderColor: "#ddd",
-          borderWidth: 1,
-        }}
-        textStyle={{ color: "#1a1a1a" }}
-      />
-
-      {showPicker && (
-        <DateTimePicker
-          value={userData.dob || new Date()}
-          mode="date"
-          display="default"
-          onChange={(_, selectedDate) => {
-            setShowPicker(false);
-            if (selectedDate)
-              setUserData((prev) => ({ ...prev, dob: selectedDate }));
-          }}
+      {/* Form Fields */}
+      <View style={styles.form}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={[
+            styles.fullInput,
+            { backgroundColor: "#f0f0f0", color: "gray" },
+          ]}
+          value={userData.email}
+          editable={false}
         />
-      )}
 
-      <Text style={styles.text}>Current Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Current Password"
-        value={passwordData.current}
-        onChangeText={(text) =>
-          setPasswordData((prev) => ({ ...prev, current: text }))
-        }
-        secureTextEntry
-      />
+        <Text style={styles.label}>Date of Birth</Text>
+        <TouchableOpacity
+          style={styles.fullInput}
+          onPress={() => setShowPicker(true)}
+        >
+          <Text
+            style={{ fontSize: 16, color: userData.dob ? "#1a1a1a" : "#999" }}
+          >
+            {userData.dob ? formatDate(userData.dob) : "Select Date of Birth"}
+          </Text>
+        </TouchableOpacity>
 
-      <Text style={styles.text}>New Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="New Password (optional)"
-        value={passwordData.new}
-        onChangeText={(text) =>
-          setPasswordData((prev) => ({ ...prev, new: text }))
-        }
-        secureTextEntry
-      />
+        {showPicker && (
+          <DateTimePicker
+            value={userData.dob || new Date()}
+            mode="date"
+            display="default"
+            maximumDate={new Date()}
+            onChange={(_, selectedDate) => {
+              setShowPicker(false);
+              if (selectedDate)
+                setUserData((prev) => ({ ...prev, dob: selectedDate }));
+            }}
+          />
+        )}
 
-      <Text style={styles.text}>Confirm New Password</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Confirm New Password"
-        value={passwordData.confirm}
-        onChangeText={(text) =>
-          setPasswordData((prev) => ({ ...prev, confirm: text }))
-        }
-        secureTextEntry
-      />
+        <View style={styles.sectionDivider} />
 
-      <Button title="Save Changes" onPress={handleUpdate} />
+        <Text style={styles.label}>Current Password</Text>
+        <TextInput
+          style={styles.fullInput}
+          placeholder="Current Password"
+          value={passwordData.current}
+          onChangeText={(text) =>
+            setPasswordData((prev) => ({ ...prev, current: text }))
+          }
+          secureTextEntry
+        />
 
-      <Button
-        title="Reset Skin Type"
-        onPress={handleResetSkinType}
-        style={{
-          backgroundColor: "#f9f9f9",
-          borderWidth: 1,
-          borderColor: "#ddd",
-          marginBottom: 10,
-        }}
-        textStyle={{ color: "#00CC99" }}
-      />
-      <Button
-        title="Delete Account"
-        onPress={handleDelete}
-        style={{
-          backgroundColor: "#f9f9f9",
-          borderWidth: 1,
-          borderColor: "#ddd",
-        }}
-        textStyle={{ color: "red" }}
-      />
+        <Text style={styles.label}>New Password</Text>
+        <TextInput
+          style={styles.fullInput}
+          placeholder="New Password (optional)"
+          value={passwordData.new}
+          onChangeText={(text) =>
+            setPasswordData((prev) => ({ ...prev, new: text }))
+          }
+          secureTextEntry
+        />
 
-      {/* ===== Delete Confirmation Modal ===== */}
+        <Text style={styles.label}>Confirm New Password</Text>
+        <TextInput
+          style={styles.fullInput}
+          placeholder="Confirm New Password"
+          value={passwordData.confirm}
+          onChangeText={(text) =>
+            setPasswordData((prev) => ({ ...prev, confirm: text }))
+          }
+          secureTextEntry
+        />
+      </View>
+
+      {/* Action Buttons */}
+      <TouchableOpacity style={styles.editBtn} onPress={handleResetSkinType}>
+        <Text style={styles.editBtnText}>Reset Skin Type</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
+        <Text style={styles.deleteBtnText}>Delete Account</Text>
+      </TouchableOpacity>
+
+      {/* Delete Modal */}
       <Modal
         visible={showDeleteModal}
         transparent
@@ -330,25 +306,22 @@ const Profile = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text>Enter your password to confirm deletion</Text>
-            <TextInput
-              placeholder="Password"
-              value={deletePassword}
-              onChangeText={setDeletePassword}
-              secureTextEntry
-              style={styles.modalInput}
-            />
-            <Button
-              title="Delete Account"
+            <Text style={styles.modalTitle}>Delete Account</Text>
+            <Text style={styles.modalText}>
+              This action is permanent and cannot be undone. Are you sure?
+            </Text>
+            <TouchableOpacity
+              style={[styles.deleteBtn, { marginTop: 15 }]}
               onPress={confirmDelete}
-              style={{
-                backgroundColor: "#f9f9f9",
-                borderWidth: 1,
-                borderColor: "#ddd",
-              }}
-              textStyle={{ color: "red" }}
-            />
-            <Button title="Cancel" onPress={() => setShowDeleteModal(false)} />
+            >
+              <Text style={styles.deleteBtnText}>Yes, Delete My Account</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.editBtn, { marginTop: 10 }]}
+              onPress={() => setShowDeleteModal(false)}
+            >
+              <Text style={styles.editBtnText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -359,36 +332,63 @@ const Profile = () => {
 export default Profile;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingHorizontal: 20,
+  scrollContent: { padding: 20, paddingBottom: 100 },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 25,
+    marginTop: 10,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#00CC99",
-    marginBottom: 20,
+  avatarPlaceholder: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  text: {
-    fontWeight: "700",
-    fontSize: 18,
-  },
-  input: {
+  nameContainer: { flex: 1, marginHorizontal: 15 },
+  nameInput: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 15,
+    borderColor: "#CCC",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 8,
+    fontSize: 16,
+  },
+  saveIcon: {
+    fontSize: 32,
+    color: "#00CC99",
+    fontWeight: "bold",
+  },
+  form: { marginBottom: 20 },
+  label: { fontWeight: "bold", fontSize: 16, marginBottom: 5, color: "#444" },
+  fullInput: {
+    borderWidth: 1,
+    borderColor: "#CCC",
+    borderRadius: 10,
+    padding: 12,
     fontSize: 16,
     marginBottom: 15,
-    width: "100%",
+    justifyContent: "center",
   },
-  buttonRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-evenly",
+  editBtn: {
+    borderWidth: 1,
+    borderColor: "#00CC99",
+    borderRadius: 12,
+    padding: 15,
+    alignItems: "center",
     marginBottom: 15,
   },
+  editBtnText: { color: "#00CC99", fontWeight: "600", fontSize: 16 },
+  deleteBtn: {
+    backgroundColor: "#FFC1C1",
+    borderRadius: 12,
+    padding: 15,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FF8080",
+  },
+  deleteBtnText: { color: "#FF4D4D", fontWeight: "600", fontSize: 16 },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
@@ -401,9 +401,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "80%",
   },
-  modalInput: {
-    borderWidth: 1,
-    padding: 10,
-    marginVertical: 10,
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1a1a1a",
+    marginBottom: 8,
+  },
+  modalText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: "#E5E5E5",
+    marginVertical: 20,
   },
 });

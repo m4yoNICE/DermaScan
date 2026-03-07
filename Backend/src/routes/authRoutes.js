@@ -4,7 +4,7 @@ import {
   register,
   forgetPassword,
   checkOtp,
-} from "../controllers/authControllers.js";
+} from "../controllers/authController.js";
 const router = express.Router();
 
 router.post("/login", login);

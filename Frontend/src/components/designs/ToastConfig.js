@@ -1,0 +1,21 @@
+import { BaseToast, ErrorToast } from "react-native-toast-message";
+
+export const toastConfig = {
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: "#00CC99", height: 80 }}
+      contentContainerStyle={{ paddingHorizontal: 20 }}
+      text1Style={{ fontSize: 18, fontWeight: "bold" }}
+      text2Style={{ fontSize: 16 }}
+    />
+  ),
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      style={{ borderLeftColor: "red", height: 80 }}
+      text1Style={{ fontSize: 18, fontWeight: "bold" }}
+      text2Style={{ fontSize: 16 }}
+    />
+  ),
+};

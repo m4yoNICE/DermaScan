@@ -1,14 +1,58 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useState, useCallback } from "react";
+import { StyleSheet, FlatList, View, Text } from "react-native";
+import { useFocusEffect } from "expo-router";
+import HistoryCard from "@/components/designs/HistoryCard";
+import Api from "@/services/Api";
+import LoadingModal from "@/components/designs/LoadingModal";
 
 const History = () => {
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetch = async () => {
+        try {
+          setLoading(true);
+          const res = await Api.getHistoryAPI();
+          setHistory(res.data);
+        } catch (err) {
+          console.error("History fetch error:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetch();
+    }, []),
+  );
+
   return (
-    <View>
-      <Text>History</Text>
+    <View style={styles.container}>
+      <LoadingModal visible={loading} />
+      <FlatList
+        data={history}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <HistoryCard item={item} />}
+        contentContainerStyle={{ paddingVertical: 10, paddingBottom: 100 }}
+        ListEmptyComponent={
+          !loading && <Text style={styles.empty}>No history yet.</Text>
+        }
+      />
     </View>
-  )
-}
+  );
+};
 
-export default History
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  empty: {
+    textAlign: "center",
+    marginTop: 40,
+    color: "#999",
+    fontSize: 16,
+  },
+});
 
-const styles = StyleSheet.create({})
+export default History;

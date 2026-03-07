@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, useEffect, useState, useContext } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
-import { setLogoutCallback } from "@/services/logoutReference";
+import { setLogoutCallback } from "src/utils/logoutReference";
+
 export const UserContext = createContext();
 
-export function UserProvider({ children }) {
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [token, setToken] = useState();
   const [loading, setLoading] = useState(true);
@@ -39,13 +40,11 @@ export function UserProvider({ children }) {
   const login = async (data) => {
     console.log("UserContext login called with:", data);
     const { token, user } = data;
-    console.log("Setting token:", token);
-    console.log("Setting user:", user);
+
     setToken(token);
     setUser(user);
     await AsyncStorage.setItem("authToken", token);
     await AsyncStorage.setItem("user", JSON.stringify(user));
-    console.log("Login complete - token set");
   };
   //clear everything here
   const logout = async () => {
@@ -58,9 +57,12 @@ export function UserProvider({ children }) {
   useEffect(() => {
     setLogoutCallback(logout);
   }, []);
-  return (
-    <UserContext.Provider value={{ user, token, loading, login, logout }}>
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({ user, token, loading, login, logout }),
+    [user, token, loading],
   );
-}
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+};
+
+export const useUser = () => useContext(UserContext);

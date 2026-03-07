@@ -7,7 +7,7 @@ import Landing2 from "@/components/landing/Landing2";
 import Landing3 from "@/components/landing/Landing3";
 import Landing4 from "@/components/landing/Landing4";
 
-import Button from "@/components/Button";
+import Button from "@/components/designs/Button";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { router } from "expo-router";
 

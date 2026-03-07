@@ -1,18 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Drawer } from "expo-router/drawer";
-import Logo from "@/components/Logo";
-import { DrawerItemList } from "@react-navigation/drawer";
+import Logo from "@/components/designs/Logo";
+import {
+  DrawerContentScrollView,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 
 function CustomDrawerContent(props) {
   return (
-    <View style={{ flex: 1 }}>
+    <DrawerContentScrollView style={{ flex: 1 }}>
       <View style={styles.header}>
-        <Logo style={{ width: 32, height: 32 }} />
+        <Logo style={{ width: 50, height: 50 }} />
         <Text style={styles.title}>DermaScan+</Text>
       </View>
+
       <DrawerItemList {...props} />
-    </View>
+    </DrawerContentScrollView>
   );
 }
 
@@ -34,15 +38,26 @@ export const Drawerlayout = () => {
     >
       <Drawer.Screen
         name="(tabs)"
-        options={{ title: "Home", headerShown: false }}
+        options={{
+          title: "Home",
+          headerShown: false,
+          drawerLabelStyle: { fontSize: 15, fontWeight: "600" },
+        }}
       />
       <Drawer.Screen
         name="Profile"
-        options={{ title: "Settings", headerShown: true }}
+        options={{
+          title: "Settings",
+          headerShown: true,
+          drawerLabelStyle: { fontSize: 15, fontWeight: "600" },
+        }}
       />
       <Drawer.Screen
         name="Logout"
-        options={{ title: "Logout", drawerLabelStyle: { color: "red" } }}
+        options={{
+          title: "Logout",
+          drawerLabelStyle: { fontSize: 15, fontWeight: "600", color: "red" },
+        }}
       />
     </Drawer>
   );
@@ -54,12 +69,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+    marginBottom: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: "bold",
     marginLeft: 10,
     color: "#081021",

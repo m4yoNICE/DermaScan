@@ -6,7 +6,7 @@ import {
   Keyboard,
 } from "react-native";
 import { Link, router } from "expo-router";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 //external ui
 import { Feather, Ionicons } from "@expo/vector-icons";
 import BottomSheet, {
@@ -15,18 +15,21 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 
 //own ui
-import Button from "@/components/Button";
+import Button from "@/components/designs/Button";
 import Landing4 from "@/components/landing/Landing4";
-import { ToastMessage } from "@/components/ToastMessage";
-import LoadingModal from "@/components/LoadingModal";
+import { ToastMessage } from "@/components/designs/ToastMessage";
+import LoadingModal from "@/components/designs/LoadingModal";
 import Api from "@/services/Api";
 //User Context
-import { UserContext } from "src/contexts/UserContext";
-
+import { useUser } from "src/contexts/UserContext";
+import { useUserData } from "@/contexts/UserDataContext";
+import { useHomeData } from "@/contexts/HomeDataContext";
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useContext(UserContext);
+  const { login } = useUser();
+  const { fetchUserData } = useUserData();
+  const { fetchAll } = useHomeData();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -64,6 +67,8 @@ const Login = () => {
       const res = await Api.loginAccountAPI(loginData);
 
       await login(res.data);
+      await fetchUserData();
+      await fetchAll();
       ToastMessage("success", "Login Successful", "Welcome back 👋");
 
       router.replace("/");
@@ -168,7 +173,7 @@ const Login = () => {
           />
 
           <Text style={styles.signUp}>
-            Don't have an account?{" "}
+            Don't have an account?
             <Link href="/Register" style={styles.signUpLink}>
               Sign Up
             </Link>

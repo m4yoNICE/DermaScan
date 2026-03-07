@@ -6,12 +6,16 @@ import { ENV } from "./config/env.js";
 //users routes imports
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import imageRoutes from "./routes/imageRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
-import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
+import reccommendRoutes from "./routes/recommendRoutes.js";
+import routineRoutes from "./routes/routineRoutes.js";
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
+import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
+import outOfScopeRoutes from "./AdminBE/routes/outOfScopeRoutes.js";
+
+import skinCareProduct from "./AdminBE/routes/skinCareProductsRoutes.js";
 
 const app = express();
 const PORT = ENV.PORT || 6969;
@@ -28,18 +32,27 @@ app.use(
 app.use(express.json());
 
 //static
-app.use("/uploads", express.static(path.join(process.cwd(), "skinUploads")));
+app.use(
+  "/api/uploads/skin-images",
+  express.static(path.join(process.cwd(), "skinUploads")),
+);
+app.use(
+  "/api/uploads/product-images",
+  express.static(path.join(process.cwd(), "productUploads")),
+);
 
 //users
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/journals", journalRoutes);
-app.use("/api/images", imageRoutes);
-app.use("/api/condition", skinAnalysisRoutes);
-
+app.use("/api/conditions", skinAnalysisRoutes);
+app.use("/api/recommendations", reccommendRoutes);
+app.use("/api/routines", routineRoutes);
 //admin
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/users", adminUserRoutes);
+app.use("/api/admin/products", skinCareProduct);
+app.use("/api/admin/scope", outOfScopeRoutes);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);

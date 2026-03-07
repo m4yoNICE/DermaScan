@@ -10,4 +10,5 @@ export const ENV = {
   JWT_SECRET: process.env.JWT_SECRET,
   OTP_USER: process.env.OTP_USER,
   OTP_PASSWORD_OTP: process.env.OTP_PASSWORD_OTP,
+  BASE_URL: process.env.BASE_URL,
 };

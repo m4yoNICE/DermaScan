@@ -1,3 +1,4 @@
+import { FormsData } from "src/utils/FormData";
 import { Http } from "./Http";
 
 const Api = {
@@ -21,11 +22,32 @@ const Api = {
   updateJournalAPI: (id, data) => Http.put("/api/journals/" + id, data),
   deleteJournalAPI: (id) => Http.delete("/api/journals/" + id),
 
+  //recommendation
+  saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
+  getHistoryAPI: () => Http.get("/api/recommendations"),
+
+  // Routine
+  getRoutineNotificationsAPI: () => Http.get("/api/routines/notifications"),
+  completeRoutineNotificationAPI: (id) =>
+    Http.put("/api/routines/notifications/" + id),
+  getRoutineLogsAPI: () => Http.get("/api/routines/logs"),
+  setUserRoutineAPI: (data) => Http.post("/api/routines/schedule"),
+  editUserRoutineAPI: (data) => Http.put("/api/routines/schedule"),
+
+  // Analysis logs (already has getHistoryAPI, this is the raw one for calendar)
+  getAnalysisLogsAPI: () => Http.get("/api/conditions"),
+
   // Uploads & Images
-  getUploadedAPI: (data) => Http.get("/api/uploads", data),
-  getConditionByIdAPI: (id) => Http.get("/api/condition/" + id),
-  getImageByIdAPI: (id) => Http.get("/api/images/results/" + id),
-  getImageAPI: (filename) => `${Http.defaults.baseURL}/uploads/${filename}`,
+  getSkinImage: (data) => {
+    return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
+  },
+  getProductImage: (data) => {
+    return Http.defaults.baseURL + "/api/uploads/product-images/" + data;
+  },
+
+  //FormData
+  uploadSkinImageAPI: (formData) => FormsData("/api/conditions/skin", formData),
+  uploadProfilePicAPI: (formData) => FormsData("/api/profile/pic", formData),
 };
 
 export default Api;
