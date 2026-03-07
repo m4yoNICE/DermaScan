@@ -6,7 +6,7 @@ import {
   updatejournal,
   deletejournal,
   getsinglejournalbydate,
-} from "../controllers/journalControllers.js";
+} from "../controllers/journalController.js";
 const router = express.Router();
 
 router.get("/", verifyToken, getalljournal);

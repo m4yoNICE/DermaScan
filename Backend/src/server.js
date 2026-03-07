@@ -9,6 +9,7 @@ import userRoutes from "./routes/userRoutes.js";
 import journalRoutes from "./routes/journalRoutes.js";
 import skinAnalysisRoutes from "./routes/skinAnalysisRoutes.js";
 import reccommendRoutes from "./routes/recommendRoutes.js";
+import routineRoutes from "./routes/routineRoutes.js";
 //admin routes imports
 import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
@@ -46,6 +47,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/journals", journalRoutes);
 app.use("/api/conditions", skinAnalysisRoutes);
 app.use("/api/recommendations", reccommendRoutes);
+app.use("/api/routines", routineRoutes);
 //admin
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/users", adminUserRoutes);

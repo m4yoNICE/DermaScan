@@ -1,20 +1,41 @@
 import {
   productRecommendations,
+  routineNotifications,
   skinAnalysis,
   skinConditions,
   storedImages,
   skinCareProducts,
 } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, inArray } from "drizzle-orm";
 
-export async function insertRecommendations(analysisId, productIds) {
+export async function insertRecommendations(userId, analysisId, productIds) {
+  // insert product recommendations first
   const values = productIds.map((productId) => ({
     analysisId,
     productId,
   }));
 
   await db.insert(productRecommendations).values(values);
+  //find the recommendations again
+  const inserted = await db
+    .select()
+    .from(productRecommendations)
+    .where(
+      and(
+        eq(productRecommendations.analysisId, analysisId),
+        inArray(productRecommendations.productId, productIds),
+      ),
+    );
+
+  // insert one notification row per recommendation
+  const notifications = inserted.map((rec) => ({
+    userId,
+    analysisId,
+    recommendationId: rec.id,
+  }));
+
+  return await db.insert(routineNotifications).values(notifications);
 }
 
 export async function fetchHistory(userId) {

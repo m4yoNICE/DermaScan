@@ -2,7 +2,7 @@ import * as recommendationService from "../services/recommendServices.js";
 
 export async function saveRecommendation(req, res) {
   try {
-    console.log(req.body);
+    const userId = req.user.id;
     const { analysisId, productIds } = req.body;
 
     if (!analysisId || !productIds?.length) {
@@ -11,7 +11,11 @@ export async function saveRecommendation(req, res) {
         .json({ error: "Analysis records and selected products are required" });
     }
 
-    await recommendationService.insertRecommendations(analysisId, productIds);
+    await recommendationService.insertRecommendations(
+      userId,
+      analysisId,
+      productIds,
+    );
 
     res.status(201).json({ success: true, message: "Recommendations saved." });
   } catch (err) {

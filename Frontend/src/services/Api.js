@@ -26,6 +26,17 @@ const Api = {
   saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
   getHistoryAPI: () => Http.get("/api/recommendations"),
 
+  // Routine
+  getRoutineNotificationsAPI: () => Http.get("/api/routines/notifications"),
+  completeRoutineNotificationAPI: (id) =>
+    Http.put("/api/routines/notifications/" + id),
+  getRoutineLogsAPI: () => Http.get("/api/routines/logs"),
+  setUserRoutineAPI: (data) => Http.post("/api/routines/schedule"),
+  editUserRoutineAPI: (data) => Http.put("/api/routines/schedule"),
+
+  // Analysis logs (already has getHistoryAPI, this is the raw one for calendar)
+  getAnalysisLogsAPI: () => Http.get("/api/conditions"),
+
   // Uploads & Images
   getSkinImage: (data) => {
     return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;

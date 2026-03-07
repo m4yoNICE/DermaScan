@@ -2,6 +2,12 @@ import { skinConditions, skinAnalysis } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
 
+export async function fetchAnalysisLogsByUser(user_id) {
+  return await db.query.skinAnalysis.findMany({
+    where: eq(skinAnalysis.userId, user_id),
+  });
+}
+
 export async function mapSkinResultToCatalog(user_id, skinResult) {
   if (!skinResult?.top3) return null;
 
