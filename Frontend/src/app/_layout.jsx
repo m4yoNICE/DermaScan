@@ -4,7 +4,7 @@ import { AnalysisProvider } from "src/contexts/AnalysisContext";
 import Toast from "react-native-toast-message";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { toastConfig } from "@/components/designs/ToastConfig";
+import { toastConfig } from "@/components/designs/feedback/ToastConfig";
 import { ProductProvider } from "src/contexts/ProductContext";
 import { UserDataProvider } from "@/contexts/UserDataContext";
 import { HomeDataProvider } from "@/contexts/HomeDataContext";

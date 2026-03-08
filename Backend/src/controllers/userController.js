@@ -1,3 +1,4 @@
+import { fetchRoutineSchedule } from "../services/routineServices.js";
 import {
   updateUser,
   deleteUser,
@@ -13,7 +14,9 @@ export async function getuserid(req, res) {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    return res.status(200).json(user);
+    const routine = await fetchRoutineSchedule(userId);
+
+    return res.status(200).json({ user, routine });
   } catch (err) {
     console.error("Error fetching user by ID:", err);
     res.status(500).json({ error: "Server error" });

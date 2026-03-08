@@ -132,83 +132,6 @@ export const conditionProducts = mysqlTable("condition_products", {
     .notNull(),
 });
 
-// ======INGREDIENTS======
-export const ingredients = mysqlTable("ingredients", {
-  id: int().autoincrement().primaryKey().notNull(),
-  name: varchar("name", { length: 255 }).notNull(),
-  createdAt: datetime("created_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3)`)
-    .notNull(),
-  updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-    .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-    .notNull(),
-});
-
-// ======CONDITION_INGREDIENTS (junction: skin_conditions <-> ingredients)======
-// used in scoreProducts to boost products with beneficial ingredients per condition
-export const conditionIngredients = mysqlTable(
-  "condition_ingredients",
-  {
-    id: int().autoincrement().primaryKey().notNull(),
-    conditionId: int("condition_id").notNull(),
-    ingredientId: int("ingredient_id").notNull(),
-    createdAt: datetime("created_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-  },
-  (table) => [
-    foreignKey({
-      name: "ci_cond_fk",
-      columns: [table.conditionId],
-      foreignColumns: [skinConditions.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-    foreignKey({
-      name: "ci_ing_fk",
-      columns: [table.ingredientId],
-      foreignColumns: [ingredients.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-  ],
-);
-
-// ======PRODUCT_INGREDIENTS (junction: skin_care_products <-> ingredients)======
-export const productIngredients = mysqlTable(
-  "product_ingredients",
-  {
-    id: int().autoincrement().primaryKey().notNull(),
-    productId: int("product_id").notNull(),
-    ingredientId: int("ingredient_id").notNull(),
-    createdAt: datetime("created_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-    updatedAt: datetime("updated_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-  },
-  (table) => [
-    foreignKey({
-      name: "pi_prod_fk",
-      columns: [table.productId],
-      foreignColumns: [skinCareProducts.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-    foreignKey({
-      name: "pi_ing_fk",
-      columns: [table.ingredientId],
-      foreignColumns: [ingredients.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-  ],
-);
-
 // ======PRODUCT_RECOMMENDATIONS======
 export const productRecommendations = mysqlTable(
   "product_recommendations",
@@ -296,51 +219,7 @@ export const users = mysqlTable(
   (table) => [unique("users_email_key").on(table.email)],
 );
 
-// ======ROUTINE_NOTIFICATIONS======
-// isCompleted and isNotified replaced with lastCompletedAt for daily reset logic
-// frontend derives completed/pending: dayjs(lastCompletedAt).isSame(dayjs(), 'day')
-export const routineNotifications = mysqlTable(
-  "routine_notifications",
-  {
-    id: int().autoincrement().primaryKey().notNull(),
-    userId: int("user_id").notNull(),
-    analysisId: int("analysis_id").notNull(),
-    recommendationId: int("recommendation_id").notNull(),
-    lastCompletedAt: datetime("last_completed_at", {
-      mode: "string",
-      fsp: 3,
-    }).default(null),
-    createdAt: datetime("created_at", { mode: "string", fsp: 3 })
-      .default(sql`CURRENT_TIMESTAMP(3)`)
-      .notNull(),
-  },
-  (table) => [
-    foreignKey({
-      name: "rn_user_fk",
-      columns: [table.userId],
-      foreignColumns: [users.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-    foreignKey({
-      name: "rn_analysis_fk",
-      columns: [table.analysisId],
-      foreignColumns: [skinAnalysis.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-    foreignKey({
-      name: "rn_rec_fk",
-      columns: [table.recommendationId],
-      foreignColumns: [productRecommendations.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-  ],
-);
-
 // ======USER_ROUTINE======
-// stores user's preferred AM/PM schedule times for routine notifications
 export const userRoutine = mysqlTable(
   "user_routine",
   {
@@ -363,15 +242,17 @@ export const userRoutine = mysqlTable(
   (table) => [unique("user_routine_user_unique").on(table.userId)],
 );
 
-// ======ROUTINE_LOGS======
-// tracks daily completion history for calendar display
-export const routineLogs = mysqlTable(
-  "routine_logs",
+// ======REMINDER_LOGS======
+// one row per schedule per day — "Morning" or "Night"
+// inserted when user completes all products for that schedule
+// powers calendar ✓ / ✗ / 1/2 display
+export const reminderLogs = mysqlTable(
+  "reminder_logs",
   {
     id: int().autoincrement().primaryKey().notNull(),
     userId: int("user_id").notNull(),
-    notificationId: int("notification_id").notNull(), // which product
-    completedDate: date("completed_date", { mode: "string" }).notNull(), // "2026-03-04"
+    schedule: varchar("schedule", { length: 10 }).notNull(), // "Morning" or "Night"
+    completedDate: date("completed_date", { mode: "string" }).notNull(),
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)
       .notNull(),
@@ -381,13 +262,6 @@ export const routineLogs = mysqlTable(
       name: "rl_user_fk",
       columns: [table.userId],
       foreignColumns: [users.id],
-    })
-      .onDelete("cascade")
-      .onUpdate("cascade"),
-    foreignKey({
-      name: "rl_notif_fk",
-      columns: [table.notificationId],
-      foreignColumns: [routineNotifications.id],
     })
       .onDelete("cascade")
       .onUpdate("cascade"),

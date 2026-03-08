@@ -1,5 +1,6 @@
 import { analyzeSkinOrchestrator } from "../application/skinAnalysisOrchestrator.js";
 import { recommendOrchestrator } from "../application/productRecommendationOrchestrator.js";
+import { fetchAnalysisLogsByUser } from "../services/skinAnalysisDBMapping.js";
 // === MAIN IMAGE PROCESSING LOGIC ===
 // Handles the full lifecycle of a skin analysis request
 

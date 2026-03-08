@@ -22,30 +22,25 @@ const Api = {
   updateJournalAPI: (id, data) => Http.put("/api/journals/" + id, data),
   deleteJournalAPI: (id) => Http.delete("/api/journals/" + id),
 
-  //recommendation
+  // Recommendations
   saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
   getHistoryAPI: () => Http.get("/api/recommendations"),
 
   // Routine
-  getRoutineNotificationsAPI: () => Http.get("/api/routines/notifications"),
-  completeRoutineNotificationAPI: (id) =>
-    Http.put("/api/routines/notifications/" + id),
-  getRoutineLogsAPI: () => Http.get("/api/routines/logs"),
-  setUserRoutineAPI: (data) => Http.post("/api/routines/schedule"),
-  editUserRoutineAPI: (data) => Http.put("/api/routines/schedule"),
-
-  // Analysis logs (already has getHistoryAPI, this is the raw one for calendar)
-  getAnalysisLogsAPI: () => Http.get("/api/conditions"),
+  getRoutineScheduleAPI: () => Http.get("/api/routines/schedule"),
+  setUserRoutineAPI: (data) => Http.post("/api/routines/schedule", data),
+  editUserRoutineAPI: (data) => Http.put("/api/routines/schedule", data),
+  getRoutineProductsAPI: () => Http.get("/api/routines/products"),
+  completeScheduleAPI: (data) => Http.post("/api/routines/complete", data),
+  getReminderLogsAPI: () => Http.get("/api/routines/logs"),
 
   // Uploads & Images
-  getSkinImage: (data) => {
-    return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
-  },
-  getProductImage: (data) => {
-    return Http.defaults.baseURL + "/api/uploads/product-images/" + data;
-  },
+  getSkinImage: (data) =>
+    Http.defaults.baseURL + "/api/uploads/skin-images/" + data,
+  getProductImage: (data) =>
+    Http.defaults.baseURL + "/api/uploads/product-images/" + data,
 
-  //FormData
+  // FormData
   uploadSkinImageAPI: (formData) => FormsData("/api/conditions/skin", formData),
   uploadProfilePicAPI: (formData) => FormsData("/api/profile/pic", formData),
 };

@@ -1,6 +1,6 @@
 import Button from "@/components/designs/Button";
-import Card from "@/components/designs/Card";
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import Card from "@/components/designs/cards/Card";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useRef, useState } from "react";
 import {

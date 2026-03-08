@@ -1,14 +1,20 @@
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Accordion from "@/components/designs/Accordian";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import Api from "@/services/Api";
 import RoutineView from "@/components/results/RoutineView";
-import LoadingModal from "@/components/designs/LoadingModal";
 import DermaAlert, {
   dermaAlertTextStyle,
-} from "@/components/designs/DermaAlert";
+} from "@/components/designs/feedback/DermaAlert";
 
 const Results = () => {
   const { analysis } = useAnalysis();
@@ -53,7 +59,11 @@ const Results = () => {
       );
     }
 
-    return <LoadingModal />;
+    return (
+      <View style={styles.imagePlaceholder}>
+        <ActivityIndicator size="small" color="#00CC99" />
+      </View>
+    );
   };
 
   return (

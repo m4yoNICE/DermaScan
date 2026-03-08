@@ -12,7 +12,7 @@ import React, { useState, useCallback } from "react";
 import { useFocusEffect, router } from "expo-router";
 import { useUser } from "@/contexts/UserContext";
 import { useUserData } from "@/contexts/UserDataContext";
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Logo from "@/components/designs/Logo";
 import Api from "@/services/Api";

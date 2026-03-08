@@ -6,6 +6,7 @@ const UserDataContext = createContext();
 
 export const UserDataProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
+  const [userRoutine, setUserRoutine] = useState(null);
 
   useEffect(() => {
     AsyncStorage.getItem("authToken").then((token) => {
@@ -16,7 +17,8 @@ export const UserDataProvider = ({ children }) => {
   const fetchUserData = async () => {
     try {
       const res = await Api.getUserByTokenAPI();
-      setUserData(res.data);
+      setUserData(res.data.user);
+      setUserRoutine(res.data.routine ?? null);
     } catch (err) {
       console.error("UserData fetch error:", err);
     }
@@ -26,9 +28,11 @@ export const UserDataProvider = ({ children }) => {
     () => ({
       userData,
       setUserData,
+      userRoutine,
+      setUserRoutine,
       fetchUserData,
     }),
-    [userData],
+    [userData, userRoutine],
   );
 
   return (
