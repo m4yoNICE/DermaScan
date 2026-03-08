@@ -31,7 +31,7 @@ const Api = {
 
   //skin products api endpoints
   getSkinProducts: (config = {}) => {
-    return Http.get("api/admin/products/getSkinProducts", config)
+    return Http.get("api/admin/products/getSkinProducts", config);
   },
 
   getProductById: (id) => {
@@ -51,9 +51,16 @@ const Api = {
   },
 
   // out of scope api endpoints
-  getOutOfScopeData : (config = {}) => {
+  getOutOfScopeData: (config = {}) => {
     return Http.get("/api/admin/scope/out-of-scope", config);
   },
+
+  getAnalysisData: () => Http.get("/api/admin/analysis"),
+
+  getSkinImage: (data) =>
+    Http.defaults.baseURL + "/api/uploads/skin-images/" + data,
+  getProductImage: (data) =>
+    Http.defaults.baseURL + "/api/uploads/product-images/" + data,
 };
 
 export default Api;

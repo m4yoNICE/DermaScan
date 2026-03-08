@@ -125,36 +125,36 @@ const Home = () => {
   return (
     <View style={styles.container}>
       <LoadingModal visible={loading} />
-      <ScrollView>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>
-            {currentMonth.format("MMMM YYYY")}
-          </Text>
-          <View style={styles.arrows}>
-            <TouchableOpacity onPress={goToPrev}>
-              <AntDesign name="left" size={20} color="#00CC99" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={goToNext}>
-              <AntDesign name="right" size={20} color="#00CC99" />
-            </TouchableOpacity>
-          </View>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>
+          {currentMonth.format("MMMM YYYY")}
+        </Text>
+        <View style={styles.arrows}>
+          <TouchableOpacity onPress={goToPrev}>
+            <AntDesign name="left" size={20} color="#00CC99" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={goToNext}>
+            <AntDesign name="right" size={20} color="#00CC99" />
+          </TouchableOpacity>
         </View>
+      </View>
 
-        <CalendarToggle active={activeTab} onChange={setActiveTab} />
+      <CalendarToggle active={activeTab} onChange={setActiveTab} />
 
-        <Calendar
-          key={currentMonth.format("YYYY-MM")}
-          markingType="custom"
-          current={currentMonth.format("YYYY-MM-DD")}
-          hideArrows={true}
-          hideDayNames={false}
-          renderHeader={() => null}
-          onDayPress={(day) => {
-            setSelectedDate(day.dateString);
-            sheetRef.current?.expand();
-          }}
-          markedDates={markedDates}
-        />
+      <Calendar
+        key={currentMonth.format("YYYY-MM")}
+        markingType="custom"
+        current={currentMonth.format("YYYY-MM-DD")}
+        hideArrows={true}
+        hideDayNames={false}
+        renderHeader={() => null}
+        onDayPress={(day) => {
+          setSelectedDate(day.dateString);
+          sheetRef.current?.expand();
+        }}
+        markedDates={markedDates}
+      />
+      <ScrollView>
         <RoutineFeed />
       </ScrollView>
 

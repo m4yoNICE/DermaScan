@@ -11,6 +11,7 @@ import {
 import { Trash2, Plus, Pencil } from "lucide-react";
 import AddProduct from "./AddProductModal";
 import EditProductModal from "./EditProductModal";
+import Api from "@/services/Api";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -95,7 +96,7 @@ const Product = () => {
       render: (value) =>
         value && value !== "NULL" ? (
           <img
-            src={value}
+            src={Api.getProductImage(value)}
             alt="product"
             className="w-10 h-10 object-cover rounded"
           />
@@ -273,7 +274,9 @@ const Product = () => {
 
       {/* products table */}
       {!loading && !error && (
-        <Table data={filteredData} columns={columns} itemsPerPage={10} />
+        <div className="overflow-x-auto">
+          <Table data={filteredData} columns={columns} itemsPerPage={10} />
+        </div>
       )}
 
       <AddProduct
