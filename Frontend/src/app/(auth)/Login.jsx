@@ -17,19 +17,17 @@ import BottomSheet, {
 //own ui
 import Button from "@/components/designs/Button";
 import Landing4 from "@/components/landing/Landing4";
-import { ToastMessage } from "@/components/designs/ToastMessage";
-import LoadingModal from "@/components/designs/LoadingModal";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import Api from "@/services/Api";
 //User Context
 import { useUser } from "src/contexts/UserContext";
-import { useUserData } from "@/contexts/UserDataContext";
-import { useHomeData } from "@/contexts/HomeDataContext";
+
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useUser();
-  const { fetchUserData } = useUserData();
-  const { fetchAll } = useHomeData();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -67,8 +65,6 @@ const Login = () => {
       const res = await Api.loginAccountAPI(loginData);
 
       await login(res.data);
-      await fetchUserData();
-      await fetchAll();
       ToastMessage("success", "Login Successful", "Welcome back 👋");
 
       router.replace("/");
@@ -82,7 +78,13 @@ const Login = () => {
 
   return (
     <View style={styles.root}>
-      <LoadingModal visible={isLoading} />
+      <LoadingModal
+        visible={isLoading}
+        onTimeout={() => {
+          setIsLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
 
       <View style={styles.backgroundWrapper}>
         <View style={styles.landingScale}>

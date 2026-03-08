@@ -9,13 +9,11 @@ import Pigmentation from "@/components/SkinTypeQuestionnaire/Pigmentation";
 import Sensitivity from "@/components/SkinTypeQuestionnaire/Sensitivity";
 
 //own UI and services
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import Api from "@/services/Api";
-import LoadingModal from "@/components/designs/LoadingModal";
-import { useUserData } from "@/contexts/UserDataContext";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
 
 const BaumannQuestionnaire = () => {
-  const { fetchUserData } = useUserData();
   const [loading, setLoading] = useState(false);
 
   const [oil, setOil] = useState(null);
@@ -67,7 +65,6 @@ const BaumannQuestionnaire = () => {
       };
 
       await Api.updateSkinDataAPI(skinData);
-      await fetchUserData();
       const code = results.map((v) => v.charAt(0).toUpperCase()).join("");
 
       ToastMessage(
@@ -88,8 +85,13 @@ const BaumannQuestionnaire = () => {
 
   return (
     <View style={styles.container}>
-      <LoadingModal visible={loading} />
-
+      <LoadingModal
+        visible={loading}
+        onTimeout={() => {
+          setLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
       <Text style={styles.header}>Let's Know About You!</Text>
       <Text style={styles.subtitle}>
         Answer these questions to properly curate your skin type.

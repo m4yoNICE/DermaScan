@@ -1,41 +1,16 @@
 import {
   productRecommendations,
-  routineNotifications,
   skinAnalysis,
   skinConditions,
   storedImages,
   skinCareProducts,
 } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
-import { eq, desc, and, inArray } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
-export async function insertRecommendations(userId, analysisId, productIds) {
-  // insert product recommendations first
-  const values = productIds.map((productId) => ({
-    analysisId,
-    productId,
-  }));
-
+export async function insertRecommendations(analysisId, productIds) {
+  const values = productIds.map((productId) => ({ analysisId, productId }));
   await db.insert(productRecommendations).values(values);
-  //find the recommendations again
-  const inserted = await db
-    .select()
-    .from(productRecommendations)
-    .where(
-      and(
-        eq(productRecommendations.analysisId, analysisId),
-        inArray(productRecommendations.productId, productIds),
-      ),
-    );
-
-  // insert one notification row per recommendation
-  const notifications = inserted.map((rec) => ({
-    userId,
-    analysisId,
-    recommendationId: rec.id,
-  }));
-
-  return await db.insert(routineNotifications).values(notifications);
 }
 
 export async function fetchHistory(userId) {
@@ -73,6 +48,7 @@ export async function fetchHistory(userId) {
     if (!grouped[row.analysisId]) {
       grouped[row.analysisId] = {
         id: row.analysisId,
+        rawDate: row.createdAt.slice(0, 10),
         createdAt: new Date(row.createdAt).toLocaleDateString("en-US", {
           weekday: "long",
           year: "numeric",

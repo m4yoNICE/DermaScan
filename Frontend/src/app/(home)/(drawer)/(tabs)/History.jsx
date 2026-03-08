@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { StyleSheet, FlatList, View, Text } from "react-native";
 import { useFocusEffect } from "expo-router";
-import HistoryCard from "@/components/designs/HistoryCard";
+import HistoryCard from "@/components/designs/cards/HistoryCard";
 import Api from "@/services/Api";
-import LoadingModal from "@/components/designs/LoadingModal";
-
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 const History = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,13 @@ const History = () => {
 
   return (
     <View style={styles.container}>
-      <LoadingModal visible={loading} />
+      <LoadingModal
+        visible={loading}
+        onTimeout={() => {
+          setLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
       <FlatList
         data={history}
         keyExtractor={(item) => item.id.toString()}

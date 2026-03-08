@@ -1,14 +1,15 @@
 import {
   insertUserRoutine,
   updateUserRoutine,
-  fetchRoutineNotifications,
-  completeRoutineNotification,
-  fetchRoutineLogs,
-} from "../services/routineService.js";
+  fetchRoutineProducts,
+  insertReminderLog,
+  fetchReminderLogs,
+  fetchRoutineSchedule,
+} from "../services/routineServices.js";
 
-export async function getRoutineNotifications(req, res) {
+export async function getRoutineProducts(req, res) {
   try {
-    const result = await fetchRoutineNotifications(req.user.id);
+    const result = await fetchRoutineProducts(req.user.id);
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -16,10 +17,26 @@ export async function getRoutineNotifications(req, res) {
   }
 }
 
-export async function markNotificationDone(req, res) {
+export async function completeSchedule(req, res) {
   try {
-    const { id } = req.params;
-    const result = await completeRoutineNotification(id);
+    const { schedule } = req.body;
+    const userId = req.user.id;
+
+    if (!schedule) {
+      return res.status(400).json({ error: "Schedule is required" });
+    }
+
+    await insertReminderLog(userId, schedule);
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function getReminderLogs(req, res) {
+  try {
+    const result = await fetchReminderLogs(req.user.id);
     res.status(200).json(result);
   } catch (err) {
     console.error(err);
@@ -27,9 +44,9 @@ export async function markNotificationDone(req, res) {
   }
 }
 
-export async function getRoutineLogs(req, res) {
+export async function getRoutineSchedule(req, res) {
   try {
-    const result = await fetchRoutineLogs(req.user.id);
+    const result = await fetchRoutineSchedule(req.user.id);
     res.status(200).json(result);
   } catch (err) {
     console.error(err);

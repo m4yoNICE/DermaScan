@@ -14,11 +14,11 @@ import {
   Keyboard,
 } from "react-native";
 import Button from "@/components/designs/Button";
-import LoadingModal from "@/components/designs/LoadingModal";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import { UserContext } from "src/contexts/UserContext";
 import Api from "src/services/Api.js";
 
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 const Register = () => {
@@ -126,7 +126,13 @@ const Register = () => {
 
   return (
     <View style={styles.root}>
-      <LoadingModal visible={loading} />
+      <LoadingModal
+        visible={loading}
+        onTimeout={() => {
+          setLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
       {/* Top Background Section */}
       <View style={styles.backgroundWrapper}>
         <View style={styles.landingScale}>

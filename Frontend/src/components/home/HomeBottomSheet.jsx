@@ -1,41 +1,44 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
 import JournalSection from "./JournalSection";
-import ReminderSection from "./ReminderSection";
+import AnalysisSection from "./AnalysisSection";
 
 const HomeBottomSheet = ({ sheetRef, selectedDate }) => {
-  const [activeTab, setActiveTab] = useState("Routine");
+  const [activeTab, setActiveTab] = useState("Analysis");
 
   return (
     <BottomSheet
       ref={sheetRef}
       index={-1}
-      snapPoints={["50%", "85%"]} // Adjusted to match the taller UI in the pic
+      snapPoints={["50%", "85%"]}
       enablePanDownToClose
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
+          disappearsOnIndex={1}
+          appearsOnIndex={2}
         />
       )}
       backgroundStyle={styles.sheetBackground}
+      handleIndicatorStyle={{ backgroundColor: "#ccc" }}
     >
-      <View style={styles.content}>
-        {/* Tab Headers */}
+      <BottomSheetView style={styles.content}>
         <View style={styles.tabContainer}>
           <TouchableOpacity
-            onPress={() => setActiveTab("Routine")}
-            style={[styles.tab, activeTab === "Routine" && styles.activeTab]}
+            onPress={() => setActiveTab("Analysis")}
+            style={[styles.tab, activeTab === "Analysis" && styles.activeTab]}
           >
             <Text
               style={[
                 styles.tabText,
-                activeTab === "Routine" && styles.activeTabText,
+                activeTab === "Analysis" && styles.activeTabText,
               ]}
             >
-              Routine
+              Analysis
             </Text>
           </TouchableOpacity>
 
@@ -54,31 +57,34 @@ const HomeBottomSheet = ({ sheetRef, selectedDate }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Conditional Content */}
-        {activeTab === "Routine" ? (
-          <ReminderSection selectedDate={selectedDate} />
-        ) : (
-          <JournalSection selectedDate={selectedDate} />
-        )}
-      </View>
+        <View style={styles.sectionWrapper}>
+          {activeTab === "Analysis" ? (
+            <AnalysisSection selectedDate={selectedDate} />
+          ) : (
+            <JournalSection selectedDate={selectedDate} />
+          )}
+        </View>
+      </BottomSheetView>
     </BottomSheet>
   );
 };
 
+export default HomeBottomSheet;
+
 const styles = StyleSheet.create({
   sheetBackground: {
-    borderRadius: 40, // Match the heavy rounding in image_4664bd.png
+    borderRadius: 40,
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
   tabContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     borderBottomWidth: 1,
     borderBottomColor: "#EEE",
-    marginBottom: 20,
   },
   tab: {
     paddingVertical: 15,
@@ -97,6 +103,8 @@ const styles = StyleSheet.create({
   activeTabText: {
     color: "#00CC99",
   },
+  sectionWrapper: {
+    flex: 1,
+    paddingTop: 15,
+  },
 });
-
-export default HomeBottomSheet;

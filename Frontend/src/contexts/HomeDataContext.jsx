@@ -1,32 +1,33 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import dayjs from "dayjs";
 import Api from "@/services/Api";
 
 const HomeDataContext = createContext();
 
 export const HomeDataProvider = ({ children }) => {
   const [journals, setJournals] = useState({});
-  const [routineNotifications, setRoutineNotifications] = useState([]);
-  const [routineLogs, setRoutineLogs] = useState({});
+  const [routineProducts, setRoutineProducts] = useState([]);
+  const [reminderLogs, setReminderLogs] = useState({});
   const [analysisLogs, setAnalysisLogs] = useState({});
 
   useEffect(() => {
     const checkToken = async () => {
       const token = await AsyncStorage.getItem("authToken");
-      console.log(
-        "HomeDataContext: token check:",
-        token ? "found" : "not found",
-      );
-      if (token) fetchAll();
+
+      if (token) {
+        fetchAll();
+      } else {
+        console.log("No token. Skipping fetch.");
+      }
     };
+
     checkToken();
   }, []);
 
   const fetchJournals = async () => {
     try {
-      console.log("fetchJournals: calling API");
       const res = await Api.getAllJournalsAPI();
-      console.log("fetchJournals result:", res.data);
 
       const normalized = {};
       res.data.forEach((j) => {
@@ -37,49 +38,48 @@ export const HomeDataProvider = ({ children }) => {
           mood: j.mood,
         };
       });
+
       setJournals(normalized);
     } catch (err) {
       console.error("Journals fetch error:", err);
     }
   };
 
-  const fetchRoutineNotifications = async () => {
+  const fetchRoutineProducts = async () => {
     try {
-      console.log("fetchRoutineNotifications: calling API");
-      const res = await Api.getRoutineNotificationsAPI();
-      console.log("fetchRoutineNotifications result:", res.data);
-      setRoutineNotifications(res.data);
+      const res = await Api.getRoutineProductsAPI();
+
+      setRoutineProducts(res.data);
     } catch (err) {
-      console.error("Routine notifications fetch error:", err);
+      console.error("Routine products fetch error:", err);
     }
   };
 
-  const fetchRoutineLogs = async () => {
+  const fetchReminderLogs = async () => {
     try {
-      console.log("fetchRoutineLogs: calling API");
-      const res = await Api.getRoutineLogsAPI();
-      console.log("fetchRoutineLogs result:", res.data);
+      const res = await Api.getReminderLogsAPI();
+      console.log("Raw reminder logs:", res.data);
+
       const normalized = {};
       res.data.forEach((log) => {
         if (!normalized[log.completedDate]) {
           normalized[log.completedDate] = [];
         }
-        normalized[log.completedDate].push(log);
+        normalized[log.completedDate].push(log.schedule);
       });
-      setRoutineLogs(normalized);
+
+      setReminderLogs(normalized);
     } catch (err) {
-      console.error("Routine logs fetch error:", err);
+      console.error("Reminder logs fetch error:", err);
     }
   };
 
   const fetchAnalysisLogs = async () => {
     try {
-      console.log("fetchAnalysisLogs: calling API");
       const res = await Api.getHistoryAPI();
-      console.log("fetchAnalysisLogs result:", res.data);
       const normalized = {};
       res.data.forEach((entry) => {
-        const date = entry.createdAt.slice(0, 10);
+        const date = entry.rawDate;
         if (!normalized[date]) normalized[date] = [];
         normalized[date].push(entry);
       });
@@ -89,27 +89,28 @@ export const HomeDataProvider = ({ children }) => {
     }
   };
 
-  const fetchAll = () => {
-    console.log("HomeDataContext: fetchAll triggered");
-    fetchJournals();
-    fetchRoutineNotifications();
-    fetchRoutineLogs();
-    fetchAnalysisLogs();
+  const fetchAll = async () => {
+    await Promise.all([
+      fetchJournals(),
+      fetchRoutineProducts(),
+      fetchReminderLogs(),
+      fetchAnalysisLogs(),
+    ]);
   };
 
   const value = useMemo(
     () => ({
       journals,
-      routineNotifications,
-      routineLogs,
+      routineProducts,
+      reminderLogs,
       analysisLogs,
       fetchJournals,
-      fetchRoutineNotifications,
-      fetchRoutineLogs,
+      fetchRoutineProducts,
+      fetchReminderLogs,
       fetchAnalysisLogs,
       fetchAll,
     }),
-    [journals, routineNotifications, routineLogs, analysisLogs],
+    [journals, routineProducts, reminderLogs, analysisLogs],
   );
 
   return (
