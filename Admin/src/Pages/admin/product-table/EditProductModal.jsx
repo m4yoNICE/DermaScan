@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchProducts, updateProduct } from "@/redux/slices/skinProductSlice";
+import { buildProductFormData } from "@/utils/Forms";
 import { X } from "lucide-react";
 
 const EditProductModal = ({ isOpen, onClose, product }) => {
@@ -59,8 +60,8 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = buildProductFormData(formData);
-    await dispatch(updateProduct({ id: product.id, data }));
-    await dispatch(fetchProducts());
+    await dispatch(updateProduct({ id: product.id, data })).unwrap();
+    dispatch(fetchProducts());
     onClose();
   };
 

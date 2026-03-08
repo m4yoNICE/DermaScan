@@ -1,14 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { createProduct } from "@/redux/slices/skinProductSlice";
+import { createProduct, fetchProducts } from "@/redux/slices/skinProductSlice";
 import { X } from "lucide-react";
 import { buildProductFormData } from "@/utils/Forms";
+
+const SKIN_CONDITIONS = [
+  { id: 1, label: "acne-blackheads" },
+  { id: 2, label: "acne-cyst" },
+  { id: 3, label: "acne-fungal" },
+  { id: 4, label: "acne-nodules" },
+  { id: 5, label: "acne-papules" },
+  { id: 6, label: "acne-pustules" },
+  { id: 7, label: "acne-whiteheads" },
+  { id: 8, label: "mild eczema" },
+  { id: 9, label: "severe eczema" },
+  { id: 10, label: "enlarged-pores" },
+  { id: 11, label: "melasma" },
+  { id: 12, label: "milia" },
+  { id: 13, label: "post-inflammatory-erythema" },
+  { id: 14, label: "post-inflammatory-pigmentation" },
+  { id: 15, label: "psoriasis" },
+];
 
 const AddProductModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     productName: "",
-    productImage: "",
+    productImage: null,
     ingredient: "",
     description: "",
     productType: "",
@@ -16,9 +34,9 @@ const AddProductModal = ({ isOpen, onClose }) => {
     skinType: "",
     dermaTested: false,
     timeRoutine: "",
+    conditionIds: [],
   });
 
-  // lock background scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -40,19 +58,25 @@ const AddProductModal = ({ isOpen, onClose }) => {
     }));
   };
 
+  const handleConditionToggle = (id) => {
+    setFormData((prev) => ({
+      ...prev,
+      conditionIds: prev.conditionIds.includes(id)
+        ? prev.conditionIds.filter((c) => c !== id)
+        : [...prev.conditionIds, id],
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await dispatch(createProduct(formData)).unwrap();
-    await dispatch(fetchProducts(formData));
+    const data = buildProductFormData(formData);
+    await dispatch(createProduct(data)).unwrap();
+    dispatch(fetchProducts());
     onClose();
   };
 
-
-  // close when clicking outside the modal
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    if (e.target === e.currentTarget) onClose();
   };
 
   return (
@@ -64,7 +88,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
       tabIndex={-1}
     >
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        {/* header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-800">Add Product</h2>
           <button
@@ -75,9 +98,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* form */}
         <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
-          {/* Product Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Name <span className="text-red-500">*</span>
@@ -93,7 +114,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          {/* Product Image */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Image
@@ -112,7 +132,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          {/* Product Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Type <span className="text-red-500">*</span>
@@ -134,7 +153,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             </select>
           </div>
 
-          {/* Ingredient */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Ingredient
@@ -149,7 +167,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Description
@@ -164,7 +181,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          {/* Skin Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Skin Type
@@ -179,7 +195,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          {/* Locality */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Locality
@@ -196,7 +211,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             </select>
           </div>
 
-          {/* Time Routine */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Time Routine
@@ -214,7 +228,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
             </select>
           </div>
 
-          {/* Derma Tested */}
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
@@ -232,7 +245,30 @@ const AddProductModal = ({ isOpen, onClose }) => {
             </label>
           </div>
 
-          {/* footer buttons */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Applicable Conditions
+            </label>
+            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
+              {SKIN_CONDITIONS.map((condition) => (
+                <label
+                  key={condition.id}
+                  className="flex items-center gap-2 text-sm cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.conditionIds.includes(condition.id)}
+                    onChange={() => handleConditionToggle(condition.id)}
+                    className="w-4 h-4 accent-[#00CC99]"
+                  />
+                  <span className="capitalize text-gray-600">
+                    {condition.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-200">
             <button
               type="button"

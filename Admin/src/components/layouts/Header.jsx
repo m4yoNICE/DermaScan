@@ -32,8 +32,8 @@ const Header = () => {
           <button onClick={() => setOpen(!open)} className="focus:outline-none">
             <div className="p-[2px] rounded-full border border-gray-200 shadow-sm">
                <img
-                src="https://i.pravatar.cc/150?img=47"
-                alt="Avatar"
+                src="logo.png"
+                alt="Dermascan Logo"
                 className="w-10 h-10 rounded-full object-cover"
               />
             </div>

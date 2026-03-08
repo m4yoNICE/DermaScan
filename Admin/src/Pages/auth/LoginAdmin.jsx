@@ -65,11 +65,9 @@ const LoginAdmin = () => {
   const displayError = localError || error;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-[#0eb397]">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          DermaScan+ Admin
-        </h2>
+        <h2 className="text-2xl font-bold mb-6 text-left">DermaScan+ Admin</h2>
 
         {displayError && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -89,7 +87,7 @@ const LoginAdmin = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00CC99]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -102,7 +100,7 @@ const LoginAdmin = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-12"
+                className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00CC99] pr-12"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
@@ -111,7 +109,8 @@ const LoginAdmin = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-80"
+                style={{ color: "#00CC99" }}
                 disabled={loading}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
@@ -122,13 +121,13 @@ const LoginAdmin = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full bg-[#00CC99] text-white py-2 px-4 rounded-lg hover:bg-[#00aa80] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="mt-4 text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} Admin Portal
+        <p className="mt-6 text-center text-gray-300 text-xs">
+          © {new Date().getFullYear()} DermaScan+ Admin Portal
         </p>
       </div>
     </div>

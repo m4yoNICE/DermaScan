@@ -1,5 +1,5 @@
 import { db } from "../../config/db.js";
-import { skinCareProducts } from "../../drizzle/schema.js";
+import { skinCareProducts, conditionProducts } from "../../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 
 export const getAllProducts = async () => {
@@ -15,8 +15,23 @@ export const getProductById = async (id) => {
 };
 
 export const createProduct = async (data) => {
-  const result = await db.insert(skinCareProducts).values(data);
+  const { conditionIds, ...productData } = data;
+
+  const result = await db.insert(skinCareProducts).values(productData);
   const insertId = result[0].insertId;
+
+  const parsedConditionIds = JSON.parse(conditionIds || "[]");
+  if (parsedConditionIds.length > 0) {
+    const conditionValues = [];
+    for (const conditionId of parsedConditionIds) {
+      conditionValues.push({
+        conditionId: Number(conditionId),
+        productId: insertId,
+      });
+    }
+    await db.insert(conditionProducts).values(conditionValues);
+  }
+
   const [product] = await db
     .select()
     .from(skinCareProducts)
@@ -25,15 +40,31 @@ export const createProduct = async (data) => {
 };
 
 export const updateProduct = async (id, data) => {
-  const result = await db
+  const { conditionIds, ...productData } = data;
+
+  await db
     .update(skinCareProducts)
-    .set(data)
+    .set(productData)
     .where(eq(skinCareProducts.id, id));
-  const insertId = result[0].insertId;
+
+  await db.delete(conditionProducts).where(eq(conditionProducts.productId, id));
+
+  const parsedConditionIds = JSON.parse(conditionIds || "[]");
+  if (parsedConditionIds.length > 0) {
+    const conditionValues = [];
+    for (const conditionId of parsedConditionIds) {
+      conditionValues.push({
+        conditionId: Number(conditionId),
+        productId: id,
+      });
+    }
+    await db.insert(conditionProducts).values(conditionValues);
+  }
+
   const [product] = await db
     .select()
     .from(skinCareProducts)
-    .where(eq(skinCareProducts.id, insertId));
+    .where(eq(skinCareProducts.id, id));
   return product;
 };
 
