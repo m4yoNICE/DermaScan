@@ -3,11 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Table from "@/components/Table";
 import SearchBar from "@/components/SearchBar";
 import DeleteModal from "@/components/DeleteModal";
-import {
-  fetchProducts,
-  getProductById,
-  deleteProduct,
-} from "@/redux/slices/skinProductSlice";
+import { fetchProducts, deleteProduct } from "@/redux/slices/skinProductSlice";
+import { fetchConditions } from "@/redux/slices/conditionSlice";
 import { Trash2, Plus, Pencil } from "lucide-react";
 import AddProduct from "./AddProductModal";
 import EditProductModal from "./EditProductModal";
@@ -25,24 +22,20 @@ const Product = () => {
   const { products, loading, error, deleteLoading, deleteError } = useSelector(
     (state) => state.products,
   );
-
-  //fetch data when component mount
+  const { data: conditions } = useSelector((state) => state.conditions);
   useEffect(() => {
     const abortController = new AbortController();
     dispatch(fetchProducts());
-
+    dispatch(fetchConditions());
     return () => {
       abortController.abort();
     };
   }, [dispatch]);
 
-  //filter data based on search query
   const filteredData = useMemo(() => {
     if (!searchQuery) return products;
-
     return products.filter((product) => {
       const searchLower = searchQuery.toLowerCase();
-
       return (
         product.productName?.toLowerCase().includes(searchLower) ||
         product.productType?.toLowerCase().includes(searchLower) ||
@@ -52,13 +45,11 @@ const Product = () => {
     });
   }, [products, searchQuery]);
 
-  //handle delete button click
   const handleData = (product) => {
     setSelectedProduct(product);
     setIsDeleteModalOpen(true);
   };
 
-  //handle confirm delete
   const handleConfirmDelete = async () => {
     if (selectedProduct?.id) {
       await dispatch(deleteProduct(selectedProduct.id));
@@ -77,7 +68,6 @@ const Product = () => {
     setIsEditModalOpen(true);
   };
 
-  //table columns config
   const columns = [
     {
       key: "productName",
@@ -181,6 +171,37 @@ const Product = () => {
       width: "100px",
     },
     {
+      key: "conditionIds",
+      label: "Conditions",
+      width: "200px",
+      render: (value) => {
+        if (!value || value.length === 0)
+          return <span className="text-gray-400 text-xs">None</span>;
+        const visible = value.slice(0, 2);
+        const remaining = value.length - 2;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {visible.map((id) => {
+              const condition = conditions.find((c) => c.id === id);
+              return (
+                <span
+                  key={id}
+                  className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full"
+                >
+                  {condition ? condition.condition : id}
+                </span>
+              );
+            })}
+            {remaining > 0 && (
+              <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
+                +{remaining} more
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
       key: "createdAt",
       label: "Created At",
       width: "110px",
@@ -227,9 +248,9 @@ const Product = () => {
       ),
     },
   ];
+
   return (
     <div>
-      {/* page header */}
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Products</h1>
         <button
@@ -241,7 +262,6 @@ const Product = () => {
         </button>
       </div>
 
-      {/* search bar */}
       <div className="mb-6">
         <SearchBar
           value={searchQuery}
@@ -251,28 +271,24 @@ const Product = () => {
         />
       </div>
 
-      {/* loading state */}
       {loading && (
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
         </div>
       )}
 
-      {/* error state */}
       {error && (
         <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
       )}
 
-      {/* delete error state */}
       {deleteError && (
         <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
           {deleteError}
         </div>
       )}
 
-      {/* products table */}
       {!loading && !error && (
         <div className="overflow-x-auto">
           <Table data={filteredData} columns={columns} itemsPerPage={10} />
@@ -293,7 +309,6 @@ const Product = () => {
         product={selectedEditProduct}
       />
 
-      {/* deleteModal */}
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseModal}

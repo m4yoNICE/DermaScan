@@ -1,29 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createProduct, fetchProducts } from "@/redux/slices/skinProductSlice";
+import { fetchConditions } from "@/redux/slices/conditionSlice";
 import { X } from "lucide-react";
 import { buildProductFormData } from "@/utils/Forms";
-
-const SKIN_CONDITIONS = [
-  { id: 1, label: "acne-blackheads" },
-  { id: 2, label: "acne-cyst" },
-  { id: 3, label: "acne-fungal" },
-  { id: 4, label: "acne-nodules" },
-  { id: 5, label: "acne-papules" },
-  { id: 6, label: "acne-pustules" },
-  { id: 7, label: "acne-whiteheads" },
-  { id: 8, label: "mild eczema" },
-  { id: 9, label: "severe eczema" },
-  { id: 10, label: "enlarged-pores" },
-  { id: 11, label: "melasma" },
-  { id: 12, label: "milia" },
-  { id: 13, label: "post-inflammatory-erythema" },
-  { id: 14, label: "post-inflammatory-pigmentation" },
-  { id: 15, label: "psoriasis" },
-];
+import { SKIN_TYPES } from "@/constants/skinTypes";
 
 const AddProductModal = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
+  const { data: conditions } = useSelector((state) => state.conditions);
+  console.log("conditions from store:", conditions);
+  const recommendableConditions = conditions.filter(
+    (c) => c.canRecommend === "Yes",
+  );
+
   const [formData, setFormData] = useState({
     productName: "",
     productImage: null,
@@ -36,6 +26,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
     timeRoutine: "",
     conditionIds: [],
   });
+
+  useEffect(() => {
+    dispatch(fetchConditions());
+  }, [dispatch]);
 
   useEffect(() => {
     if (isOpen) {
@@ -65,6 +59,16 @@ const AddProductModal = ({ isOpen, onClose }) => {
         ? prev.conditionIds.filter((c) => c !== id)
         : [...prev.conditionIds, id],
     }));
+  };
+
+  const handleSkinTypeToggle = (type) => {
+    setFormData((prev) => {
+      const current = prev.skinType ? prev.skinType.split(", ") : [];
+      const updated = current.includes(type)
+        ? current.filter((t) => t !== type)
+        : [...current, type];
+      return { ...prev, skinType: updated.join(", ") };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -182,17 +186,28 @@ const AddProductModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Skin Type
             </label>
-            <input
-              type="text"
-              name="skinType"
-              value={formData.skinType}
-              onChange={handleChange}
-              placeholder="e.g. oily, combination, dry"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
-            />
+            <div className="grid grid-cols-2 gap-2 border border-gray-200 rounded-lg p-3">
+              {SKIN_TYPES.map((type) => (
+                <label
+                  key={type}
+                  className="flex items-center gap-2 text-sm cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.skinType
+                      .split(", ")
+                      .filter(Boolean)
+                      .includes(type)}
+                    onChange={() => handleSkinTypeToggle(type)}
+                    className="w-4 h-4 accent-[#00CC99]"
+                  />
+                  <span className="capitalize text-gray-600">{type}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -250,7 +265,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
               Applicable Conditions
             </label>
             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
-              {SKIN_CONDITIONS.map((condition) => (
+              {recommendableConditions.map((condition) => (
                 <label
                   key={condition.id}
                   className="flex items-center gap-2 text-sm cursor-pointer"
@@ -262,7 +277,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
                     className="w-4 h-4 accent-[#00CC99]"
                   />
                   <span className="capitalize text-gray-600">
-                    {condition.label}
+                    {condition.condition}
                   </span>
                 </label>
               ))}

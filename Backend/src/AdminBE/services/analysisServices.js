@@ -1,6 +1,11 @@
 import { db } from "../../config/db.js";
 import { eq } from "drizzle-orm";
-import { skinAnalysis, skinConditions, users, storedImages } from "../../drizzle/schema.js";
+import {
+  skinAnalysis,
+  skinConditions,
+  users,
+  storedImages,
+} from "../../drizzle/schema.js";
 
 export async function getAllAnalysis() {
   try {
@@ -27,3 +32,10 @@ export async function getAllAnalysis() {
     throw err;
   }
 }
+
+export const getAllConditions = async () => {
+  return await db
+    .select()
+    .from(skinConditions)
+    .where(eq(skinConditions.canRecommend, "Yes"));
+};
