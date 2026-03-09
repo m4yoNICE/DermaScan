@@ -56,6 +56,7 @@ const Api = {
   },
 
   getAnalysisData: () => Http.get("/api/admin/analysis"),
+  getConditions: () => Http.get("/api/admin/analysis/condition"),
 
   getSkinImage: (data) =>
     Http.defaults.baseURL + "/api/uploads/skin-images/" + data,

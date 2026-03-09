@@ -3,9 +3,54 @@ import { skinCareProducts, conditionProducts } from "../../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 
 export const getAllProducts = async () => {
-  return await db.select().from(skinCareProducts);
-};
+  const rows = await db
+    .select({
+      id: skinCareProducts.id,
+      productName: skinCareProducts.productName,
+      productImage: skinCareProducts.productImage,
+      ingredient: skinCareProducts.ingredient,
+      description: skinCareProducts.description,
+      productType: skinCareProducts.productType,
+      locality: skinCareProducts.locality,
+      skinType: skinCareProducts.skinType,
+      dermaTested: skinCareProducts.dermaTested,
+      timeRoutine: skinCareProducts.timeRoutine,
+      createdAt: skinCareProducts.createdAt,
+      updatedAt: skinCareProducts.updatedAt,
+      conditionId: conditionProducts.conditionId,
+    })
+    .from(skinCareProducts)
+    .leftJoin(
+      conditionProducts,
+      eq(skinCareProducts.id, conditionProducts.productId),
+    );
 
+  const grouped = {};
+  for (const row of rows) {
+    if (!grouped[row.id]) {
+      grouped[row.id] = {
+        id: row.id,
+        productName: row.productName,
+        productImage: row.productImage,
+        ingredient: row.ingredient,
+        description: row.description,
+        productType: row.productType,
+        locality: row.locality,
+        skinType: row.skinType,
+        dermaTested: row.dermaTested,
+        timeRoutine: row.timeRoutine,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        conditionIds: [],
+      };
+    }
+    if (row.conditionId) {
+      grouped[row.id].conditionIds.push(row.conditionId);
+    }
+  }
+
+  return Object.values(grouped);
+};
 export const getProductById = async (id) => {
   const result = await db
     .select()
