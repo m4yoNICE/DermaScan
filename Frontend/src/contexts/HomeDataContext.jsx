@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import dayjs from "dayjs";
 import Api from "@/services/Api";
 
 const HomeDataContext = createContext();
@@ -28,7 +27,6 @@ export const HomeDataProvider = ({ children }) => {
   const fetchJournals = async () => {
     try {
       const res = await Api.getAllJournalsAPI();
-
       const normalized = {};
       res.data.forEach((j) => {
         normalized[j.journalDate] = {
@@ -38,39 +36,35 @@ export const HomeDataProvider = ({ children }) => {
           mood: j.mood,
         };
       });
-
       setJournals(normalized);
+      console.log("[HomeData] journals:", normalized);
     } catch (err) {
-      console.error("Journals fetch error:", err);
+      console.error("[HomeData] journals error:", err);
     }
   };
 
   const fetchRoutineProducts = async () => {
     try {
       const res = await Api.getRoutineProductsAPI();
-
       setRoutineProducts(res.data);
+      console.log("[HomeData] routineProducts:", res.data);
     } catch (err) {
-      console.error("Routine products fetch error:", err);
+      console.error("[HomeData] routineProducts error:", err);
     }
   };
 
   const fetchReminderLogs = async () => {
     try {
       const res = await Api.getReminderLogsAPI();
-      console.log("Raw reminder logs:", res.data);
-
       const normalized = {};
       res.data.forEach((log) => {
-        if (!normalized[log.completedDate]) {
-          normalized[log.completedDate] = [];
-        }
+        if (!normalized[log.completedDate]) normalized[log.completedDate] = [];
         normalized[log.completedDate].push(log.schedule);
       });
-
       setReminderLogs(normalized);
+      console.log("[HomeData] reminderLogs:", normalized);
     } catch (err) {
-      console.error("Reminder logs fetch error:", err);
+      console.error("[HomeData] reminderLogs error:", err);
     }
   };
 
@@ -84,8 +78,9 @@ export const HomeDataProvider = ({ children }) => {
         normalized[date].push(entry);
       });
       setAnalysisLogs(normalized);
+      console.log("[HomeData] analysisLogs:", normalized);
     } catch (err) {
-      console.error("Analysis logs fetch error:", err);
+      console.error("[HomeData] analysisLogs error:", err);
     }
   };
 

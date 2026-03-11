@@ -7,66 +7,31 @@ import {
 } from "../drizzle/schema.js";
 import { getInstructions } from "../utils/routineInstructions.js";
 import { db } from "../config/db.js";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
-// fetch latest analysis products for checklist
 export async function fetchRoutineProducts(userId) {
-  const [latestAnalysis] = await db
+  const analysisId = await getActiveOrLatestAnalysisId(userId);
+  if (!analysisId) return [];
+
+  const rows = await fetchProductRowsByAnalysis(analysisId, userId);
+  return shapeRoutineProducts(rows);
+}
+
+async function getActiveOrLatestAnalysisId(userId) {
+  const routine = await db.query.userRoutine.findFirst({
+    where: eq(userRoutine.userId, userId),
+  });
+
+  if (routine?.activeAnalysisId) return routine.activeAnalysisId;
+
+  const [latest] = await db
     .select({ id: skinAnalysis.id })
     .from(skinAnalysis)
     .where(eq(skinAnalysis.userId, userId))
     .orderBy(desc(skinAnalysis.createdAt))
     .limit(1);
 
-  if (!latestAnalysis) return [];
-
-  const results = await db
-    .select({
-      id: productRecommendations.id,
-      productName: skinCareProducts.productName,
-      productImage: skinCareProducts.productImage,
-      productType: skinCareProducts.productType,
-      timeRoutine: skinCareProducts.timeRoutine,
-      morningTime: userRoutine.morningTime,
-      eveningTime: userRoutine.eveningTime,
-    })
-    .from(productRecommendations)
-    .innerJoin(
-      skinCareProducts,
-      eq(productRecommendations.productId, skinCareProducts.id),
-    )
-    .leftJoin(userRoutine, eq(userRoutine.userId, userId))
-    .where(eq(productRecommendations.analysisId, latestAnalysis.id));
-
-  return results.map((row) => {
-    const isMorning = row.timeRoutine?.toLowerCase().includes("morning");
-    const isNight = row.timeRoutine?.toLowerCase().includes("night");
-    let resolvedTime = row.timeRoutine;
-
-    if (row.morningTime || row.eveningTime) {
-      if (isMorning && isNight)
-        resolvedTime = `${row.morningTime} / ${row.eveningTime}`;
-      else if (isMorning) resolvedTime = row.morningTime;
-      else if (isNight) resolvedTime = row.eveningTime;
-    }
-
-    return {
-      id: row.id,
-      productName: row.productName,
-      productImage: row.productImage,
-      productType: row.productType,
-      timeRoutine: resolvedTime,
-      instructions: getInstructions(row.productType),
-    };
-  });
-}
-
-// called when user completes all products for a schedule
-export async function insertReminderLog(userId, schedule) {
-  const today = new Date().toISOString().slice(0, 10);
-  await db
-    .insert(reminderLogs)
-    .values({ userId, schedule, completedDate: today });
+  return latest?.id ?? null;
 }
 
 export async function fetchReminderLogs(userId) {
@@ -74,6 +39,36 @@ export async function fetchReminderLogs(userId) {
     .select()
     .from(reminderLogs)
     .where(eq(reminderLogs.userId, userId));
+}
+
+export async function insertReminderLog(userId, schedule) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  // get active analysis id from userRoutine
+  const routine = await db.query.userRoutine.findFirst({
+    where: eq(userRoutine.userId, userId),
+  });
+
+  const existing = await db
+    .select()
+    .from(reminderLogs)
+    .where(
+      and(
+        eq(reminderLogs.userId, userId),
+        eq(reminderLogs.schedule, schedule),
+        eq(reminderLogs.completedDate, today),
+      ),
+    )
+    .limit(1);
+
+  if (existing.length > 0) return;
+
+  await db.insert(reminderLogs).values({
+    userId,
+    analysisId: routine?.activeAnalysisId ?? null,
+    schedule,
+    completedDate: today,
+  });
 }
 
 export async function fetchRoutineSchedule(userId) {
@@ -88,7 +83,8 @@ export async function fetchRoutineSchedule(userId) {
   return result[0] ?? null;
 }
 
-//=======================this is for user schedule===============================
+// ======= USER SCHEDULE CRUD =======
+
 export async function insertUserRoutine(userId, morningTime, eveningTime) {
   await db.insert(userRoutine).values({ userId, morningTime, eveningTime });
   return await db.query.userRoutine.findFirst({
@@ -104,4 +100,65 @@ export async function updateUserRoutine(userId, morningTime, eveningTime) {
   return await db.query.userRoutine.findFirst({
     where: eq(userRoutine.userId, userId),
   });
+}
+
+export async function updateActiveLoadout(userId, analysisId) {
+  await db
+    .update(userRoutine)
+    .set({ activeAnalysisId: analysisId })
+    .where(eq(userRoutine.userId, userId));
+
+  return await db.query.userRoutine.findFirst({
+    where: eq(userRoutine.userId, userId),
+  });
+}
+
+// ============= HELPER FUNCTIONS ==========
+
+function resolveRoutineTime(timeRoutine, morningTime, eveningTime) {
+  const isMorning = timeRoutine?.toLowerCase().includes("morning");
+  const isNight = timeRoutine?.toLowerCase().includes("night");
+
+  if (!morningTime && !eveningTime) return timeRoutine;
+  if (isMorning && isNight) return `${morningTime} / ${eveningTime}`;
+  if (isMorning) return morningTime;
+  if (isNight) return eveningTime;
+
+  return timeRoutine;
+}
+
+async function fetchProductRowsByAnalysis(analysisId, userId) {
+  return await db
+    .select({
+      id: productRecommendations.id,
+      productName: skinCareProducts.productName,
+      productImage: skinCareProducts.productImage,
+      productType: skinCareProducts.productType,
+      timeRoutine: skinCareProducts.timeRoutine,
+      morningTime: userRoutine.morningTime,
+      eveningTime: userRoutine.eveningTime,
+    })
+    .from(productRecommendations)
+    .innerJoin(
+      skinCareProducts,
+      eq(productRecommendations.productId, skinCareProducts.id),
+    )
+    .leftJoin(userRoutine, eq(userRoutine.userId, userId))
+    .where(eq(productRecommendations.analysisId, analysisId));
+}
+
+function shapeRoutineProducts(rows) {
+  return rows.map((row) => ({
+    id: row.id,
+    productName: row.productName,
+    productImage: row.productImage,
+    productType: row.productType,
+    schedule: row.timeRoutine, // "Morning", "Night", "Morning, Night" — original label
+    timeRoutine: resolveRoutineTime(
+      row.timeRoutine,
+      row.morningTime,
+      row.eveningTime,
+    ), // display time
+    instructions: getInstructions(row.productType),
+  }));
 }

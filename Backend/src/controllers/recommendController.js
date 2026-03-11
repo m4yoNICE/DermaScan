@@ -3,6 +3,7 @@ import * as recommendationService from "../services/recommendServices.js";
 export async function saveRecommendation(req, res) {
   try {
     const { analysisId, productIds } = req.body;
+    console.log("saveRecommendation hit:", { analysisId, productIds });
 
     if (!analysisId || !productIds?.length) {
       return res
@@ -18,12 +19,4 @@ export async function saveRecommendation(req, res) {
   }
 }
 
-export async function getHistory(req, res) {
-  try {
-    const history = await recommendationService.fetchHistory(req.user.id);
-    res.status(200).json(history);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-}
+

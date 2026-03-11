@@ -5,17 +5,22 @@ import {
   getRoutineProducts,
   completeSchedule,
   getReminderLogs,
-  getRoutineSchedule,
+  activateLoadout
 } from "../controllers/routineController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-router.get("/schedule", verifyToken, getRoutineSchedule);
+//routine schedule
 router.post("/schedule", verifyToken, setUserRoutine);
 router.put("/schedule", verifyToken, editUserRoutine);
+
+//reminders
 router.get("/products", verifyToken, getRoutineProducts);
 router.post("/complete", verifyToken, completeSchedule);
 router.get("/logs", verifyToken, getReminderLogs);
+
+//activate loadout
+router.patch("/activate", verifyToken, activateLoadout);
 
 export default router;

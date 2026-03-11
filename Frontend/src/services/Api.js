@@ -33,7 +33,8 @@ const Api = {
   getRoutineProductsAPI: () => Http.get("/api/routines/products"),
   completeScheduleAPI: (data) => Http.post("/api/routines/complete", data),
   getReminderLogsAPI: () => Http.get("/api/routines/logs"),
-
+  activateLoadoutAPI: (analysisId) =>
+    Http.patch("/api/routines/activate", { analysisId }),
   // Uploads & Images
   getSkinImage: (data) =>
     Http.defaults.baseURL + "/api/uploads/skin-images/" + data,

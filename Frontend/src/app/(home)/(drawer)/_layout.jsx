@@ -2,21 +2,17 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { Drawer } from "expo-router/drawer";
 import Logo from "@/components/designs/Logo";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from "@react-navigation/drawer";
+import { DrawerItemList } from "@react-navigation/drawer";
 
 function CustomDrawerContent(props) {
   return (
-    <DrawerContentScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <View style={styles.header}>
-        <Logo style={{ width: 50, height: 50 }} />
+        <Logo style={{ width: 32, height: 32 }} />
         <Text style={styles.title}>DermaScan+</Text>
       </View>
-
       <DrawerItemList {...props} />
-    </DrawerContentScrollView>
+    </View>
   );
 }
 
@@ -38,26 +34,15 @@ export const Drawerlayout = () => {
     >
       <Drawer.Screen
         name="(tabs)"
-        options={{
-          title: "Home",
-          headerShown: false,
-          drawerLabelStyle: { fontSize: 15, fontWeight: "600" },
-        }}
+        options={{ title: "Home", headerShown: false }}
       />
       <Drawer.Screen
         name="Profile"
-        options={{
-          title: "Settings",
-          headerShown: true,
-          drawerLabelStyle: { fontSize: 15, fontWeight: "600" },
-        }}
+        options={{ title: "Settings", headerShown: true }}
       />
       <Drawer.Screen
         name="Logout"
-        options={{
-          title: "Logout",
-          drawerLabelStyle: { fontSize: 15, fontWeight: "600", color: "red" },
-        }}
+        options={{ title: "Logout", drawerLabelStyle: { color: "red" } }}
       />
     </Drawer>
   );
@@ -69,15 +54,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 30,
-    paddingBottom: 20,
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    marginBottom: 10,
   },
   title: {
-    fontSize: 25,
+    fontSize: 18,
     fontWeight: "bold",
     marginLeft: 10,
     color: "#081021",
