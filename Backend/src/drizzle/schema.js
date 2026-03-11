@@ -230,6 +230,13 @@ export const userRoutine = mysqlTable(
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
+    activeAnalysisId: int("active_analysis_id").references(
+      () => skinAnalysis.id,
+      {
+        onDelete: "set null",
+        onUpdate: "cascade",
+      },
+    ),
     morningTime: time("morning_time").notNull().default("07:00:00"),
     eveningTime: time("evening_time").notNull().default("21:00:00"),
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
@@ -251,7 +258,11 @@ export const reminderLogs = mysqlTable(
   {
     id: int().autoincrement().primaryKey().notNull(),
     userId: int("user_id").notNull(),
-    schedule: varchar("schedule", { length: 10 }).notNull(), // "Morning" or "Night"
+    analysisId: int("analysis_id").references(() => skinAnalysis.id, {
+      onDelete: "set null",
+      onUpdate: "cascade",
+    }),
+    schedule: varchar("schedule", { length: 10 }).notNull(),
     completedDate: date("completed_date", { mode: "string" }).notNull(),
     createdAt: datetime("created_at", { mode: "string", fsp: 3 })
       .default(sql`CURRENT_TIMESTAMP(3)`)

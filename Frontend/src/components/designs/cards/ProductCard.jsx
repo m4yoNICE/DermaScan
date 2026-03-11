@@ -21,7 +21,9 @@ const ProductCard = ({ item }) => {
         {item.productName}
       </Text>
       <Text style={styles.productType}>{item.productType}</Text>
-      <Text style={styles.productScore}>Score: {item.score}</Text>
+      {item.score != null && (
+        <Text style={styles.productScore}>Score: {item.score}</Text>
+      )}
     </View>
   );
 };

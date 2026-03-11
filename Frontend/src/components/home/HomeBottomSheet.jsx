@@ -4,8 +4,9 @@ import BottomSheet, {
   BottomSheetView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
-import JournalSection from "./JournalSection";
-import AnalysisSection from "./AnalysisSection";
+
+import JournalSection from "./bottomsheetSections/JournalSection";
+import AnalysisSection from "./bottomsheetSections/AnalysisSection";
 
 const HomeBottomSheet = ({ sheetRef, selectedDate }) => {
   const [activeTab, setActiveTab] = useState("Analysis");
