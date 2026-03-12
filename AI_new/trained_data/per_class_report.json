@@ -1,0 +1,322 @@
+{
+  "Logistic Regression": {
+    "acne-blackheads": {
+      "avg_confidence_correct": 0.9597,
+      "avg_confidence_wrong": 0.1203,
+      "correct_count": 55,
+      "wrong_count": 4
+    },
+    "acne-cyst": {
+      "avg_confidence_correct": 0.9137,
+      "avg_confidence_wrong": 0.1268,
+      "correct_count": 37,
+      "wrong_count": 3
+    },
+    "acne-fungal": {
+      "avg_confidence_correct": 0.9953,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 44,
+      "wrong_count": 0
+    },
+    "acne-nodules": {
+      "avg_confidence_correct": 0.9821,
+      "avg_confidence_wrong": 0.24,
+      "correct_count": 56,
+      "wrong_count": 4
+    },
+    "acne-papules": {
+      "avg_confidence_correct": 0.9904,
+      "avg_confidence_wrong": 0.3864,
+      "correct_count": 40,
+      "wrong_count": 1
+    },
+    "acne-pustules": {
+      "avg_confidence_correct": 0.943,
+      "avg_confidence_wrong": 0.0163,
+      "correct_count": 38,
+      "wrong_count": 2
+    },
+    "acne-whiteheads": {
+      "avg_confidence_correct": 0.981,
+      "avg_confidence_wrong": 0.1893,
+      "correct_count": 38,
+      "wrong_count": 1
+    },
+    "eczema": {
+      "avg_confidence_correct": 0.9321,
+      "avg_confidence_wrong": 0.0393,
+      "correct_count": 38,
+      "wrong_count": 3
+    },
+    "enlarged-pores": {
+      "avg_confidence_correct": 0.9993,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 41,
+      "wrong_count": 0
+    },
+    "melasma": {
+      "avg_confidence_correct": 0.9981,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 40,
+      "wrong_count": 0
+    },
+    "milia": {
+      "avg_confidence_correct": 0.96,
+      "avg_confidence_wrong": 0.2399,
+      "correct_count": 39,
+      "wrong_count": 2
+    },
+    "post-inflammatory-erythema": {
+      "avg_confidence_correct": 0.9506,
+      "avg_confidence_wrong": 0.1539,
+      "correct_count": 27,
+      "wrong_count": 12
+    },
+    "post-inflammatory-pigmentation": {
+      "avg_confidence_correct": 0.995,
+      "avg_confidence_wrong": 0.0931,
+      "correct_count": 38,
+      "wrong_count": 1
+    }
+  },
+  "SVM": {
+    "acne-blackheads": {
+      "avg_confidence_correct": 0.8802,
+      "avg_confidence_wrong": 0.1366,
+      "correct_count": 51,
+      "wrong_count": 8
+    },
+    "acne-cyst": {
+      "avg_confidence_correct": 0.7996,
+      "avg_confidence_wrong": 0.2667,
+      "correct_count": 32,
+      "wrong_count": 8
+    },
+    "acne-fungal": {
+      "avg_confidence_correct": 0.9584,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 44,
+      "wrong_count": 0
+    },
+    "acne-nodules": {
+      "avg_confidence_correct": 0.9136,
+      "avg_confidence_wrong": 0.0656,
+      "correct_count": 58,
+      "wrong_count": 2
+    },
+    "acne-papules": {
+      "avg_confidence_correct": 0.8907,
+      "avg_confidence_wrong": 0.253,
+      "correct_count": 38,
+      "wrong_count": 3
+    },
+    "acne-pustules": {
+      "avg_confidence_correct": 0.8542,
+      "avg_confidence_wrong": 0.1914,
+      "correct_count": 32,
+      "wrong_count": 8
+    },
+    "acne-whiteheads": {
+      "avg_confidence_correct": 0.8588,
+      "avg_confidence_wrong": 0.0015,
+      "correct_count": 38,
+      "wrong_count": 1
+    },
+    "eczema": {
+      "avg_confidence_correct": 0.8029,
+      "avg_confidence_wrong": 0.1827,
+      "correct_count": 36,
+      "wrong_count": 5
+    },
+    "enlarged-pores": {
+      "avg_confidence_correct": 0.9684,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 41,
+      "wrong_count": 0
+    },
+    "melasma": {
+      "avg_confidence_correct": 0.9608,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 40,
+      "wrong_count": 0
+    },
+    "milia": {
+      "avg_confidence_correct": 0.9195,
+      "avg_confidence_wrong": 0.2398,
+      "correct_count": 36,
+      "wrong_count": 5
+    },
+    "post-inflammatory-erythema": {
+      "avg_confidence_correct": 0.8126,
+      "avg_confidence_wrong": 0.1279,
+      "correct_count": 30,
+      "wrong_count": 9
+    },
+    "post-inflammatory-pigmentation": {
+      "avg_confidence_correct": 0.9584,
+      "avg_confidence_wrong": 0.1641,
+      "correct_count": 38,
+      "wrong_count": 1
+    }
+  },
+  "Random Forest": {
+    "acne-blackheads": {
+      "avg_confidence_correct": 0.5759,
+      "avg_confidence_wrong": 0.1738,
+      "correct_count": 51,
+      "wrong_count": 8
+    },
+    "acne-cyst": {
+      "avg_confidence_correct": 0.5083,
+      "avg_confidence_wrong": 0.165,
+      "correct_count": 36,
+      "wrong_count": 4
+    },
+    "acne-fungal": {
+      "avg_confidence_correct": 0.7345,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 44,
+      "wrong_count": 0
+    },
+    "acne-nodules": {
+      "avg_confidence_correct": 0.5014,
+      "avg_confidence_wrong": 0.13,
+      "correct_count": 58,
+      "wrong_count": 2
+    },
+    "acne-papules": {
+      "avg_confidence_correct": 0.7038,
+      "avg_confidence_wrong": 0.14,
+      "correct_count": 39,
+      "wrong_count": 2
+    },
+    "acne-pustules": {
+      "avg_confidence_correct": 0.5939,
+      "avg_confidence_wrong": 0.1657,
+      "correct_count": 33,
+      "wrong_count": 7
+    },
+    "acne-whiteheads": {
+      "avg_confidence_correct": 0.5329,
+      "avg_confidence_wrong": 0.1775,
+      "correct_count": 35,
+      "wrong_count": 4
+    },
+    "eczema": {
+      "avg_confidence_correct": 0.3581,
+      "avg_confidence_wrong": 0.157,
+      "correct_count": 31,
+      "wrong_count": 10
+    },
+    "enlarged-pores": {
+      "avg_confidence_correct": 0.8022,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 41,
+      "wrong_count": 0
+    },
+    "melasma": {
+      "avg_confidence_correct": 0.795,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 40,
+      "wrong_count": 0
+    },
+    "milia": {
+      "avg_confidence_correct": 0.6224,
+      "avg_confidence_wrong": 0.1514,
+      "correct_count": 34,
+      "wrong_count": 7
+    },
+    "post-inflammatory-erythema": {
+      "avg_confidence_correct": 0.4313,
+      "avg_confidence_wrong": 0.172,
+      "correct_count": 24,
+      "wrong_count": 15
+    },
+    "post-inflammatory-pigmentation": {
+      "avg_confidence_correct": 0.6947,
+      "avg_confidence_wrong": 0.24,
+      "correct_count": 36,
+      "wrong_count": 3
+    }
+  },
+  "MLP": {
+    "acne-blackheads": {
+      "avg_confidence_correct": 0.9787,
+      "avg_confidence_wrong": 0.2356,
+      "correct_count": 54,
+      "wrong_count": 5
+    },
+    "acne-cyst": {
+      "avg_confidence_correct": 0.9017,
+      "avg_confidence_wrong": 0.2904,
+      "correct_count": 36,
+      "wrong_count": 4
+    },
+    "acne-fungal": {
+      "avg_confidence_correct": 0.9962,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 44,
+      "wrong_count": 0
+    },
+    "acne-nodules": {
+      "avg_confidence_correct": 0.9862,
+      "avg_confidence_wrong": 0.2228,
+      "correct_count": 57,
+      "wrong_count": 3
+    },
+    "acne-papules": {
+      "avg_confidence_correct": 0.9165,
+      "avg_confidence_wrong": 0.1952,
+      "correct_count": 38,
+      "wrong_count": 3
+    },
+    "acne-pustules": {
+      "avg_confidence_correct": 0.8798,
+      "avg_confidence_wrong": 0.1266,
+      "correct_count": 35,
+      "wrong_count": 5
+    },
+    "acne-whiteheads": {
+      "avg_confidence_correct": 0.9685,
+      "avg_confidence_wrong": 0.1149,
+      "correct_count": 37,
+      "wrong_count": 2
+    },
+    "eczema": {
+      "avg_confidence_correct": 0.898,
+      "avg_confidence_wrong": 0.1236,
+      "correct_count": 32,
+      "wrong_count": 9
+    },
+    "enlarged-pores": {
+      "avg_confidence_correct": 0.9998,
+      "avg_confidence_wrong": 0.0,
+      "correct_count": 41,
+      "wrong_count": 0
+    },
+    "melasma": {
+      "avg_confidence_correct": 0.9924,
+      "avg_confidence_wrong": 0.4404,
+      "correct_count": 39,
+      "wrong_count": 1
+    },
+    "milia": {
+      "avg_confidence_correct": 0.9844,
+      "avg_confidence_wrong": 0.1265,
+      "correct_count": 37,
+      "wrong_count": 4
+    },
+    "post-inflammatory-erythema": {
+      "avg_confidence_correct": 0.9504,
+      "avg_confidence_wrong": 0.1828,
+      "correct_count": 30,
+      "wrong_count": 9
+    },
+    "post-inflammatory-pigmentation": {
+      "avg_confidence_correct": 0.9961,
+      "avg_confidence_wrong": 0.0007,
+      "correct_count": 38,
+      "wrong_count": 1
+    }
+  }
+}
