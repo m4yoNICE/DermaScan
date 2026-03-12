@@ -7,20 +7,31 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
+import { router } from "expo-router";
+//contexts
 import { useProduct } from "@/contexts/ProductContext";
 import { useAnalysis } from "@/contexts/AnalysisContext";
+import { useUserData } from "@/contexts/UserDataContext";
+//ui
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "@/components/designs/Button";
-import LoadingModal from "@/components/designs/LoadingModal";
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
+import ScheduleModal from "@/components/results/RoutineScheduleModal";
+//api
 import Api from "@/services/Api";
-import { router } from "expo-router";
 
 const Checkout = () => {
-  const { product, setProduct } = useProduct(); // Added setProduct for the "Remove" design
+  //context init
+  const { product, setProduct } = useProduct();
+  const { userRoutine } = useUserData();
   const { analysis, setAnalysis, setRecommendation } = useAnalysis();
-  const [isLoading, setIsLoading] = useState(false);
 
+  //ui
+  const [isLoading, setIsLoading] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+
+  //save recommendation
   const handleSaveRecommendation = async () => {
     try {
       setIsLoading(true);
@@ -35,13 +46,20 @@ const Checkout = () => {
         "Routine Saved",
         "Your recommendation has been stored.",
       );
-      router.push("/Home");
+
+      if (!userRoutine) {
+        setShowScheduleModal(true);
+      } else {
+        router.push("/Home");
+      }
     } catch (err) {
       ToastMessage("error", "Error", err.message);
     } finally {
       setIsLoading(false);
     }
   };
+
+  //remove product
   const handleRemoveProduct = (index) => {
     const updated = [...product];
     updated.splice(index, 1);
@@ -50,7 +68,13 @@ const Checkout = () => {
 
   return (
     <View style={styles.container}>
-      <LoadingModal visible={isLoading} />
+      <LoadingModal
+        visible={isLoading}
+        onTimeout={() => {
+          setIsLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
 
       <View style={styles.headerSection}>
         <Text style={styles.title}>My Routine</Text>
@@ -74,7 +98,7 @@ const Checkout = () => {
               <Text style={styles.itemType}>{item.productType}</Text>
             </View>
             <TouchableOpacity
-              onPress={handleRemoveProduct}
+              onPress={() => handleRemoveProduct(index)}
               style={styles.removeBtn}
             >
               <MaterialCommunityIcons
@@ -105,6 +129,13 @@ const Checkout = () => {
           disabled={product.length === 0}
         />
       </View>
+      <ScheduleModal
+        visible={showScheduleModal}
+        onDone={() => {
+          setShowScheduleModal(false);
+          router.push("/Home");
+        }}
+      />
     </View>
   );
 };

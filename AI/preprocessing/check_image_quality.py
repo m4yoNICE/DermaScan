@@ -48,7 +48,7 @@ try:
     lap = cv2.Laplacian(gray, cv2.CV_64F)
     variance = float(lap.var())
 
-    BLUR_THRESHOLD = 50.0  # adjust after testing real images
+    BLUR_THRESHOLD = 10.0  # adjust after testing real images
 
     if variance < BLUR_THRESHOLD:
         print(json.dumps({

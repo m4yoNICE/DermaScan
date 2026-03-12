@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import  API  from "../../services/Api.js"; 
+import API from "../../services/Api.js";
 
 export const fetchOutOfScope = createAsyncThunk(
   "outOfScope/fetchOutOfScope",
@@ -10,7 +10,7 @@ export const fetchOutOfScope = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || error.message);
     }
-  }
+  },
 );
 
 const outOfScopeSlice = createSlice({

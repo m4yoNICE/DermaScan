@@ -14,7 +14,7 @@ import {
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CircularButton from "../designs/CircularButton";
-import Card from "../designs/Card";
+import Card from "../designs/cards/Card";
 import { router } from "expo-router";
 import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";

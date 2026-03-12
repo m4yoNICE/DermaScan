@@ -17,21 +17,8 @@ export const AnalysisProvider = ({ children }) => {
     image_url: null,
   });
 
-  const [recommendation, setRecommendation] = useState([
-    {
-      id: null,
-      productName: null,
-      productImage: null,
-      ingredient: null,
-      description: null,
-      productType: null,
-      locality: null,
-      skinType: null,
-      dermaTested: null,
-      timeRoutine: null,
-      score: null,
-    },
-  ]);
+  const [recommendation, setRecommendation] = useState([]);
+
   const value = useMemo(
     () => ({
       analysis,
@@ -41,6 +28,7 @@ export const AnalysisProvider = ({ children }) => {
     }),
     [analysis, recommendation],
   );
+
   return (
     <AnalysisContext.Provider value={value}>
       {children}

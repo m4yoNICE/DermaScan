@@ -8,8 +8,8 @@ import {
 import React, { useState } from "react";
 import Api from "@/services/Api";
 import Button from "@/components/designs/Button";
-import Card from "@/components/designs/Card";
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import Card from "@/components/designs/cards/Card";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { router, Link } from "expo-router";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 

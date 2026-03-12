@@ -8,6 +8,7 @@ export function buildProductFormData(formData) {
   data.append("skinType", formData.skinType);
   data.append("dermaTested", formData.dermaTested);
   data.append("timeRoutine", formData.timeRoutine);
+  data.append("conditionIds", JSON.stringify(formData.conditionIds || []));
   if (formData.productImage) {
     data.append("productImage", formData.productImage);
   }

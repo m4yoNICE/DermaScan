@@ -2,8 +2,8 @@ import * as recommendationService from "../services/recommendServices.js";
 
 export async function saveRecommendation(req, res) {
   try {
-    console.log(req.body);
     const { analysisId, productIds } = req.body;
+    console.log("saveRecommendation hit:", { analysisId, productIds });
 
     if (!analysisId || !productIds?.length) {
       return res
@@ -12,21 +12,11 @@ export async function saveRecommendation(req, res) {
     }
 
     await recommendationService.insertRecommendations(analysisId, productIds);
-
     res.status(201).json({ success: true, message: "Recommendations saved." });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 }
 
-export async function getHistory(req, res) {
-  try {
-    const userId = req.user.id;
-    const history = await recommendationService.fetchHistory(userId);
-    res.status(200).json(history);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err.message });
-  }
-}
+

@@ -6,19 +6,38 @@ import {
   skinProfile,
   skinCareProducts,
   conditionProducts,
-  skinAnalysis,
 } from "./schema.js";
 import bcrypt from "bcryptjs";
-import { inArray } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export async function main() {
   console.log("Seeding database...");
+
+  await db.execute(sql`SET FOREIGN_KEY_CHECKS = 0`);
+  await db.execute(sql`TRUNCATE TABLE reminder_logs`);
+  await db.execute(sql`TRUNCATE TABLE user_routine`);
+  await db.execute(sql`TRUNCATE TABLE product_recommendations`);
+  await db.execute(sql`TRUNCATE TABLE skin_analysis`);
+  await db.execute(sql`TRUNCATE TABLE stored_images`);
+  await db.execute(sql`TRUNCATE TABLE condition_products`);
+  await db.execute(sql`TRUNCATE TABLE skin_care_products`);
+  await db.execute(sql`TRUNCATE TABLE skin_profile`);
+  await db.execute(sql`TRUNCATE TABLE journals`);
+  await db.execute(sql`TRUNCATE TABLE otp`);
+  await db.execute(sql`TRUNCATE TABLE users`);
+  await db.execute(sql`TRUNCATE TABLE skin_conditions`);
+  await db.execute(sql`TRUNCATE TABLE role`);
+  await db.execute(sql`SET FOREIGN_KEY_CHECKS = 1`);
 
   const now = new Date().toISOString().slice(0, 19).replace("T", " ");
   const adminPassword = await bcrypt.hash("admin", 10);
   const userPassword = await bcrypt.hash("user", 10);
 
-  // Seed Skin Conditions
+  await db.insert(role).values([
+    { id: 1, roleName: "admin" },
+    { id: 2, roleName: "user" },
+  ]);
+
   await db.insert(skinConditions).values([
     { id: 1, condition: "acne-blackheads", canRecommend: "Yes" },
     { id: 2, condition: "acne-cyst", canRecommend: "No" },
@@ -41,22 +60,6 @@ export async function main() {
     { id: 15, condition: "psoriasis", canRecommend: "No" },
   ]);
 
-  // Seed Roles
-  await db.insert(role).values([
-    { id: 1, roleName: "admin" },
-    { id: 2, roleName: "user" },
-  ]);
-
-  // Fetch Role IDs correctly
-  const roles = await db
-    .select()
-    .from(role)
-    .where(inArray(role.roleName, ["admin", "user"]));
-
-  const adminRoleId = roles.find((r) => r.roleName === "admin").id;
-  const userRoleId = roles.find((r) => r.roleName === "user").id;
-
-  // Seed Users
   await db.insert(users).values([
     {
       id: 1,
@@ -64,7 +67,7 @@ export async function main() {
       lastName: "lastadmin",
       email: "admin@a.c",
       password: adminPassword,
-      roleId: adminRoleId,
+      roleId: 1,
       birthdate: "2000-01-01",
       updatedAt: now,
     },
@@ -74,22 +77,15 @@ export async function main() {
       lastName: "lastuser",
       email: "user@a.c",
       password: userPassword,
-      roleId: userRoleId,
+      roleId: 2,
       birthdate: "2000-01-01",
       updatedAt: now,
     },
   ]);
 
-  // Seed Skin Data (Using real user IDs)
-  const userList = await db
-    .select()
-    .from(users)
-    .where(inArray(users.email, ["user@a.c"]));
-  const targetUserId = userList[0].id;
-
   await db.insert(skinProfile).values([
     {
-      userId: targetUserId,
+      userId: 2,
       skinType: "oily",
       skinSensitivity: "resistant",
       pigmentation: "pigmented",
@@ -120,7 +116,7 @@ export async function main() {
       description: "Placeholder description for cream cleanser.",
       productType: "Cleanser",
       locality: "Local",
-      sskinType: "dry, sensitive, pigmented, tight",
+      skinType: "dry, sensitive, pigmented, tight",
       dermaTested: true,
       timeRoutine: "Morning, Night",
       updatedAt: now,
@@ -239,80 +235,45 @@ export async function main() {
     { conditionId: 1, productId: 5, createdAt: now, updatedAt: now },
     { conditionId: 1, productId: 8, createdAt: now, updatedAt: now },
     { conditionId: 1, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 5, productId: 1, createdAt: now, updatedAt: now },
     { conditionId: 5, productId: 3, createdAt: now, updatedAt: now },
     { conditionId: 5, productId: 5, createdAt: now, updatedAt: now },
     { conditionId: 5, productId: 8, createdAt: now, updatedAt: now },
     { conditionId: 5, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 6, productId: 1, createdAt: now, updatedAt: now },
     { conditionId: 6, productId: 3, createdAt: now, updatedAt: now },
     { conditionId: 6, productId: 5, createdAt: now, updatedAt: now },
     { conditionId: 6, productId: 8, createdAt: now, updatedAt: now },
     { conditionId: 6, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 7, productId: 1, createdAt: now, updatedAt: now },
     { conditionId: 7, productId: 3, createdAt: now, updatedAt: now },
     { conditionId: 7, productId: 5, createdAt: now, updatedAt: now },
     { conditionId: 7, productId: 8, createdAt: now, updatedAt: now },
     { conditionId: 7, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 8, productId: 2, createdAt: now, updatedAt: now },
     { conditionId: 8, productId: 4, createdAt: now, updatedAt: now },
     { conditionId: 8, productId: 7, createdAt: now, updatedAt: now },
     { conditionId: 8, productId: 9, createdAt: now, updatedAt: now },
     { conditionId: 8, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 10, productId: 1, createdAt: now, updatedAt: now },
     { conditionId: 10, productId: 3, createdAt: now, updatedAt: now },
     { conditionId: 10, productId: 5, createdAt: now, updatedAt: now },
     { conditionId: 10, productId: 8, createdAt: now, updatedAt: now },
     { conditionId: 10, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 11, productId: 2, createdAt: now, updatedAt: now },
     { conditionId: 11, productId: 6, createdAt: now, updatedAt: now },
     { conditionId: 11, productId: 9, createdAt: now, updatedAt: now },
     { conditionId: 11, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 12, productId: 1, createdAt: now, updatedAt: now },
     { conditionId: 12, productId: 3, createdAt: now, updatedAt: now },
     { conditionId: 12, productId: 8, createdAt: now, updatedAt: now },
     { conditionId: 12, productId: 10, createdAt: now, updatedAt: now },
-
     { conditionId: 14, productId: 2, createdAt: now, updatedAt: now },
     { conditionId: 14, productId: 4, createdAt: now, updatedAt: now },
     { conditionId: 14, productId: 6, createdAt: now, updatedAt: now },
     { conditionId: 14, productId: 9, createdAt: now, updatedAt: now },
     { conditionId: 14, productId: 10, createdAt: now, updatedAt: now },
   ]);
-
-  await db.insert(skinAnalysis).values([
-  {
-    userId: 2,
-    conditionId: 1,
-    status: "flagged",
-    confidenceScores: 0.85, 
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    userId: 2,
-    conditionId: 2,
-    status: "flagged",
-    confidenceScores: 0.60, 
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    userId: 2,
-    conditionId: 9,
-    status: "flagged",
-    confidenceScores: 0.95, 
-    createdAt: now,
-    updatedAt: now,
-  }
-]);
 
   console.log("Seeding completed!");
 }
