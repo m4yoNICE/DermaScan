@@ -1,0 +1,12 @@
+# Skin Lesion Detection - YOLO dataset config
+path: J:/Test Dermascan+/DermaScan/AI/datasets/skin_diseases/skin-diseases-segmentation-classification
+train: train/images
+val: train/images
+names:
+  0: BKL
+  1: NV
+  2: DF
+  3: MEL
+  4: VASC
+  5: BCC
+  6: AKIEC

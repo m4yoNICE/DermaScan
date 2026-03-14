@@ -67,10 +67,37 @@ huggingface-cli login
 Download required Python packages:
 
 ```bash
-pip install scikit-learn pillow tensorflow huggingface_hub opencv-python fastapi uvicorn joblib numpy
+pip install scikit-learn pillow tensorflow huggingface_hub opencv-python fastapi uvicorn joblib numpy ultralytics
 ```
 
 **Note:** Use `pip install tensorflow-cpu` if you don't have a GPU.
+
+---
+
+### Skin Lesion YOLO Model (optional)
+
+The analysis pipeline uses YOLO for lesion detection. Use one of these options:
+
+**Option A – Pre-trained skin model (recommended):**
+```bash
+cd AI
+python download_skin_yolo.py
+```
+Downloads `skin_yolov8n_seg.pt` from Hugging Face (trained on skin lesion data).
+
+**Option B – Train your own on ISIC/HAM10000:**
+```bash
+cd AI
+pip install requests
+python train_skin_yolo.py
+```
+Downloads the dataset from Hugging Face and trains YOLOv8. Then copy the best weights:
+```bash
+copy AI\runs\detect\skin_lesion\weights\best.pt AI\skin_yolov8n_seg.pt
+```
+
+**Option C – Use default COCO model:**
+If no skin model is present, the server falls back to `yolov8n.pt` (general object detection).
 
 ---
 

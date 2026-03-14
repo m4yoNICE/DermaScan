@@ -1,0 +1,11 @@
+# DermFoundation + YOLO skin analysis
+scikit-learn
+pillow
+tensorflow
+huggingface_hub
+opencv-python
+fastapi
+uvicorn
+joblib
+numpy
+ultralytics
