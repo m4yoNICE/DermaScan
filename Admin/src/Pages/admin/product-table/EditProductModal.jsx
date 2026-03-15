@@ -9,7 +9,7 @@ import { SKIN_TYPES } from "@/constants/skinTypes";
 
 const EditProductModal = ({ isOpen, onClose, product }) => {
   const dispatch = useDispatch();
-  const { data: conditions } = useSelector((state) => state.condition);
+  const { data: conditions= [] } = useSelector((state) => state.condition || {});
 
   const [formData, setFormData] = useState({
     productName: "",

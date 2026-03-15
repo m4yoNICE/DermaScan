@@ -120,6 +120,16 @@ const AnalysisPage = () => {
     },
   ];
 
+  const handleGenerateAnalysisReport = async () => {
+    const res = await Api.generateAnalysisReport({ responseType: "blob" });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "analysis-report.pdf");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
   return (
     <div className="min-h-screen p-6 bg-gray-50">
       <h1 className="text-3xl font-bold mb-6">Analysis</h1>
@@ -133,6 +143,12 @@ const AnalysisPage = () => {
           className="border px-3 py-2 rounded w-full max-w-md"
         />
       </div>
+       <button 
+        onClick={handleGenerateAnalysisReport}
+        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-500 transition-colors"
+      >
+        ...Generate Report
+      </button>
 
       {loading && (
         <div className="flex justify-center py-12">

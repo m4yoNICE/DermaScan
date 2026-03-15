@@ -15,6 +15,8 @@ import adminAuthRoutes from "./AdminBE/routes/adminAuthRoutes.js";
 import adminUserRoutes from "./AdminBE/routes/adminUserRoutes.js";
 import outOfScopeRoutes from "./AdminBE/routes/outOfScopeRoutes.js";
 import adminAnalysisRoutes from "./AdminBE/routes/analysisRoutes.js";
+import skinTypeRoutes from "./AdminBE/routes/skinTypeRoutes.js";
+import generateReportRoutes from "./AdminBE/routes/generateReportRoutes.js";
 
 import skinCareProduct from "./AdminBE/routes/skinCareProductsRoutes.js";
 
@@ -55,6 +57,8 @@ app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/products", skinCareProduct);
 app.use("/api/admin/scope", outOfScopeRoutes);
 app.use("/api/admin/analysis", adminAnalysisRoutes);
+app.use("/api/admin/skin-types", skinTypeRoutes);
+app.use("/api/admin/reports", generateReportRoutes);
 
 app.listen(PORT, () => {
   console.log("Server started on PORT: ", PORT);
