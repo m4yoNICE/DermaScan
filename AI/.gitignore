@@ -1,1 +1,6 @@
 training_data/*
+
+*.h5
+*.keras
+*.pkl
+*.npy

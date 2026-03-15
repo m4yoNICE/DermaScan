@@ -1,8 +1,8 @@
 import os
 import csv
 
-DATA_DIR = "../training_data"
-OUTPUT   = "../trained_data_backup/dataset_manifest.csv"
+DATA_DIR = "../dataset_system"
+OUTPUT   = "../trained_data_backup/data_set_manifest.csv"
 
 with open(OUTPUT, "w", newline="") as f:
     writer = csv.writer(f)
