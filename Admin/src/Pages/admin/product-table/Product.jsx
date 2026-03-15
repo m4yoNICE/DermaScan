@@ -249,17 +249,35 @@ const Product = () => {
     },
   ];
 
+  const handleGenerateReport = async () => {
+  const res = await Api.generateProductReport({ responseType: "blob" });
+  const url = window.URL.createObjectURL(new Blob([res.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "product-report.pdf");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Products</h1>
         <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#00CC99] text-white text-sm font-medium rounded-lg hover:bg-[#00b389] transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Add Product
-        </button>
+        onClick={() => setIsAddModalOpen(true)}
+        className="flex items-center gap-2 px-4 py-2 bg-[#00CC99] text-white text-sm font-medium rounded-lg hover:bg-[#00b389] transition-colors"
+      >
+        <Plus className="w-4 h-4" />
+       
+      </button>
+
+      <button 
+        onClick={handleGenerateReport}
+        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-500 transition-colors"
+      >
+        ...Generate Report
+      </button>
       </div>
 
       <div className="mb-6">

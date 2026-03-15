@@ -1,7 +1,10 @@
 import React, { use } from 'react'
 import { Line, Pie, Bar } from "react-chartjs-2";
 import { useEffect, useState } from "react";
-
+import { useDispatch,useSelector } from 'react-redux';
+import { fetchSkinTypes } from '../../redux/slices/skinTypeSlice.js';
+import Api from '../../services/Api.js';
+ 
 import {
   Chart as ChartJS,
   LineElement,
@@ -28,52 +31,68 @@ ChartJS.register(
 
 
 export default function analytics() {
+ const dispatch = useDispatch();
+  const skinTypes = useSelector((state) => state.skinType.skinTypes);
 
   const [Oily, setOily] = useState(0);
-const [Dry, setDry] = useState(0);
-const [Combination, setCombination] = useState(0);
-const [Normal, setNormal] = useState(0);
+  const [Dry, setDry] = useState(0);
+  const [Combination, setCombination] = useState(0);
+  const [Normal, setNormal] = useState(0);
+
+  const [scanData, setScanData] = useState([]);
+  const [scanLabels, setScanLabels] = useState([]);
+
   useEffect(() => {
-  
-  const fetchSkinTypeData = async () => {
+    dispatch(fetchSkinTypes());
+  }, [dispatch]);
+
+  useEffect(() => {
+    let oilyCount = 0;
+    let dryCount = 0;
+    let combinationCount = 0;
+    let normalCount = 0;
+
+    skinTypes.forEach((user) => {
+      switch (user.skinType.toLowerCase()) {
+        case "oily":
+          oilyCount++;
+          break;
+        case "dry":
+          dryCount++;
+          break;
+        case "combination":
+          combinationCount++;
+          break;
+        case "normal":
+          normalCount++;
+          break;
+      }
+    });
+
+    setOily(oilyCount);
+    setDry(dryCount);
+    setCombination(combinationCount);
+    setNormal(normalCount);
+  }, [skinTypes]);
+
+  useEffect(() => {
+  const fetchScanPerDay = async () => {
     try {
-      const data = await response.json();
+      const res = await Api.get("/analysis/scan-per-day");
 
-      let oilyCount = 0;
-      let dryCount = 0;
-      let combinationCount = 0;
-      let normalCount = 0;
+      const labels = res.data.map(item => item.date);
+      const counts = res.data.map(item => Number(item.count));
 
-      data.forEach(user => {
-        switch(user.skinType) {
-          case 'Oily':
-            oilyCount++;
-            break;
-          case 'Dry':
-            dryCount++;
-            break;
-          case 'Combination':
-            combinationCount++;
-            break;
-          case 'Normal':
-            normalCount++;
-            break;
-        }
-      });
-
-      setOily(oilyCount);
-      setDry(dryCount);
-      setCombination(combinationCount);
-      setNormal(normalCount);
+      setScanLabels(labels);
+      setScanData(counts);
 
     } catch (error) {
-      console.error("Error fetching skin type data:", error);
+      console.error("Error fetching scans per day:", error);
     }
-
   };
-  fetchSkinTypeData();
-}, []);
 
+  fetchScanPerDay();
+}, []);
   return (
       <div className="bg-white p-6 rounded-xl shadow">
       <h3 className="text-xl font-bold mb-4">Daily Scan Activity</h3>
@@ -81,11 +100,11 @@ const [Normal, setNormal] = useState(0);
   <div className="h-48">  {/* shrink chart height here */}
     <Line
       data={{
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        labels: scanLabels,
         datasets: [
           {
             label: "Scans per Day",
-            data: [12, 19, 7, 14, 22, 30, 25],
+            data: scanData,
             borderWidth: 2,
           },
         ],
@@ -98,20 +117,20 @@ const [Normal, setNormal] = useState(0);
 <div className="bg-white p-6 rounded-xl shadow">
   <h3 className="text-xl font-bold mb-4">Skin Type Distribution</h3>
 
-  <div className="h-48">  {/* shrink chart height here */}
-    <Pie
-      data={{
-        labels: ["Oily", "Dry", "Combination", "Normal"],
-        datasets: [
-          {
-            data: [Oily, Dry, Combination, Normal],
-          },
-        ],
-      }}
-      options={{ maintainAspectRatio: false }}
-    />
-      </div>
+    <div className="h-48">
+      <Pie
+        data={{
+          labels: ["Oily", "Dry", "Combination", "Normal"],
+          datasets: [
+            {
+              data: [Oily, Dry, Combination, Normal],
+            },
+          ],
+        }}
+        options={{ maintainAspectRatio: false }}
+      />
     </div>
+  </div>
 </div>
   )
 }

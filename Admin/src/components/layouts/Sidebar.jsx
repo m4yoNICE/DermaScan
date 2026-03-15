@@ -14,7 +14,7 @@ const Sidebar = () => {
       label: "Analytics",
       icon: <SearchIcon size={20} />,
     },
-    { path: "/out-of-scope", label: "Out of Scope", icon: <BookOpenText size={20} /> },
+    // { path: "/out-of-scope", label: "Out of Scope", icon: <BookOpenText size={20} /> },
     { path: "/analysis", label: "Analysis", icon: <BookOpenText size={20} /> },
     { path: "/products", label: "Products", icon: <ShoppingBag size={20} /> },
     { path: "/users", label: "Users", icon: <User size={20} /> },

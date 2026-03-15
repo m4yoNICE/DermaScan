@@ -55,6 +55,25 @@ const Api = {
     return Http.get("/api/admin/scope/out-of-scope", config);
   },
 
+  fetchScansPerDay: (config = {}) => {
+    return Http.get("/api/admin/scope/scans", config);
+  },
+
+  getSkinTypes: (config = {}) => {
+    return Http.get("/api/admin/skin-types/getSkinTypes", config);
+  },
+
+  // Generate reports endpoint
+  generateProductReport: () => {
+    return Http.get("/api/admin/reports/generate/product", {responseType: 'blob'});
+  },
+  generateUserReport: () => {
+    return Http.get("/api/admin/reports/generate/user", {responseType: 'blob'});
+  },
+  generateAnalysisReport: () => {
+    return Http.get("/api/admin/reports/generate/analysis", {responseType: 'blob'});
+  },
+
   getAnalysisData: () => Http.get("/api/admin/analysis"),
   getConditions: () => Http.get("/api/admin/analysis/condition"),
 

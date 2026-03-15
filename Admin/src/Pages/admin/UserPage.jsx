@@ -5,6 +5,7 @@ import SearchBar from "@/components/SearchBar";
 import DeleteModal from "@/components/DeleteModal";
 import { deleteUser, fetchUsers } from "@/redux/slices/userSlice";
 import { Trash2 } from "lucide-react";
+import Api from "@/services/Api";
 
 const UserPage = () => {
   const dispatch = useDispatch();
@@ -130,6 +131,17 @@ const UserPage = () => {
     },
   ];
 
+  const handleGenerateUserReport = async () => {
+  const res = await Api.generateUserReport({ responseType: "blob" });
+  const url = window.URL.createObjectURL(new Blob([res.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "user-report.pdf");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
   return (
     <div>
       {/* Page Header */}
@@ -138,6 +150,13 @@ const UserPage = () => {
           Users Management
         </h1>
       </div>
+
+      <button
+        onClick={handleGenerateUserReport}
+         className="bg-[#00CC99] text-white px-4 py-2 rounded-lg hover:bg-[#00b386] transition"
+      >
+        Generate Users Report
+      </button>
 
       {/* Search Bar */}
       <div className="mb-6">

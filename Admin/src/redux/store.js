@@ -5,6 +5,7 @@ import skinProductReducer from "./slices/skinProductSlice";
 import outOfScopeReducer from "./slices/outOfScopeSlice";
 import analysisReducer from "./slices/analysisSlice";
 import conditionReducer from "./slices/conditionSlice";
+import skinTypeReducer from "./slices/skinTypeSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -13,5 +14,6 @@ export const store = configureStore({
     outOfScope: outOfScopeReducer,
     analysis: analysisReducer,
     conditions: conditionReducer,
+    skinType: skinTypeReducer,
   },
 });
