@@ -78,7 +78,7 @@ export default function analytics() {
   useEffect(() => {
   const fetchScanPerDay = async () => {
     try {
-      const res = await Api.get("/analysis/scan-per-day");
+      const res = await Api.fetchScanPerDay();
 
       const labels = res.data.map(item => item.date);
       const counts = res.data.map(item => Number(item.count));
