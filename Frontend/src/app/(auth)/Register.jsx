@@ -113,7 +113,7 @@ const Register = () => {
           "Registration Successful!",
           "Welcome aboard 👋",
         );
-        router.push("/BaumannQuestionnaire");
+        router.push("/SkinTypeQuestionnaire");
       }
     } catch (err) {
       const message =
