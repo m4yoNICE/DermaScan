@@ -47,8 +47,6 @@ export async function getUserWithSkinData(userId) {
       birthdate: users.birthdate,
       skinType: skinProfile.skinType,
       skinSensitivity: skinProfile.skinSensitivity,
-      pigmentation: skinProfile.pigmentation,
-      aging: skinProfile.aging,
     })
     .from(users)
     .leftJoin(skinProfile, eq(skinProfile.userId, users.id))
@@ -57,21 +55,13 @@ export async function getUserWithSkinData(userId) {
   return result[0] || null;
 }
 
-export async function createSkinData(
-  userId,
-  skin_type,
-  skin_sensitivity,
-  pigmentation,
-  aging,
-) {
+export async function createSkinData(userId, skin_type, skin_sensitivity) {
   const [inserted] = await db
     .insert(skinProfile)
     .values({
       userId,
       skinType: skin_type,
       skinSensitivity: skin_sensitivity,
-      pigmentation,
-      aging,
     })
     .$returningId();
 

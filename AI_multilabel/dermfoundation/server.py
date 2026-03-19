@@ -17,46 +17,54 @@ async def analyze(request: Request):
         image_data = await request.body()
         emb = get_embedding(image_data).reshape(1, -1)
 
-        # Get proba per label — same reconstruction as training
         y_pred_list = lr_classifier.predict_proba(emb)
         cols = [y_pred_list[i][:, 1] for i in range(len(mlb.classes_))]
-        proba = np.column_stack(cols)[0]  # shape: (n_labels,)
+        proba = np.column_stack(cols)[0]
 
-        # Threshold at 0.5
-        y_bool = (proba >= 0.5).astype(int)
-        predicted_labels = mlb.classes_[y_bool.astype(bool)].tolist()
-
-        # Extract structured output
-        full_label = next(
-            (l for l in predicted_labels
-             if l.endswith(("-mild", "-moderate", "-severe"))),
-            None
-        )
-        condition = next(
-            (l for l in predicted_labels
-             if not l.endswith(("-mild", "-moderate", "-severe"))
-             and l not in {"mild", "moderate", "severe"}),
-            None
-        )
-        severity = next(
-            (l for l in predicted_labels
-             if l in {"mild", "moderate", "severe"}),
-            None
-        )
-
-        # Top 3 labels by proba score
-        top_idx = np.argsort(proba)[-3:][::-1]
-        top3 = [
-            {"label": mlb.classes_[i], "score": float(proba[i])}
-            for i in top_idx
+        # Only look at full labels (condition-severity pairs)
+        full_label_indices = [
+            i for i, c in enumerate(mlb.classes_)
+            if c.endswith(("-mild", "-moderate", "-severe"))
         ]
 
+        # Get all full labels above threshold
+        THRESHOLD = 0.3
+        detected = [
+            {
+                "label": mlb.classes_[i],
+                "condition": mlb.classes_[i].rsplit("-", 1)[0],
+                "severity": mlb.classes_[i].rsplit("-", 1)[1],
+                "confidence": float(proba[i])
+            }
+            for i in full_label_indices
+            if proba[i] >= THRESHOLD
+        ]
+
+        # Sort by confidence descending
+        detected = sorted(detected, key=lambda x: x["confidence"], reverse=True)
+
+        # Primary is always highest confidence
+        primary = detected[0] if detected else None
+
+        # Fallback if nothing above threshold
+        if not detected:
+            best_idx = max(full_label_indices, key=lambda i: proba[i])
+            best_label = mlb.classes_[best_idx]
+            primary = {
+                "label": best_label,
+                "condition": best_label.rsplit("-", 1)[0],
+                "severity": best_label.rsplit("-", 1)[1],
+                "confidence": float(proba[best_idx])
+            }
+            detected = [primary]
+
         return {
-            "primary_prediction": full_label or (predicted_labels[0] if predicted_labels else "unknown"),
-            "condition": condition,
-            "severity": severity,
-            "predicted_labels": predicted_labels,
-            "top3": top3,
+            "primary_prediction": primary["label"],
+            "condition": primary["condition"],
+            "severity": primary["severity"],
+            "confidence": primary["confidence"],
+            "can_recommend": primary["label"] != "out-of-scope",
+            "detected_conditions": detected,  # all conditions found
         }
 
     except ImagePreprocessingError as e:

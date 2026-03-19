@@ -29,7 +29,7 @@ def load_from_class_caches():
         raise FileNotFoundError(f"No cls_*.npy files found in {CACHE_DIR}")
 
     for fname in cache_files:
-        label = fname[4:-4]  # strip "cls_" and ".npy"
+        label = fname[4:-4]
         path = os.path.join(CACHE_DIR, fname)
         data = np.load(path, allow_pickle=True).item()
 
@@ -40,7 +40,7 @@ def load_from_class_caches():
         parts = label.rsplit("-", 1)
         if len(parts) == 2 and parts[1] in {"mild", "moderate", "severe"}:
             for _ in class_X:
-                y.append([parts[0], parts[1], label])
+                y.append([parts[0], label])  # condition + full label only
         else:
             for _ in class_X:
                 y.append([label])

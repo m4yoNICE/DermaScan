@@ -5,7 +5,6 @@ import {
   users,
   skinProfile,
   skinCareProducts,
-  conditionProducts,
 } from "./schema.js";
 import bcrypt from "bcryptjs";
 import { sql } from "drizzle-orm";
@@ -38,27 +37,46 @@ export async function main() {
     { id: 2, roleName: "user" },
   ]);
 
-  await db.insert(skinConditions).values([
-    { id: 1, condition: "acne-blackheads", canRecommend: "Yes" },
-    { id: 2, condition: "acne-cyst", canRecommend: "No" },
-    { id: 3, condition: "acne-fungal", canRecommend: "No" },
-    { id: 4, condition: "acne-nodules", canRecommend: "No" },
-    { id: 5, condition: "acne-papules", canRecommend: "Yes" },
-    { id: 6, condition: "acne-pustules", canRecommend: "Yes" },
-    { id: 7, condition: "acne-whiteheads", canRecommend: "Yes" },
-    { id: 8, condition: "mild eczema", canRecommend: "Yes" },
-    { id: 9, condition: "severe eczema", canRecommend: "No" },
-    { id: 10, condition: "enlarged-pores", canRecommend: "Yes" },
-    { id: 11, condition: "melasma", canRecommend: "Yes" },
-    { id: 12, condition: "milia", canRecommend: "Yes" },
-    { id: 13, condition: "post-inflammatory-erythema", canRecommend: "No" },
-    {
-      id: 14,
-      condition: "post-inflammatory-pigmentation",
-      canRecommend: "Yes",
-    },
-    { id: 15, condition: "psoriasis", canRecommend: "No" },
-  ]);
+await db.insert(skinConditions).values([
+  // MILD / MODERATE (Can Recommend)
+  { id: 1, condition: "acne-blackheads-mild", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Adapalene, Retinol, Retinoids" },
+  { id: 2, condition: "acne-blackheads-moderate", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Adapalene, Retinol, Retinoids" },
+  { id: 3, condition: "acne-whiteheads-mild", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Adapalene, Retinol, Retinoids" },
+  { id: 4, condition: "acne-whiteheads-moderate", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Adapalene, Retinol, Retinoids" },
+  { id: 5, condition: "acne-papules-mild", canRecommend: "Yes", targetIngredients: "Benzoyl Peroxide, Retinol, Clindamycin, Retinoids" },
+  { id: 6, condition: "acne-papules-moderate", canRecommend: "Yes", targetIngredients: "Benzoyl Peroxide, Retinol, Clindamycin, Retinoids" },
+  { id: 7, condition: "acne-pustules-mild", canRecommend: "Yes", targetIngredients: "Benzoyl Peroxide, Retinol, Clindamycin, Retinoids" },
+  { id: 8, condition: "acne-pustules-moderate", canRecommend: "Yes", targetIngredients: "Benzoyl Peroxide, Retinol, Clindamycin, Retinoids" },
+  { id: 9, condition: "eczema-mild", canRecommend: "Yes", targetIngredients: "Oats, Lipids, Zinc Oxide, Emollients" },
+  { id: 10, condition: "eczema-moderate", canRecommend: "Yes", targetIngredients: "Oats, Lipids, Zinc Oxide, Emollients" },
+  { id: 11, condition: "melasma-mild", canRecommend: "Yes", targetIngredients: "Kojic Acid, Glutathione, Vitamin C" },
+  { id: 12, condition: "melasma-moderate", canRecommend: "Yes", targetIngredients: "Kojic Acid, Glutathione, Vitamin C" },
+  { id: 13, condition: "melasma-severe", canRecommend: "Yes", targetIngredients: "Kojic Acid, Glutathione, Vitamin C" },
+  { id: 14, condition: "milia-mild", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Retinol" },
+  { id: 15, condition: "milia-moderate", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Retinol" },
+  { id: 16, condition: "enlarged-pores-mild", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Adapalene" },
+  { id: 17, condition: "enlarged-pores-moderate", canRecommend: "Yes", targetIngredients: "Salicylic Acid, Adapalene" },
+  { id: 18, condition: "post-inflammatory-pigmentation-mild", canRecommend: "Yes", targetIngredients: "Vitamin C, Arbutin, Niacinamide, Glycolic Acid" },
+  { id: 19, condition: "post-inflammatory-pigmentation-moderate", canRecommend: "Yes", targetIngredients: "Vitamin C, Arbutin, Niacinamide, Glycolic Acid" },
+  { id: 20, condition: "post-inflammatory-erythema-mild", canRecommend: "Yes", targetIngredients: "Azelaic Acid, Glycolic Acid, Vitamin C" },
+  { id: 21, condition: "post-inflammatory-erythema-moderate", canRecommend: "Yes", targetIngredients: "Azelaic Acid, Glycolic Acid, Vitamin C" },
+
+  // SEVERE / MEDICAL (Cannot Recommend)
+  { id: 22, condition: "milia-severe", canRecommend: "No", targetIngredients: null },
+  { id: 23, condition: "enlarged-pores-severe", canRecommend: "No", targetIngredients: null },
+  { id: 24, condition: "acne-blackheads-severe", canRecommend: "No", targetIngredients: null },
+  { id: 25, condition: "acne-papules-severe", canRecommend: "No", targetIngredients: null },
+  { id: 26, condition: "acne-pustules-severe", canRecommend: "No", targetIngredients: null },
+  { id: 27, condition: "acne-whiteheads-severe", canRecommend: "No", targetIngredients: null },
+  { id: 28, condition: "acne-cyst", canRecommend: "No", targetIngredients: null },
+  { id: 29, condition: "acne-nodules", canRecommend: "No", targetIngredients: null },
+  { id: 30, condition: "psoriasis", canRecommend: "No", targetIngredients: null },
+  { id: 31, condition: "eczema-severe", canRecommend: "No", targetIngredients: null },
+  { id: 32, condition: "post-inflammatory-erythema-severe", canRecommend: "No", targetIngredients: null },
+  { id: 33, condition: "post-inflammatory-pigmentation-severe", canRecommend: "No", targetIngredients: null },
+  { id: 34, condition: "out-of-scope", canRecommend: "No", targetIngredients: null },
+]);
+//adapalene, benzoid peroxide, and clindamycin is what i put there as not for sensitive
 
   await db.insert(users).values([
     {
@@ -88,9 +106,7 @@ export async function main() {
       userId: 2,
       skinType: "oily",
       skinSensitivity: "resistant",
-      pigmentation: "pigmented",
-      aging: "tight",
-      updatedAt: now,
+      createdAt: now,
     },
   ]);
 
@@ -227,52 +243,6 @@ export async function main() {
       timeRoutine: "Morning",
       updatedAt: now,
     },
-  ]);
-
-  await db.insert(conditionProducts).values([
-    { conditionId: 1, productId: 1, createdAt: now, updatedAt: now },
-    { conditionId: 1, productId: 3, createdAt: now, updatedAt: now },
-    { conditionId: 1, productId: 5, createdAt: now, updatedAt: now },
-    { conditionId: 1, productId: 8, createdAt: now, updatedAt: now },
-    { conditionId: 1, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 5, productId: 1, createdAt: now, updatedAt: now },
-    { conditionId: 5, productId: 3, createdAt: now, updatedAt: now },
-    { conditionId: 5, productId: 5, createdAt: now, updatedAt: now },
-    { conditionId: 5, productId: 8, createdAt: now, updatedAt: now },
-    { conditionId: 5, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 6, productId: 1, createdAt: now, updatedAt: now },
-    { conditionId: 6, productId: 3, createdAt: now, updatedAt: now },
-    { conditionId: 6, productId: 5, createdAt: now, updatedAt: now },
-    { conditionId: 6, productId: 8, createdAt: now, updatedAt: now },
-    { conditionId: 6, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 7, productId: 1, createdAt: now, updatedAt: now },
-    { conditionId: 7, productId: 3, createdAt: now, updatedAt: now },
-    { conditionId: 7, productId: 5, createdAt: now, updatedAt: now },
-    { conditionId: 7, productId: 8, createdAt: now, updatedAt: now },
-    { conditionId: 7, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 8, productId: 2, createdAt: now, updatedAt: now },
-    { conditionId: 8, productId: 4, createdAt: now, updatedAt: now },
-    { conditionId: 8, productId: 7, createdAt: now, updatedAt: now },
-    { conditionId: 8, productId: 9, createdAt: now, updatedAt: now },
-    { conditionId: 8, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 10, productId: 1, createdAt: now, updatedAt: now },
-    { conditionId: 10, productId: 3, createdAt: now, updatedAt: now },
-    { conditionId: 10, productId: 5, createdAt: now, updatedAt: now },
-    { conditionId: 10, productId: 8, createdAt: now, updatedAt: now },
-    { conditionId: 10, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 11, productId: 2, createdAt: now, updatedAt: now },
-    { conditionId: 11, productId: 6, createdAt: now, updatedAt: now },
-    { conditionId: 11, productId: 9, createdAt: now, updatedAt: now },
-    { conditionId: 11, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 12, productId: 1, createdAt: now, updatedAt: now },
-    { conditionId: 12, productId: 3, createdAt: now, updatedAt: now },
-    { conditionId: 12, productId: 8, createdAt: now, updatedAt: now },
-    { conditionId: 12, productId: 10, createdAt: now, updatedAt: now },
-    { conditionId: 14, productId: 2, createdAt: now, updatedAt: now },
-    { conditionId: 14, productId: 4, createdAt: now, updatedAt: now },
-    { conditionId: 14, productId: 6, createdAt: now, updatedAt: now },
-    { conditionId: 14, productId: 9, createdAt: now, updatedAt: now },
-    { conditionId: 14, productId: 10, createdAt: now, updatedAt: now },
   ]);
 
   console.log("Seeding completed!");

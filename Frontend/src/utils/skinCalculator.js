@@ -9,15 +9,7 @@ export const calculateSkinType = (oilAnswers, senAnswers) => {
   else if (oilinessAvg <= 3.5) skinType = "combination";
   else skinType = "oily";
 
-  let skinSensitivity = "";
-  if (sensitivityAvg <= 2.0) skinSensitivity = "insensitive";
-  else if (sensitivityAvg <= 3.0) skinSensitivity = "mild";
-  else if (sensitivityAvg <= 4.0) skinSensitivity = "moderate";
-  else skinSensitivity = "severe";
+  const skinSensitivity = sensitivityAvg >= 3.0 ? "sensitive" : "resistant";
 
-  return {
-    skinType,
-    skinSensitivity,
-    description: `${skinSensitivity} ${skinType} skin`,
-  };
+  return { skinType, skinSensitivity };
 };
