@@ -12,7 +12,7 @@ const Api = {
   getUserByTokenAPI: () => Http.get("/api/users"),
   editUserAPI: (data) => Http.put("/api/users", data),
   deleteUserAPI: () => Http.delete("/api/users"),
-  updateSkinDataAPI: (data) => Http.post("/api/users/skin", data),
+  createSkinDataAPI: (data) => Http.post("/api/users/skin", data),
   resetSkinDataAPI: () => Http.delete("/api/users/skinreset"),
 
   // Journal

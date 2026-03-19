@@ -70,7 +70,7 @@ const SkinTypeQuestionnaire = () => {
         senAnswers,
       );
 
-      await Api.updateSkinDataAPI({ skinType, skinSensitivity });
+      await Api.createJournalAPI({ skinType, skinSensitivity });
       ToastMessage(
         "success",
         "Done",

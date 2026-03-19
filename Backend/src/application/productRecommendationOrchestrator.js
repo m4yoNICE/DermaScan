@@ -1,7 +1,8 @@
 import {
   filterBySkinType,
   getSkinData,
-  matchProductByCondition,
+  getTargetIngredients,
+  matchProductsByIngredients,
   scoreProducts,
 } from "../services/productRecommendationServices.js";
 
@@ -13,24 +14,22 @@ export async function recommendOrchestrator(
   try {
     const skinData = await getSkinData(user_id);
     console.log("Phase 1 - skinData:", skinData);
-    console.log("=====================================");
-
     if (!skinData) return null;
 
-    const matchedProducts = await matchProductByCondition(condition_id);
-    console.log("Phase 2 - matchedProducts:", matchedProducts);
-    console.log("=====================================");
+    const targetIngredients = await getTargetIngredients(condition_id);
+    console.log("Phase 2 - targetIngredients:", targetIngredients);
+    if (!targetIngredients.length) return null;
 
+    const matchedProducts = await matchProductsByIngredients(targetIngredients);
+    console.log("Phase 3 - matchedProducts:", matchedProducts.length);
     if (!matchedProducts.length) return null;
 
     const filteredProducts = filterBySkinType(matchedProducts, skinData);
-    console.log("Phase 3 - filteredProducts:", filteredProducts);
-    console.log("=====================================");
+    console.log("Phase 4 - filteredProducts:", filteredProducts.length);
     if (!filteredProducts.length) return null;
 
     const scoredProducts = scoreProducts(filteredProducts);
-    console.log("Phase 4 - scoredProducts:", scoredProducts);
-    console.log("=====================================");
+    console.log("Phase 5 - scoredProducts:", scoredProducts.length);
 
     return scoredProducts;
   } catch (error) {
