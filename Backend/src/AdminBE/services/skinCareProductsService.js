@@ -1,56 +1,11 @@
 import { db } from "../../config/db.js";
-import { skinCareProducts, conditionProducts } from "../../drizzle/schema.js";
+import { skinCareProducts } from "../../drizzle/schema.js";
 import { eq } from "drizzle-orm";
 
 export const getAllProducts = async () => {
-  const rows = await db
-    .select({
-      id: skinCareProducts.id,
-      productName: skinCareProducts.productName,
-      productImage: skinCareProducts.productImage,
-      ingredient: skinCareProducts.ingredient,
-      description: skinCareProducts.description,
-      productType: skinCareProducts.productType,
-      locality: skinCareProducts.locality,
-      skinType: skinCareProducts.skinType,
-      dermaTested: skinCareProducts.dermaTested,
-      timeRoutine: skinCareProducts.timeRoutine,
-      createdAt: skinCareProducts.createdAt,
-      updatedAt: skinCareProducts.updatedAt,
-      conditionId: conditionProducts.conditionId,
-    })
-    .from(skinCareProducts)
-    .leftJoin(
-      conditionProducts,
-      eq(skinCareProducts.id, conditionProducts.productId),
-    );
-
-  const grouped = {};
-  for (const row of rows) {
-    if (!grouped[row.id]) {
-      grouped[row.id] = {
-        id: row.id,
-        productName: row.productName,
-        productImage: row.productImage,
-        ingredient: row.ingredient,
-        description: row.description,
-        productType: row.productType,
-        locality: row.locality,
-        skinType: row.skinType,
-        dermaTested: row.dermaTested,
-        timeRoutine: row.timeRoutine,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-        conditionIds: [],
-      };
-    }
-    if (row.conditionId) {
-      grouped[row.id].conditionIds.push(row.conditionId);
-    }
-  }
-
-  return Object.values(grouped);
+  return await db.select().from(skinCareProducts);
 };
+
 export const getProductById = async (id) => {
   const result = await db
     .select()
@@ -61,22 +16,8 @@ export const getProductById = async (id) => {
 
 export const createProduct = async (data) => {
   const { conditionIds, ...productData } = data;
-
   const result = await db.insert(skinCareProducts).values(productData);
   const insertId = result[0].insertId;
-
-  const parsedConditionIds = JSON.parse(conditionIds || "[]");
-  if (parsedConditionIds.length > 0) {
-    const conditionValues = [];
-    for (const conditionId of parsedConditionIds) {
-      conditionValues.push({
-        conditionId: Number(conditionId),
-        productId: insertId,
-      });
-    }
-    await db.insert(conditionProducts).values(conditionValues);
-  }
-
   const [product] = await db
     .select()
     .from(skinCareProducts)
@@ -86,26 +27,10 @@ export const createProduct = async (data) => {
 
 export const updateProduct = async (id, data) => {
   const { conditionIds, ...productData } = data;
-
   await db
     .update(skinCareProducts)
     .set(productData)
     .where(eq(skinCareProducts.id, id));
-
-  await db.delete(conditionProducts).where(eq(conditionProducts.productId, id));
-
-  const parsedConditionIds = JSON.parse(conditionIds || "[]");
-  if (parsedConditionIds.length > 0) {
-    const conditionValues = [];
-    for (const conditionId of parsedConditionIds) {
-      conditionValues.push({
-        conditionId: Number(conditionId),
-        productId: id,
-      });
-    }
-    await db.insert(conditionProducts).values(conditionValues);
-  }
-
   const [product] = await db
     .select()
     .from(skinCareProducts)
@@ -114,9 +39,5 @@ export const updateProduct = async (id, data) => {
 };
 
 export const deleteProduct = async (id) => {
-  const result = await db
-    .delete(skinCareProducts)
-    .where(eq(skinCareProducts.id, id));
-
-  return result;
+  return await db.delete(skinCareProducts).where(eq(skinCareProducts.id, id));
 };
