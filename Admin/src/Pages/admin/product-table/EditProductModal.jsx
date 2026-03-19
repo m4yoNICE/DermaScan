@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchProducts, updateProduct } from "@/redux/slices/skinProductSlice";
-import { fetchConditions } from "@/redux/slices/conditionSlice";
 import { buildProductFormData } from "@/utils/Forms";
 import { X } from "lucide-react";
 import Api from "@/services/Api";
@@ -9,7 +8,6 @@ import { SKIN_TYPES } from "@/constants/skinTypes";
 
 const EditProductModal = ({ isOpen, onClose, product }) => {
   const dispatch = useDispatch();
-  const { data: conditions= [] } = useSelector((state) => state.condition || {});
 
   const [formData, setFormData] = useState({
     productName: "",
@@ -21,7 +19,6 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
     skinType: "",
     dermaTested: false,
     timeRoutine: "",
-    conditionIds: [],
   });
 
   useEffect(() => {
@@ -36,14 +33,9 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
         skinType: product.skinType || "",
         dermaTested: product.dermaTested || false,
         timeRoutine: product.timeRoutine || "",
-        conditionIds: product.conditionIds || [],
       });
     }
   }, [product]);
-
-  useEffect(() => {
-    dispatch(fetchConditions());
-  }, [dispatch]);
 
   useEffect(() => {
     if (isOpen) {
@@ -63,15 +55,6 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleConditionToggle = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      conditionIds: prev.conditionIds.includes(id)
-        ? prev.conditionIds.filter((c) => c !== id)
-        : [...prev.conditionIds, id],
     }));
   };
 
@@ -283,30 +266,6 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
             >
               Derma Tested
             </label>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Applicable Conditions
-            </label>
-            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
-              {conditions.map((condition) => (
-                <label
-                  key={condition.id}
-                  className="flex items-center gap-2 text-sm cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={formData.conditionIds.includes(condition.id)}
-                    onChange={() => handleConditionToggle(condition.id)}
-                    className="w-4 h-4 accent-[#00CC99]"
-                  />
-                  <span className="capitalize text-gray-600">
-                    {condition.condition}
-                  </span>
-                </label>
-              ))}
-            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-2 border-t border-gray-200">
