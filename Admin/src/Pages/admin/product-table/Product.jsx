@@ -22,9 +22,11 @@ const Product = () => {
   const { products, loading, error, deleteLoading, deleteError } = useSelector(
     (state) => state.products,
   );
+  const { data: conditions } = useSelector((state) => state.conditions);
   useEffect(() => {
     const abortController = new AbortController();
     dispatch(fetchProducts());
+    dispatch(fetchConditions());
     return () => {
       abortController.abort();
     };
@@ -167,6 +169,37 @@ const Product = () => {
       key: "timeRoutine",
       label: "Routine",
       width: "100px",
+    },
+    {
+      key: "conditionIds",
+      label: "Conditions",
+      width: "200px",
+      render: (value) => {
+        if (!value || value.length === 0)
+          return <span className="text-gray-400 text-xs">None</span>;
+        const visible = value.slice(0, 2);
+        const remaining = value.length - 2;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {visible.map((id) => {
+              const condition = conditions.find((c) => c.id === id);
+              return (
+                <span
+                  key={id}
+                  className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full"
+                >
+                  {condition ? condition.condition : id}
+                </span>
+              );
+            })}
+            {remaining > 0 && (
+              <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
+                +{remaining} more
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "createdAt",
