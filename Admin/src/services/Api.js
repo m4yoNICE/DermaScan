@@ -65,13 +65,19 @@ const Api = {
 
   // Generate reports endpoint
   generateProductReport: () => {
-    return Http.get("/api/admin/reports/generate/product", {responseType: 'blob'});
+    return Http.get("/api/admin/reports/generate/product", {
+      responseType: "blob",
+    });
   },
   generateUserReport: () => {
-    return Http.get("/api/admin/reports/generate/user", {responseType: 'blob'});
+    return Http.get("/api/admin/reports/generate/user", {
+      responseType: "blob",
+    });
   },
   generateAnalysisReport: () => {
-    return Http.get("/api/admin/reports/generate/analysis", {responseType: 'blob'});
+    return Http.get("/api/admin/reports/generate/analysis", {
+      responseType: "blob",
+    });
   },
 
   getAnalysisData: () => Http.get("/api/admin/analysis"),
@@ -80,7 +86,9 @@ const Api = {
   getSkinImage: (data) =>
     Http.defaults.baseURL + "/api/uploads/skin-images/" + data,
   getProductImage: (data) =>
-    Http.defaults.baseURL + "/api/uploads/product-images/" + data,
+    data?.startsWith("http")
+      ? data
+      : Http.defaults.baseURL + "/api/uploads/product-images/" + data,
 };
 
 export default Api;

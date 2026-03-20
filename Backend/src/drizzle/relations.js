@@ -10,6 +10,7 @@ import {
   skinProfile,
   productRecommendations,
   skinCareProducts,
+  conditionProducts,
   reminderLogs,
   userRoutine,
 } from "./schema.js";
@@ -68,6 +69,7 @@ export const skinConditionsRelations = relations(
   skinConditions,
   ({ many }) => ({
     skinAnalysis: many(skinAnalysis),
+    conditionProducts: many(conditionProducts),
   }),
 );
 
@@ -97,6 +99,21 @@ export const skinCareProductsRelations = relations(
   skinCareProducts,
   ({ many }) => ({
     recommendations: many(productRecommendations),
+    conditionProducts: many(conditionProducts),
+  }),
+);
+
+export const conditionProductsRelations = relations(
+  conditionProducts,
+  ({ one }) => ({
+    condition: one(skinConditions, {
+      fields: [conditionProducts.conditionId],
+      references: [skinConditions.id],
+    }),
+    product: one(skinCareProducts, {
+      fields: [conditionProducts.productId],
+      references: [skinCareProducts.id],
+    }),
   }),
 );
 

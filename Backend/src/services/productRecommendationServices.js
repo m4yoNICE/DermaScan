@@ -1,7 +1,7 @@
 import {
   skinCareProducts,
   skinProfile,
-  skinConditions,
+  conditionProducts,
 } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
@@ -19,22 +19,8 @@ export async function getSkinData(user_id) {
   return result;
 }
 
-export async function getTargetIngredients(condition_id) {
-  const [result] = await db
-    .select({ targetIngredients: skinConditions.targetIngredients })
-    .from(skinConditions)
-    .where(eq(skinConditions.id, condition_id))
-    .limit(1);
-
-  if (!result?.targetIngredients) return [];
-
-  return result.targetIngredients.split(",").map((i) => i.trim().toLowerCase());
-}
-
-export async function matchProductsByIngredients(targetIngredients) {
-  if (!targetIngredients.length) return [];
-
-  const allProducts = await db
+export async function matchProductByCondition(condition_id) {
+  const results = await db
     .select({
       id: skinCareProducts.id,
       productName: skinCareProducts.productName,
@@ -47,15 +33,14 @@ export async function matchProductsByIngredients(targetIngredients) {
       dermaTested: skinCareProducts.dermaTested,
       timeRoutine: skinCareProducts.timeRoutine,
     })
-    .from(skinCareProducts);
+    .from(conditionProducts)
+    .innerJoin(
+      skinCareProducts,
+      eq(conditionProducts.productId, skinCareProducts.id),
+    )
+    .where(eq(conditionProducts.conditionId, condition_id));
 
-  return allProducts.filter((product) => {
-    if (!product.ingredient) return false;
-    const productIngredients = product.ingredient.toLowerCase();
-    return targetIngredients.some((target) =>
-      productIngredients.includes(target),
-    );
-  });
+  return results;
 }
 
 export function filterBySkinType(products, userSkinProfile) {
@@ -67,7 +52,6 @@ export function filterBySkinType(products, userSkinProfile) {
     if (skinType && !productSkinType.includes(skinType.toLowerCase()))
       return false;
 
-    // if user is sensitive, exclude products not marked for sensitive skin
     if (
       skinSensitivity === "sensitive" &&
       !productSkinType.includes("sensitive")

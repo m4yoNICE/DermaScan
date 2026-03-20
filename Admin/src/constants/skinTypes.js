@@ -5,8 +5,4 @@ export const SKIN_TYPES = [
   "combination",
   "resistant",
   "sensitive",
-  "pigmented",
-  "non-pigmented",
-  "tight",
-  "wrinkled",
 ];

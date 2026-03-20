@@ -22,9 +22,11 @@ const Product = () => {
   const { products, loading, error, deleteLoading, deleteError } = useSelector(
     (state) => state.products,
   );
+  const { data: conditions } = useSelector((state) => state.conditions);
   useEffect(() => {
     const abortController = new AbortController();
     dispatch(fetchProducts());
+    dispatch(fetchConditions());
     return () => {
       abortController.abort();
     };
@@ -68,16 +70,6 @@ const Product = () => {
 
   const columns = [
     {
-      key: "productName",
-      label: "Product Name",
-      width: "160px",
-      render: (value) => (
-        <span className="block truncate max-w-[140px]" title={value}>
-          {value || "N/A"}
-        </span>
-      ),
-    },
-    {
       key: "productImage",
       label: "Image",
       width: "80px",
@@ -93,19 +85,9 @@ const Product = () => {
         ),
     },
     {
-      key: "ingredient",
-      label: "Ingredient",
-      width: "150px",
-      render: (value) => (
-        <span className="block truncate max-w-[140px]" title={value}>
-          {value || "N/A"}
-        </span>
-      ),
-    },
-    {
-      key: "description",
-      label: "Description",
-      width: "150px",
+      key: "productName",
+      label: "Product Name",
+      width: "160px",
       render: (value) => (
         <span className="block truncate max-w-[140px]" title={value}>
           {value || "N/A"}
@@ -118,24 +100,32 @@ const Product = () => {
       width: "100px",
     },
     {
-      key: "skinType",
-      label: "Skin Type",
-      width: "180px",
+      key: "timeRoutine",
+      label: "Routine",
+      width: "100px",
+    },
+    {
+      key: "conditionIds",
+      label: "Conditions",
+      width: "200px",
       render: (value) => {
-        if (!value || value === "NULL") return <span>N/A</span>;
-        const types = value.split(",").map((s) => s.trim());
-        const visible = types.slice(0, 2);
-        const remaining = types.length - 2;
+        if (!value || value.length === 0)
+          return <span className="text-gray-400 text-xs">None</span>;
+        const visible = value.slice(0, 2);
+        const remaining = value.length - 2;
         return (
           <div className="flex flex-wrap gap-1">
-            {visible.map((type, i) => (
-              <span
-                key={i}
-                className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs rounded-full capitalize"
-              >
-                {type}
-              </span>
-            ))}
+            {visible.map((id) => {
+              const condition = conditions.find((c) => c.id === id);
+              return (
+                <span
+                  key={id}
+                  className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full"
+                >
+                  {condition ? condition.condition : id}
+                </span>
+              );
+            })}
             {remaining > 0 && (
               <span className="px-1.5 py-0.5 bg-gray-100 text-gray-500 text-xs rounded-full">
                 +{remaining} more
@@ -144,29 +134,6 @@ const Product = () => {
           </div>
         );
       },
-    },
-    {
-      key: "locality",
-      label: "Locality",
-      width: "90px",
-      render: (value) => <span className="capitalize">{value || "N/A"}</span>,
-    },
-    {
-      key: "dermaTested",
-      label: "Derma Tested",
-      width: "110px",
-      render: (value) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${value ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}
-        >
-          {value ? "Yes" : "No"}
-        </span>
-      ),
-    },
-    {
-      key: "timeRoutine",
-      label: "Routine",
-      width: "100px",
     },
     {
       key: "createdAt",
