@@ -8,10 +8,13 @@ export const getAllProducts = async () => {
       id: skinCareProducts.id,
       productName: skinCareProducts.productName,
       productImage: skinCareProducts.productImage,
+      productBrand: skinCareProducts.productBrand,
+      highlightedIngredients: skinCareProducts.highlightedIngredients,
       ingredient: skinCareProducts.ingredient,
       description: skinCareProducts.description,
       productType: skinCareProducts.productType,
       locality: skinCareProducts.locality,
+      availableIn: skinCareProducts.availableIn,
       skinType: skinCareProducts.skinType,
       dermaTested: skinCareProducts.dermaTested,
       timeRoutine: skinCareProducts.timeRoutine,
@@ -20,10 +23,7 @@ export const getAllProducts = async () => {
       conditionId: conditionProducts.conditionId,
     })
     .from(skinCareProducts)
-    .leftJoin(
-      conditionProducts,
-      eq(skinCareProducts.id, conditionProducts.productId),
-    );
+    .leftJoin(conditionProducts, eq(skinCareProducts.id, conditionProducts.productId));
 
   const grouped = {};
   for (const row of rows) {
@@ -32,10 +32,13 @@ export const getAllProducts = async () => {
         id: row.id,
         productName: row.productName,
         productImage: row.productImage,
+        productBrand: row.productBrand,
+        highlightedIngredients: row.highlightedIngredients,
         ingredient: row.ingredient,
         description: row.description,
         productType: row.productType,
         locality: row.locality,
+        availableIn: row.availableIn,
         skinType: row.skinType,
         dermaTested: row.dermaTested,
         timeRoutine: row.timeRoutine,
@@ -51,6 +54,7 @@ export const getAllProducts = async () => {
 
   return Object.values(grouped);
 };
+
 export const getProductById = async (id) => {
   const result = await db
     .select()
