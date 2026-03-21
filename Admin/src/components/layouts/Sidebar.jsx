@@ -9,11 +9,11 @@ const Sidebar = () => {
       label: "Dashboard",
       icon: <LayoutDashboard size={20} />,
     },
-    {
-      path: "/analytics",
-      label: "Analytics",
-      icon: <SearchIcon size={20} />,
-    },
+    // {
+    //   path: "/analytics",
+    //   label: "Analytics",
+    //   icon: <SearchIcon size={20} />,
+    // },
     // { path: "/out-of-scope", label: "Out of Scope", icon: <BookOpenText size={20} /> },
     { path: "/analysis", label: "Analysis", icon: <BookOpenText size={20} /> },
     { path: "/products", label: "Products", icon: <ShoppingBag size={20} /> },

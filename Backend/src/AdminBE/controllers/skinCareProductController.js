@@ -88,3 +88,22 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+export const getConditionCounts = async (req, res) => {
+  try {
+    const counts = await skinCareService.conditionCounts();
+    res.status(200).json({ success: true, data: counts });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const handleFetchConditionProducts = async (req, res) => {
+  try {
+      const conditionProducts = await skinCareService.fetchConditionProducts();
+      return res.status(200).json({ success: true, message: "Condition products fetched successfully", data: conditionProducts });
+  } catch (err) {
+      console.error("Fetch condition products error:", err);
+      return res.status(500).json({ error: "Server error" });
+  }
+}

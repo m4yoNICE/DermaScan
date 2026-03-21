@@ -63,6 +63,23 @@ const Api = {
     return Http.get("/api/admin/skin-types/getSkinTypes", config);
   },
 
+
+  getSkinConditions: (config = {}) => {
+    return Http.get("/api/admin/skin-types/skinConditions", config);
+  },
+
+  // Get User count and condition counts for dashboard stats
+  getUserCount: () => Http.get("/api/admin/users/count"),
+// Get condition counts for dashboard stats
+  getConditionCounts: () => Http.get("/api/admin/products/getConditionCounts"),
+// Get condition counts by product for dashboard stats
+  getConditionCountsByProduct: () => Http.get("/api/admin/products/getConditionCountsByProduct"),
+//
+  getRecommendationNoData: () => Http.get("/api/admin/scope/no-recommendation"),
+
+  getAnalysisData: () => Http.get("/api/admin/analysis"),
+  getConditions: () => Http.get("/api/admin/analysis/condition"),
+
   // Generate reports endpoint
   generateProductReport: () => {
     return Http.get("/api/admin/reports/generate/product", {

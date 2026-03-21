@@ -194,82 +194,92 @@ const Product = () => {
   link.remove();
 };
 
-  return (
-    <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Products</h1>
+ return (
+  <div>
+    {/* Header */}
+    <div className="mb-6 flex items-center justify-between">
+      <h1 className="text-2xl font-bold text-gray-800">Products</h1>
+
+      <div className="flex items-center gap-3">
+        {/* Add Product */}
         <button
-        onClick={() => setIsAddModalOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-[#00CC99] text-white text-sm font-medium rounded-lg hover:bg-[#00b389] transition-colors"
-      >
-        <Plus className="w-4 h-4" />
-       
-      </button>
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-emerald-600 active:scale-95 transition-all"
+        >
+          <Plus className="w-4 h-4" />
+          Add Product
+        </button>
 
-      <button 
-        onClick={handleGenerateReport}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-500 transition-colors"
-      >
-        ...Generate Report
-      </button>
+        {/* Generate Report */}
+        <button 
+          onClick={handleGenerateReport}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all"
+        >
+          📄 Generate Report
+        </button>
       </div>
+    </div>
 
-      <div className="mb-6">
-        <SearchBar
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search..."
-          className="max-w-md"
-        />
-      </div>
-
-      {loading && (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-          {error}
-        </div>
-      )}
-
-      {deleteError && (
-        <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-          {deleteError}
-        </div>
-      )}
-
-      {!loading && !error && (
-        <div className="overflow-x-auto">
-          <Table data={filteredData} columns={columns} itemsPerPage={10} />
-        </div>
-      )}
-
-      <AddProduct
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
-
-      <EditProductModal
-        isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setSelectedEditProduct(null);
-        }}
-        product={selectedEditProduct}
-      />
-
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmDelete}
-        isLoading={deleteLoading}
-        title="Product"
+    {/* Search */}
+    <div className="mb-6">
+      <SearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Search..."
+        className="max-w-md"
       />
     </div>
-  );
+
+    {/* Loading Spinner */}
+    {loading && (
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
+      </div>
+    )}
+
+    {/* Errors */}
+    {error && (
+      <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        {error}
+      </div>
+    )}
+    {deleteError && (
+      <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        {deleteError}
+      </div>
+    )}
+
+    {/* Table */}
+    {!loading && !error && (
+      <div className="overflow-x-auto">
+        <Table data={filteredData} columns={columns} itemsPerPage={10} />
+      </div>
+    )}
+
+    {/* Add / Edit / Delete Modals */}
+    <AddProduct
+      isOpen={isAddModalOpen}
+      onClose={() => setIsAddModalOpen(false)}
+    />
+
+    <EditProductModal
+      isOpen={isEditModalOpen}
+      onClose={() => {
+        setIsEditModalOpen(false);
+        setSelectedEditProduct(null);
+      }}
+      product={selectedEditProduct}
+    />
+
+    <DeleteModal
+      isOpen={isDeleteModalOpen}
+      onClose={handleCloseModal}
+      onConfirm={handleConfirmDelete}
+      isLoading={deleteLoading}
+      title="Product"
+    />
+  </div>
+);
 };
 
 export default Product;
