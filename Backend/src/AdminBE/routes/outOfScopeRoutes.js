@@ -8,5 +8,7 @@ const router = express.Router();
 router.get("/scans", verifyToken, checkAdmin, out.handleGetScanPerDay);
 router.get("/out-of-scope", verifyToken, checkAdmin, out.handleGetOutOfScopeStatistics);
 router.delete("/out-of-scope/:id", verifyToken, checkAdmin, out.handleDeleteOutOfScope);
+router.get("/no-recommendation", verifyToken, checkAdmin, out.handleFetchOutOfScopeNoRecommendation);
+
 
 export default router;

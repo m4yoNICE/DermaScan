@@ -1,6 +1,6 @@
 import { db } from "../../config/db.js";
 import { skinCareProducts, conditionProducts } from "../../drizzle/schema.js";
-import { eq } from "drizzle-orm";
+import { eq, sql} from "drizzle-orm";
 
 export const getAllProducts = async () => {
   const rows = await db
@@ -124,3 +124,45 @@ export const deleteProduct = async (id) => {
 
   return result;
 };
+
+export const conditionCounts = async () => {
+  const result = await db
+    .select({
+      conditionId: conditionProducts.conditionId,
+      count: sql`COUNT(${conditionProducts.productId})`,  
+    })
+    .from(conditionProducts)
+    .groupBy(conditionProducts.conditionId);
+    
+  return result;
+}
+
+export const fetchConditionProducts = async () => {
+  const result = await db
+  .select({
+    conditionId: conditionProducts.conditionId,
+    productId: conditionProducts.productId,
+    productName: skinCareProducts.productName,
+  })
+  .from(conditionProducts)
+  .leftJoin(
+    skinCareProducts,
+    eq(conditionProducts.productId, skinCareProducts.id)
+  );
+
+return result;
+}
+
+export const getAllProductImages = async () => {
+  const result = await db
+  .select({
+    productId: skinCareProducts.id,
+    name: skinCareProducts.productName,
+    image: skinCareProducts.productImage,
+    conditionId: conditionProducts.conditionId,
+  })
+  .from(conditionProducts)
+  .innerJoin(skinCareProducts, eq(skinCareProducts.id, conditionProducts.productId));
+
+  return result;
+}

@@ -45,6 +45,20 @@ export const deleteUser = createAsyncThunk(
       });
   },
 );
+export const getUserCount = createAsyncThunk(
+  "users/getUserCount",
+  (_, { rejectWithValue }) => {
+    return Api.getUserCount()
+      .then((response) => response.data)
+      .catch((err) => {
+        return rejectWithValue(
+          err.response?.data?.message || "Failed to fetch user count",
+        );
+      });
+  },
+);
+
+
 
 //initial state
 const initialState = {
@@ -120,6 +134,19 @@ const userSlice = createSlice({
       .addCase(deleteUser.rejected, (state, action) => {
         state.deleteLoading = false;
         state.deleteError = action.payload;
+      })
+      //get user count
+      .addCase(getUserCount.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserCount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userCount = action.payload;
+      })
+      .addCase(getUserCount.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
