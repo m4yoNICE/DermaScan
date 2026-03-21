@@ -1,6 +1,6 @@
 import { db } from "../../config/db.js";
 import { skinCareProducts, conditionProducts } from "../../drizzle/schema.js";
-import { eq } from "drizzle-orm";
+import { eq, sql} from "drizzle-orm";
 
 export const getAllProducts = async () => {
   const rows = await db
@@ -8,10 +8,13 @@ export const getAllProducts = async () => {
       id: skinCareProducts.id,
       productName: skinCareProducts.productName,
       productImage: skinCareProducts.productImage,
+      productBrand: skinCareProducts.productBrand,
+      highlightedIngredients: skinCareProducts.highlightedIngredients,
       ingredient: skinCareProducts.ingredient,
       description: skinCareProducts.description,
       productType: skinCareProducts.productType,
       locality: skinCareProducts.locality,
+      availableIn: skinCareProducts.availableIn,
       skinType: skinCareProducts.skinType,
       dermaTested: skinCareProducts.dermaTested,
       timeRoutine: skinCareProducts.timeRoutine,
@@ -20,10 +23,7 @@ export const getAllProducts = async () => {
       conditionId: conditionProducts.conditionId,
     })
     .from(skinCareProducts)
-    .leftJoin(
-      conditionProducts,
-      eq(skinCareProducts.id, conditionProducts.productId),
-    );
+    .leftJoin(conditionProducts, eq(skinCareProducts.id, conditionProducts.productId));
 
   const grouped = {};
   for (const row of rows) {
@@ -32,10 +32,13 @@ export const getAllProducts = async () => {
         id: row.id,
         productName: row.productName,
         productImage: row.productImage,
+        productBrand: row.productBrand,
+        highlightedIngredients: row.highlightedIngredients,
         ingredient: row.ingredient,
         description: row.description,
         productType: row.productType,
         locality: row.locality,
+        availableIn: row.availableIn,
         skinType: row.skinType,
         dermaTested: row.dermaTested,
         timeRoutine: row.timeRoutine,
@@ -51,6 +54,7 @@ export const getAllProducts = async () => {
 
   return Object.values(grouped);
 };
+
 export const getProductById = async (id) => {
   const result = await db
     .select()
@@ -120,3 +124,45 @@ export const deleteProduct = async (id) => {
 
   return result;
 };
+
+export const conditionCounts = async () => {
+  const result = await db
+    .select({
+      conditionId: conditionProducts.conditionId,
+      count: sql`COUNT(${conditionProducts.productId})`,  
+    })
+    .from(conditionProducts)
+    .groupBy(conditionProducts.conditionId);
+    
+  return result;
+}
+
+export const fetchConditionProducts = async () => {
+  const result = await db
+  .select({
+    conditionId: conditionProducts.conditionId,
+    productId: conditionProducts.productId,
+    productName: skinCareProducts.productName,
+  })
+  .from(conditionProducts)
+  .leftJoin(
+    skinCareProducts,
+    eq(conditionProducts.productId, skinCareProducts.id)
+  );
+
+return result;
+}
+
+export const getAllProductImages = async () => {
+  const result = await db
+  .select({
+    productId: skinCareProducts.id,
+    name: skinCareProducts.productName,
+    image: skinCareProducts.productImage,
+    conditionId: conditionProducts.conditionId,
+  })
+  .from(conditionProducts)
+  .innerJoin(skinCareProducts, eq(skinCareProducts.id, conditionProducts.productId));
+
+  return result;
+}

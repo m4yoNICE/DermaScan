@@ -98,8 +98,22 @@ export const roleRelations = relations(role, ({ many }) => ({
 export const skinCareProductsRelations = relations(
   skinCareProducts,
   ({ many }) => ({
-    conditionProducts: many(conditionProducts),
     recommendations: many(productRecommendations),
+    conditionProducts: many(conditionProducts),
+  }),
+);
+
+export const conditionProductsRelations = relations(
+  conditionProducts,
+  ({ one }) => ({
+    condition: one(skinConditions, {
+      fields: [conditionProducts.conditionId],
+      references: [skinConditions.id],
+    }),
+    product: one(skinCareProducts, {
+      fields: [conditionProducts.productId],
+      references: [skinCareProducts.id],
+    }),
   }),
 );
 
@@ -130,17 +144,3 @@ export const userRoutineRelations = relations(userRoutine, ({ one }) => ({
     references: [users.id],
   }),
 }));
-
-export const conditionProductsRelations = relations(
-  conditionProducts,
-  ({ one }) => ({
-    condition: one(skinConditions, {
-      fields: [conditionProducts.conditionId],
-      references: [skinConditions.id],
-    }),
-    product: one(skinCareProducts, {
-      fields: [conditionProducts.productId],
-      references: [skinCareProducts.id],
-    }),
-  }),
-);

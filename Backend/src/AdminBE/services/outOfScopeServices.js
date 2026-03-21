@@ -72,3 +72,18 @@ export async function deleteOutOfScope(req, res) {
     return res.status(500).json({ error: "Server error" });
   }
 }
+
+export async function fetchOutOfScopeNoRecommendation(){
+  try {
+    const result = await db
+  .select({
+    count: sql`COUNT(*)`,
+  })
+  .from(skinConditions)
+  .where(eq(skinConditions.canRecommend, "no"));
+    return result;
+  } catch (err) {
+    console.error("Fetch out of scope no recommendation error:", err);
+    throw new Error("Server error");
+  }
+}

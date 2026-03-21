@@ -55,13 +55,60 @@ const Api = {
     return Http.get("/api/admin/scope/out-of-scope", config);
   },
 
+  fetchScansPerDay: (config = {}) => {
+    return Http.get("/api/admin/scope/scans", config);
+  },
+
+  getSkinTypes: (config = {}) => {
+    return Http.get("/api/admin/skin-types/getSkinTypes", config);
+  },
+
+
+  getSkinConditions: (config = {}) => {
+    return Http.get("/api/admin/skin-types/skinConditions", config);
+  },
+
+  // Get User count and condition counts for dashboard stats
+  getUserCount: () => Http.get("/api/admin/users/count"),
+// Get condition counts for dashboard stats
+  getConditionCounts: () => Http.get("/api/admin/products/getConditionCounts"),
+// Get condition counts by product for dashboard stats
+  getConditionCountsByProduct: () => Http.get("/api/admin/products/getConditionCountsByProduct"),
+//
+  getRecommendationNoData: () => Http.get("/api/admin/scope/no-recommendation"),
+
+  getAnalysisData: () => Http.get("/api/admin/analysis"),
+  getConditions: () => Http.get("/api/admin/analysis/condition"),
+
+  // Get all product images for dashboard stats
+  getAllProductImages: () => Http.get("/api/admin/products/getAllProductImages"),
+
+  // Generate reports endpoint
+  generateProductReport: () => {
+    return Http.get("/api/admin/reports/generate/product", {
+      responseType: "blob",
+    });
+  },
+  generateUserReport: () => {
+    return Http.get("/api/admin/reports/generate/user", {
+      responseType: "blob",
+    });
+  },
+  generateAnalysisReport: () => {
+    return Http.get("/api/admin/reports/generate/analysis", {
+      responseType: "blob",
+    });
+  },
+
   getAnalysisData: () => Http.get("/api/admin/analysis"),
   getConditions: () => Http.get("/api/admin/analysis/condition"),
 
   getSkinImage: (data) =>
     Http.defaults.baseURL + "/api/uploads/skin-images/" + data,
   getProductImage: (data) =>
-    Http.defaults.baseURL + "/api/uploads/product-images/" + data,
+    data?.startsWith("http")
+      ? data
+      : Http.defaults.baseURL + "/api/uploads/product-images/" + data,
 };
 
 export default Api;

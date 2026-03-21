@@ -16,7 +16,8 @@ export async function mapSkinResultToCatalog(user_id, skinResult) {
 
   const condition = await findConditionByLabel(top1.label);
   if (!condition) return null;
-
+  console.log("top3 scores:", JSON.stringify(top3));
+  console.log("condition canRecommend:", condition.canRecommend);
   const status = checkResults(top1, top3, condition);
   const transactionId = await insertTransaction(
     user_id,
@@ -40,6 +41,20 @@ async function findConditionByLabel(label) {
     .limit(1);
 
   return condition;
+}
+
+//for analysis controller
+export async function getConditionById(conditionId) {
+  const [condition] = await db
+    .select({
+      id: skinConditions.id,
+      condition: skinConditions.condition,
+      targetIngredients: skinConditions.targetIngredients,
+    })
+    .from(skinConditions)
+    .where(eq(skinConditions.id, conditionId))
+    .limit(1);
+  return condition ?? null;
 }
 
 async function insertTransaction(userId, conditionId, score, status) {

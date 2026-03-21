@@ -12,7 +12,7 @@ const Api = {
   getUserByTokenAPI: () => Http.get("/api/users"),
   editUserAPI: (data) => Http.put("/api/users", data),
   deleteUserAPI: () => Http.delete("/api/users"),
-  updateSkinDataAPI: (data) => Http.post("/api/users/skin", data),
+  createSkinDataAPI: (data) => Http.post("/api/users/skin", data),
   resetSkinDataAPI: () => Http.delete("/api/users/skinreset"),
 
   // Journal
@@ -39,8 +39,9 @@ const Api = {
   getSkinImage: (data) =>
     Http.defaults.baseURL + "/api/uploads/skin-images/" + data,
   getProductImage: (data) =>
-    Http.defaults.baseURL + "/api/uploads/product-images/" + data,
-
+    data?.startsWith("http")
+      ? data
+      : Http.defaults.baseURL + "/api/uploads/product-images/" + data,
   // FormData
   uploadSkinImageAPI: (formData) => FormsData("/api/conditions/skin", formData),
   uploadProfilePicAPI: (formData) => FormsData("/api/profile/pic", formData),

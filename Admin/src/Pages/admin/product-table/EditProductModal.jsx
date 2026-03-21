@@ -9,15 +9,20 @@ import { SKIN_TYPES } from "@/constants/skinTypes";
 
 const EditProductModal = ({ isOpen, onClose, product }) => {
   const dispatch = useDispatch();
-  const { data: conditions } = useSelector((state) => state.condition);
+  const { data: conditions = [] } = useSelector(
+    (state) => state.conditions || {},
+  );
 
   const [formData, setFormData] = useState({
     productName: "",
     productImage: "",
+    productBrand: "",
+    highlightedIngredients: "",
     ingredient: "",
     description: "",
     productType: "",
     locality: "",
+    availableIn: "",
     skinType: "",
     dermaTested: false,
     timeRoutine: "",
@@ -29,10 +34,13 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
       setFormData({
         productName: product.productName || "",
         productImage: product.productImage || "",
+        productBrand: product.productBrand || "",
+        highlightedIngredients: product.highlightedIngredients || "",
         ingredient: product.ingredient || "",
         description: product.description || "",
         productType: product.productType || "",
         locality: product.locality || "",
+        availableIn: product.availableIn || "",
         skinType: product.skinType || "",
         dermaTested: product.dermaTested || false,
         timeRoutine: product.timeRoutine || "",
@@ -131,7 +139,47 @@ const EditProductModal = ({ isOpen, onClose, product }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Product Brand
+            </label>
+            <input
+              type="text"
+              name="productBrand"
+              value={formData.productBrand}
+              onChange={handleChange}
+              placeholder="e.g. Cetaphil, CeraVe"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
+            />
+          </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Highlighted Ingredients
+            </label>
+            <input
+              type="text"
+              name="highlightedIngredients"
+              value={formData.highlightedIngredients}
+              onChange={handleChange}
+              placeholder="e.g. Salicylic Acid, Niacinamide"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Available In
+            </label>
+            <input
+              type="text"
+              name="availableIn"
+              value={formData.availableIn}
+              onChange={handleChange}
+              placeholder="e.g. Shopee, Watson"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00CC99] focus:border-transparent"
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Product Image

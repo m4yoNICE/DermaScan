@@ -120,37 +120,62 @@ const AnalysisPage = () => {
     },
   ];
 
+  const handleGenerateAnalysisReport = async () => {
+    const res = await Api.generateAnalysisReport({ responseType: "blob" });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "analysis-report.pdf");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">Analysis</h1>
+  <div className="min-h-screen p-6 bg-gray-50">
+    {/* Page Title */}
+    <div className="mb-6 flex items-center justify-between">
+      <h1 className="text-3xl font-bold">Analysis</h1>
 
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border px-3 py-2 rounded w-full max-w-md"
-        />
-      </div>
-
-      {loading && (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-          {error}
-        </div>
-      )}
-
-      {!loading && !error && (
-        <Table data={filteredData} columns={columns} itemsPerPage={10} />
-      )}
+      {/* Generate Report Button */}
+      <button
+        onClick={handleGenerateAnalysisReport}
+        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-blue-700 active:scale-95 transition-all"
+      >
+        📊 Generate Report
+      </button>
     </div>
-  );
+
+    {/* Search Input */}
+    <div className="mb-6">
+      <input
+        type="text"
+        placeholder="Search..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="border px-3 py-2 rounded w-full max-w-md"
+      />
+    </div>
+
+    {/* Loading Spinner */}
+    {loading && (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
+      </div>
+    )}
+
+    {/* Error Message */}
+    {error && (
+      <div className="bg-red-50 border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+        {error}
+      </div>
+    )}
+
+    {/* Table */}
+    {!loading && !error && (
+      <Table data={filteredData} columns={columns} itemsPerPage={10} />
+    )}
+  </div>
+);
 };
 
 export default AnalysisPage;

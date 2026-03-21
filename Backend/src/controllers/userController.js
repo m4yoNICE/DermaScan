@@ -86,27 +86,19 @@ export async function deleteskindata(req, res) {
 
 export async function createskindata(req, res) {
   try {
-    console.log(req.body);
-    const { skin_type, skin_sensitivity, pigmentation, aging } = req.body;
+    const { skin_type, skin_sensitivity } = req.body;
     const userId = req.user.id;
-    if (!skin_type || skin_sensitivity === undefined) {
+
+    if (!skin_type || !skin_sensitivity) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-    const result = await createSkinData(
-      userId,
-      skin_type,
-      skin_sensitivity,
-      pigmentation,
-      aging,
-    );
-    if (result[0] === 0) {
-      return res
-        .status(404)
-        .json({ error: "User not found or no changes made" });
-    }
-    res.status(200).json({ message: "Skin data added successfully" });
+
+    const result = await createSkinData(userId, skin_type, skin_sensitivity);
+    res
+      .status(200)
+      .json({ message: "Skin data added successfully", data: result });
   } catch (err) {
-    console.error("Delete user error:", err);
+    console.error("Create skin data error:", err);
     res.status(500).json({ error: "Server error" });
   }
 }
