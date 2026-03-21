@@ -80,6 +80,9 @@ const Api = {
   getAnalysisData: () => Http.get("/api/admin/analysis"),
   getConditions: () => Http.get("/api/admin/analysis/condition"),
 
+  // Get all product images for dashboard stats
+  getAllProductImages: () => Http.get("/api/admin/products/getAllProductImages"),
+
   // Generate reports endpoint
   generateProductReport: () => {
     return Http.get("/api/admin/reports/generate/product", {

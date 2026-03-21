@@ -98,11 +98,25 @@ export const getConditionCountsByProduct = createAsyncThunk(
   },
 );
 
+export const getAllProductImages = createAsyncThunk(
+  "products/getAllProductImages",
+  (_, { rejectWithValue }) => {
+    return Api.getAllProductImages()
+      .then((response) => response.data)
+      .catch((err) => {
+        return rejectWithValue(
+          err.response?.data?.message || "Failed to fetch product images.",
+        );
+      });
+  },
+);
+
 //initial state
 const initialState = {
   products: [],
   getConditionCounts: [],
   getConditionCountsByProduct: [],
+  getAllProductImages: [],
   productsData: null,
   selectedProduct: null,
   loading: false,
@@ -225,6 +239,16 @@ const skinProductSlice = createSlice({
       })
       .addCase(getConditionCountsByProduct.rejected, (state, action) => {
         state.getConditionCountsByProduct = [];
+      })
+      // GET ALL PRODUCT IMAGES
+      .addCase(getAllProductImages.pending, (state) => {
+        state.getAllProductImages = [];
+      })
+      .addCase(getAllProductImages.fulfilled, (state, action) => {
+        state.getAllProductImages = action.payload.data;
+      })
+      .addCase(getAllProductImages.rejected, (state, action) => {
+        state.getAllProductImages = [];
       });
   },
 });

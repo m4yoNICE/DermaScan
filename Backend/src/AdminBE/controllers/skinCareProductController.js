@@ -107,3 +107,13 @@ export const handleFetchConditionProducts = async (req, res) => {
       return res.status(500).json({ error: "Server error" });
   }
 }
+
+export const handleGetAllProductImages = async (req, res) => {
+  try {
+      const images = await skinCareService.getAllProductImages();
+      return res.status(200).json({ success: true, message: "Product images fetched successfully", data: images });
+  } catch (err) {
+      console.error("Fetch product images error:", err);
+      return res.status(500).json({ error: "Server error" });
+  }
+}

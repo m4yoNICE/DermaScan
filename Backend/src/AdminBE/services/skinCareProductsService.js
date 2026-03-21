@@ -152,3 +152,17 @@ export const fetchConditionProducts = async () => {
 
 return result;
 }
+
+export const getAllProductImages = async () => {
+  const result = await db
+  .select({
+    productId: skinCareProducts.id,
+    name: skinCareProducts.productName,
+    image: skinCareProducts.productImage,
+    conditionId: conditionProducts.conditionId,
+  })
+  .from(conditionProducts)
+  .innerJoin(skinCareProducts, eq(skinCareProducts.id, conditionProducts.productId));
+
+  return result;
+}
