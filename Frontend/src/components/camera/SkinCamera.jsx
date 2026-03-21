@@ -20,7 +20,7 @@ import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 
 const SkinCamera = () => {
-  const { setAnalysis, setRecommendation } = useAnalysis();
+  const { setAnalysis, setRecommendation, setAnalysisDescription, setRecommendDescription } = useAnalysis();
   const [failMessage, setFailMessage] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState("back");
@@ -108,9 +108,12 @@ const SkinCamera = () => {
           createdAt: analysis.data.createdAt,
           updatedAt: analysis.data.updatedAt,
           image_url: analysis.data.image_url,
+          top3: analysis.data.top3,
         };
         console.log("Analysis Results: ", analysisResults);
         setAnalysis(analysisResults);
+        setAnalysisDescription(res.data.analysisDescription);
+        setRecommendDescription(res.data.recommendDescription);
 
         const recommendationResults =
           recommendation?.map((item) => ({

@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import joblib
-from embedder import get_embedding  # FIXED
+from AI.dermfoundation.embedder import get_embedding  # FIXED
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
