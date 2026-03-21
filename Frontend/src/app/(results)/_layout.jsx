@@ -1,8 +1,11 @@
 import { Stack, router } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useAnalysis } from "src/contexts/AnalysisContext";
 
 const AnalysisLayout = () => {
+  const { clearAnalysis } = useAnalysis();
+
   return (
     <Stack
       screenOptions={{
@@ -12,7 +15,10 @@ const AnalysisLayout = () => {
         headerTitleStyle: { fontWeight: "700" },
         headerLeft: () => (
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => {
+              clearAnalysis();
+              router.back();
+            }}
             style={{ marginLeft: 5 }}
           >
             <Ionicons name="arrow-back" size={24} color="#fff" />

@@ -1,5 +1,6 @@
 import os
 import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../dermfoundation"))
 import numpy as np
 import joblib
 from sklearn.preprocessing import LabelEncoder
@@ -10,18 +11,23 @@ from sklearn.utils.class_weight import compute_class_weight
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DATA_DIR    = "../training_data"
-CACHE_DIR   = "../trained_data/cache"
-EMB_PATH    = os.path.join(CACHE_DIR, "embeddings.npy")
-LABEL_PATH  = os.path.join(CACHE_DIR, "labels.npy")
-LR_PATH     = "../trained_data/lr_classifier.pkl"
-MLP_PATH    = "../trained_data/mlp_classifier.keras"
-LE_PATH     = "../trained_data/label_encoder.pkl"
+# CACHE_DIR   = "../trained_data/cache"
+CACHE_DIR = "../trained_data/merge_cache"
+EMB_PATH  = os.path.join(CACHE_DIR, "embeddings.npy")
+LABEL_PATH = os.path.join(CACHE_DIR, "labels.npy")
+LR_PATH  = "../trained_data/merged/lr_classifier.pkl"
+MLP_PATH = "../trained_data/merged/mlp_classifier.keras"
+LE_PATH  = "../trained_data/merged/label_encoder.pkl"
+RF_PATH  = "../trained_data/merged/rf_classifier.pkl"
+
+os.makedirs("../trained_data/merged", exist_ok=True)
+
 
 IMAGE_EXTS  = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff"}
 
 # ── Step 1: Extract or load embeddings ───────────────────────────────────────
 def extract_embeddings():
-    from embedder import get_embedding
+    from AI.dermfoundation.embedder import get_embedding
 
     os.makedirs(CACHE_DIR, exist_ok=True)
 
@@ -135,6 +141,33 @@ print(classification_report(y_test, lr.predict(X_test), target_names=le.classes_
 joblib.dump((lr, le), LR_PATH)
 print(f"✅ LR saved: {LR_PATH}")
 
+# ── Step 3b: Train Random Forest ────────────────────────────────────────────
+from sklearn.ensemble import RandomForestClassifier
+
+print("\n" + "="*50)
+print("Training Random Forest...")
+print("="*50)
+
+
+rf = RandomForestClassifier(
+    n_estimators=200,
+    class_weight="balanced",
+    random_state=42,
+    n_jobs=-1
+)
+rf.fit(X_train, y_train)
+
+rf_train_acc = rf.score(X_train, y_train)
+rf_test_acc  = rf.score(X_test, y_test)
+print(f"\nRF Train: {rf_train_acc:.2%}")
+print(f"RF Test:  {rf_test_acc:.2%}")
+
+print("\nRF Per-class report:")
+print(classification_report(y_test, rf.predict(X_test), target_names=le.classes_))
+
+joblib.dump((rf, le), RF_PATH)
+print(f"✅ RF saved: {RF_PATH}")
+
 # ── Step 4: Train MLP ─────────────────────────────────────────────────────────
 print("\n" + "="*50)
 print("Training MLP...")
@@ -197,5 +230,8 @@ print("\n" + "="*50)
 print("SUMMARY")
 print("="*50)
 print(f"LR  Test Accuracy: {lr_test_acc:.2%}")
+print(f"RF  Test Accuracy: {rf_test_acc:.2%}")
 print(f"MLP Test Accuracy: {mlp_test_acc:.2%}")
-print(f"Winner: {'LR' if lr_test_acc >= mlp_test_acc else 'MLP'}")
+best_acc = max(lr_test_acc, rf_test_acc, mlp_test_acc)
+winner = "LR" if best_acc == lr_test_acc else "RF" if best_acc == rf_test_acc else "MLP"
+print(f"Winner: {winner}")
