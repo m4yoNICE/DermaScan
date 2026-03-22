@@ -31,6 +31,19 @@ export const getUserById = createAsyncThunk(
   },
 );
 
+export const editUserAPI = createAsyncThunk(
+  "users/editUserAPI",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const res = await Api.editUserAPI(id, data); // your Api.js call
+      return res.data.user; // this will be available as action.payload
+    } catch (err) {
+      // return a rejected value for error handling in slice
+      return rejectWithValue(err.response?.data || { error: err.message });
+    }
+  }
+);
+
 export const deleteUser = createAsyncThunk(
   "users/deleteUser",
   (id, { rejectWithValue }) => {
@@ -134,6 +147,22 @@ const userSlice = createSlice({
       .addCase(deleteUser.rejected, (state, action) => {
         state.deleteLoading = false;
         state.deleteError = action.payload;
+      })
+      // edit user
+      .addCase(editUserAPI.fulfilled, (state, action) => {
+        state.editLoading = false;
+        state.editError = null;
+
+        const index = state.users.findIndex(
+          (u) => u.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.users[index] = action.payload;
+        }
+      })
+      .addCase(editUserAPI.rejected, (state, action) => {
+        state.editLoading = false;
+        state.editError = action.payload?.error || "Failed to update user";
       })
       //get user count
       .addCase(getUserCount.pending, (state) => {
