@@ -76,6 +76,8 @@ await db.insert(skinConditions).values([
   { id: 32, condition: "post-inflammatory-erythema-severe", canRecommend: "No", targetIngredients: null },
   { id: 33, condition: "post-inflammatory-pigmentation-severe", canRecommend: "No", targetIngredients: null },
   { id: 34, condition: "out-of-scope", canRecommend: "No", targetIngredients: null },
+  { id: 35, condition: "acne-fungal-mild", canRecommend: "Yes", targetIngredients: "Ketoconazole, Nizoral" },
+  { id: 36, condition: "acne-fungal-severe", canRecommend: "No", targetIngredients: null },
 ]);
 //adapalene, benzoid peroxide, and clindamycin is what i put there as not for sensitive
 

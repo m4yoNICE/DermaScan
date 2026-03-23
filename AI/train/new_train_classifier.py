@@ -27,7 +27,7 @@ IMAGE_EXTS  = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff"}
 
 # ── Step 1: Extract or load embeddings ───────────────────────────────────────
 def extract_embeddings():
-    from AI.dermfoundation.embedder import get_embedding
+    from embedder import get_embedding
 
     os.makedirs(CACHE_DIR, exist_ok=True)
 
