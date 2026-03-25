@@ -68,14 +68,7 @@ export async function deleteuser(req, res) {
 export async function deleteskindata(req, res) {
   try {
     const userId = req.user.id;
-    const updatedRows = await deleteSkinData(userId);
-
-    if (!updatedRows) {
-      // Change this
-      return res
-        .status(404)
-        .json({ error: "User not found or no data updated" });
-    }
+    await deleteSkinData(userId);
 
     res.status(200).json({ message: "Skin data cleared successfully" });
   } catch (err) {
@@ -88,8 +81,10 @@ export async function createskindata(req, res) {
   try {
     const { skin_type, skin_sensitivity } = req.body;
     const userId = req.user.id;
+    console.log("hehe: ", skin_sensitivity, skin_type);
 
     if (!skin_type || !skin_sensitivity) {
+      console.log("Missing Required Fields");
       return res.status(400).json({ error: "Missing required fields" });
     }
 

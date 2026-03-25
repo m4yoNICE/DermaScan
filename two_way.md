@@ -1,221 +1,252 @@
 Loading cached embeddings...
-  Loaded acne-blackheads-mild: 573 embeddings
-  Loaded acne-blackheads-moderate: 675 embeddings
-  Loaded acne-blackheads-severe: 745 embeddings
-  Loaded acne-cyst: 603 embeddings
-  Loaded acne-fungal-mild: 349 embeddings
-  Loaded acne-fungal-severe: 258 embeddings
-  Loaded acne-nodules: 757 embeddings
-  Loaded acne-papules-mild: 697 embeddings
-  Loaded acne-papules-moderate: 390 embeddings
-  Loaded acne-papules-severe: 319 embeddings
-  Loaded acne-pustules-mild: 588 embeddings
-  Loaded acne-pustules-moderate: 328 embeddings
-  Loaded acne-pustules-severe: 612 embeddings
-  Loaded acne-whiteheads-mild: 821 embeddings
-  Loaded acne-whiteheads-moderate: 240 embeddings
-  Loaded acne-whiteheads-severe: 116 embeddings
-  Loaded eczema-mild: 788 embeddings
-  Loaded eczema-moderate: 751 embeddings
-  Loaded eczema-severe: 570 embeddings
-  Loaded enlarged-pores-mild: 590 embeddings
-  Loaded enlarged-pores-moderate: 559 embeddings
-  Loaded enlarged-pores-severe: 691 embeddings
-  Loaded melasma-mild: 520 embeddings
-  Loaded melasma-moderate: 713 embeddings
-  Loaded melasma-severe: 627 embeddings
-  Loaded milia-mild: 887 embeddings
-  Loaded milia-moderate: 671 embeddings
-  Loaded milia-severe: 218 embeddings
-  Loaded out-of-scope: 600 embeddings
-  Loaded post-inflammatory-erythema-mild: 458 embeddings
-  Loaded post-inflammatory-erythema-moderate: 166 embeddings
-  Loaded post-inflammatory-erythema-severe: 454 embeddings
-  Loaded post-inflammatory-pigmentation-mild: 638 embeddings
-  Loaded post-inflammatory-pigmentation-moderate: 638 embeddings
-  Loaded post-inflammatory-pigmentation-severe: 634 embeddings
-  Skipping psoriasis
+Loaded acne-blackheads-mild: 573 embeddings
+Loaded acne-blackheads-moderate: 675 embeddings
+Loaded acne-blackheads-severe: 745 embeddings
+Loaded acne-cyst: 603 embeddings
+Loaded acne-fungal-mild: 349 embeddings
+Loaded acne-fungal-severe: 258 embeddings
+Loaded acne-nodules: 757 embeddings
+Loaded acne-papules-mild: 697 embeddings
+Loaded acne-papules-moderate: 390 embeddings
+Loaded acne-papules-severe: 319 embeddings
+Loaded acne-pustules-mild: 588 embeddings
+Loaded acne-pustules-moderate: 328 embeddings
+Loaded acne-pustules-severe: 497 embeddings
+Loaded acne-whiteheads-mild: 821 embeddings
+Loaded acne-whiteheads-moderate: 240 embeddings
+Loaded acne-whiteheads-severe: 116 embeddings
+Loaded eczema-mild: 788 embeddings
+Loaded eczema-moderate: 751 embeddings
+Loaded eczema-severe: 570 embeddings
+Loaded enlarged-pores-mild: 590 embeddings
+Loaded enlarged-pores-moderate: 559 embeddings
+Loaded enlarged-pores-severe: 691 embeddings
+Loaded melasma-mild: 520 embeddings
+Loaded melasma-moderate: 713 embeddings
+Loaded melasma-severe: 627 embeddings
+Loaded milia-mild: 887 embeddings
+Loaded milia-moderate: 671 embeddings
+Loaded milia-severe: 218 embeddings
+Loaded out-of-scope: 386 embeddings
+Loaded post-inflammatory-erythema-mild: 458 embeddings
+Loaded post-inflammatory-erythema-moderate: 166 embeddings
+Loaded post-inflammatory-erythema-severe: 454 embeddings
+Loaded post-inflammatory-pigmentation-mild: 638 embeddings
+Loaded post-inflammatory-pigmentation-moderate: 638 embeddings
+Loaded post-inflammatory-pigmentation-severe: 634 embeddings
+Skipping psoriasis
 
-Total: (19244, 6144)
+Total: (18915, 6144)
 
-==================================================
+==================================================  
 Training Stage 1: Condition Classifier
-==================================================
-Conditions (14): ['acne-blackheads', 'acne-cyst', 'acne-fungal', 'acne-nodules', 'acne-papules', 'acne-pustules', 'acne-whiteheads', 'eczema', 'enlarged-pores', 'melasma', 'milia', 'out-of-scope', 'post-inflammatory-erythema', 'post-inflammatory-pigmentation']
-Stage 1 Train: 99.93%
-Stage 1 Test:  94.88%
+==================================================  
+Conditions (14): [np.str_('acne-blackheads'), np.str_('acne-cyst'), np.str_('acne-fungal'), np.str_('acne-nodules'), np.str_('acne-papules'), np.str_('acne-pustules'), np.str_('acne-whiteheads'), np.str_('eczema'), np.str_('enlarged-pores'), np.str_('melasma'), np.str_('milia'), np.str_('out-of-scope'), np.str_('post-inflammatory-erythema'), np.str_('post-inflammatory-pigmentation')]
+Stage 1 Train: 100.00%
+Stage 1 Test: 96.01%
 
 Per-class report:
-                                precision    recall  f1-score   support
+precision recall f1-score support
 
-               acne-blackheads       0.96      0.95      0.95       399
-                     acne-cyst       0.91      0.88      0.89       121
-                   acne-fungal       0.97      1.00      0.98       121
-                  acne-nodules       0.96      0.94      0.95       151
-                  acne-papules       0.94      0.94      0.94       281
-                 acne-pustules       0.96      0.96      0.96       306
-               acne-whiteheads       0.97      0.95      0.96       235
-                        eczema       0.96      0.97      0.96       422
-                enlarged-pores       0.99      0.98      0.98       368
-                       melasma       0.98      0.95      0.96       372
-                         milia       0.95      0.97      0.96       355
-                  out-of-scope       0.82      0.88      0.85       120
-    post-inflammatory-erythema       0.87      0.84      0.85       216
-post-inflammatory-pigmentation       0.95      0.97      0.96       382
+               acne-blackheads       0.96      0.94      0.95       399
+                     acne-cyst       0.90      0.89      0.90       121
+                   acne-fungal       0.95      1.00      0.98       121
+                  acne-nodules       0.97      0.93      0.95       151
+                  acne-papules       0.93      0.94      0.93       281
+                 acne-pustules       0.95      0.96      0.95       283
+               acne-whiteheads       0.97      0.97      0.97       235
+                        eczema       0.97      0.98      0.97       422
+                enlarged-pores       0.99      0.99      0.99       368
+                       melasma       0.98      0.96      0.97       372
+                         milia       0.96      0.99      0.97       355
+                  out-of-scope       1.00      1.00      1.00        77
+    post-inflammatory-erythema       0.95      0.91      0.93       216
 
-                      accuracy                           0.95      3849
-                     macro avg       0.94      0.94      0.94      3849
-                  weighted avg       0.95      0.95      0.95      3849
+post-inflammatory-pigmentation 0.95 0.96 0.95 382
+
+                      accuracy
+    0.96      3783
+                     macro avg       0.96      0.96      0.96      3783
+                  weighted avg       0.96      0.96      0.96      3783
 
 Stage 1 saved.
 
-==================================================
+==================================================  
 Training Stage 2: Severity Classifiers
 ==================================================
 
-[acne-blackheads] 1993 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 100.00% | Test: 89.22%
-              precision    recall  f1-score   support
+[acne-blackheads] 1993 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]  
+ Train: 100.00% | Test: 89.47%
+precision recall f1-score support
 
-        mild       0.90      0.84      0.87       115
+        mild       0.91      0.84      0.87       115
     moderate       0.86      0.89      0.88       135
-      severe       0.91      0.93      0.92       149
+      severe       0.92      0.94      0.93       149
 
     accuracy                           0.89       399
-   macro avg       0.89      0.89      0.89       399
-weighted avg       0.89      0.89      0.89       399
 
-  Saved: ../trained_data/two_stage\stage2_acne-blackheads.pkl
+macro avg 0.89 0.89 0.89 399
+weighted avg 0.90 0.89 0.89 399
+
+Saved: ../trained_data_two_stage\stage2_acne-blackheads.pkl
 
 [acne-cyst] No severity variants — skipping
 
-[acne-fungal] 607 samples, classes: ['mild', 'severe']
-  Train: 99.18% | Test: 98.36%
-              precision    recall  f1-score   support
+[acne-fungal] 607 samples, classes: [np.str_('mild'), np.str_('severe')]
+Train: 99.18% | Test: 98.36%
+precision recall f1-score support
 
         mild       0.99      0.99      0.99        70
       severe       0.98      0.98      0.98        52
 
     accuracy                           0.98       122
-   macro avg       0.98      0.98      0.98       122
-weighted avg       0.98      0.98      0.98       122
 
-  Saved: ../trained_data/two_stage\stage2_acne-fungal.pkl
+macro avg 0.98 0.98 0.98 122
+weighted avg 0.98 0.98 0.98 122
+
+Saved: ../trained_data_two_stage\stage2_acne-fungal.pkl
 
 [acne-nodules] No severity variants — skipping
 
-[acne-papules] 1406 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 99.38% | Test: 86.52%
-              precision    recall  f1-score   support
+[acne-papules] 1406 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 99.38% | Test: 86.52%
+precision recall f1-score support
 
         mild       0.94      0.92      0.93       140
     moderate       0.74      0.85      0.79        78
       severe       0.88      0.77      0.82        64
 
     accuracy                           0.87       282
-   macro avg       0.85      0.84      0.85       282
-weighted avg       0.87      0.87      0.87       282
 
-  Saved: ../trained_data/two_stage\stage2_acne-papules.pkl
+macro avg 0.85 0.84 0.85 282
+weighted avg 0.87 0.87 0.87 282
 
-[acne-pustules] 1528 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 97.30% | Test: 90.85%
-              precision    recall  f1-score   support
+Saved: ../trained_data_two_stage\stage2_acne-papules.pkl
 
-        mild       0.91      0.91      0.91       118
-    moderate       0.84      0.88      0.86        66
-      severe       0.94      0.93      0.93       122
+Train: 99.12% | Test: 94.70%
+precision recall f1-score support
 
-    accuracy                           0.91       306
-   macro avg       0.90      0.90      0.90       306
-weighted avg       0.91      0.91      0.91       306
+        mild       0.96      0.94      0.95       118
+    moderate       0.88      0.91      0.90        66
+      severe       0.98      0.98      0.98        99
 
-  Saved: ../trained_data/two_stage\stage2_acne-pustules.pkl
+    accuracy                           0.95       283
 
-[acne-whiteheads] 1177 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 98.30% | Test: 91.95%
-              precision    recall  f1-score   support
+macro avg 0.94 0.94 0.94 283
+weighted avg 0.95 0.95 0.95 283
+
+Saved: ../trained_data_two_stage\stage2_acne-pustules.pkl
+
+[acne-whiteheads] 1177 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 98.30% | Test: 91.95%
+precision recall f1-score support
 
         mild       0.95      0.94      0.94       165
     moderate       0.80      0.81      0.80        48
       severe       1.00      1.00      1.00        23
 
     accuracy                           0.92       236
-   macro avg       0.91      0.92      0.92       236
-weighted avg       0.92      0.92      0.92       236
 
-  Saved: ../trained_data/two_stage\stage2_acne-whiteheads.pkl
+macro avg 0.91 0.92 0.92 236
+weighted avg 0.92 0.92 0.92 236
 
-[eczema] 2109 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 95.20% | Test: 55.21%
-              precision    recall  f1-score   support
+Saved: ../trained_data_two_stage\stage2_acne-whiteheads.pkl
 
-        mild       0.60      0.65      0.62       158
+[eczema] 2109 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 95.14% | Test: 54.98%
+precision recall f1-score support
+
+        mild       0.59      0.65      0.62       158
     moderate       0.49      0.46      0.47       150
       severe       0.56      0.54      0.55       114
 
     accuracy                           0.55       422
-   macro avg       0.55      0.55      0.55       422
-weighted avg       0.55      0.55      0.55       422
 
-  Saved: ../trained_data/two_stage\stage2_eczema.pkl
+macro avg 0.55 0.55 0.55 422
+weighted avg 0.55 0.55 0.55 422
 
-[enlarged-pores] 1840 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 92.60% | Test: 82.61%
-              precision    recall  f1-score   support
+Saved: ../trained_data_two_stage\stage2_eczema.pkl
+
+[enlarged-pores] 1840 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 92.53% | Test: 82.61%
+precision recall f1-score support
 
         mild       0.78      0.78      0.78       118
     moderate       0.80      0.77      0.79       112
       severe       0.88      0.91      0.90       138
 
     accuracy                           0.83       368
-   macro avg       0.82      0.82      0.82       368
-weighted avg       0.83      0.83      0.83       368
 
-  Saved: ../trained_data/two_stage\stage2_enlarged-pores.pkl
+macro avg 0.82 0.82 0.82 368
+weighted avg 0.83 0.83 0.83 368
 
-[melasma] 1860 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 96.84% | Test: 84.68%
-              precision    recall  f1-score   support
+Saved: ../trained_data_two_stage\stage2_enlarged-pores.pkl
+
+[melasma] 1860 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 96.84% | Test: 84.68%
+precision recall f1-score support
 
         mild       0.75      0.74      0.74       104
     moderate       0.81      0.83      0.82       143
       severe       0.97      0.96      0.96       125
 
     accuracy                           0.85       372
-   macro avg       0.84      0.84      0.84       372
-classes: ['mild', 'moderate', 'severe']
-  Train: 100.00% | Test: 86.11%
-              precision    recall  f1-score   support
+
+macro avg 0.84 0.84 0.84 372
+weighted avg 0.85 0.85 0.85 372
+
+Saved: ../trained_data_two_stage\stage2_melasma.pkl
+
+[milia] 1776 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 90.77% | Test: 65.73%
+precision recall f1-score support
+
+        mild       0.84      0.77      0.80       178
+    moderate       0.57      0.58      0.58       134
+      severe       0.34      0.43      0.38        44
+
+    accuracy                           0.66       356
+
+macro avg 0.58 0.59 0.59 356
+weighted avg 0.68 0.66 0.67 356
+
+Saved: ../trained_data_two_stage\stage2_milia.pkl
+
+[out-of-scope] No severity variants — skipping
+
+[post-inflammatory-erythema] 1078 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 100.00% | Test: 85.65%
+precision recall f1-score support
 
         mild       0.90      0.96      0.93        92
-    moderate       0.70      0.48      0.57        33
-      severe       0.86      0.90      0.88        91
+    moderate       0.67      0.48      0.56        33
+      severe       0.86      0.89      0.88        91
 
     accuracy                           0.86       216
-   macro avg       0.82      0.78      0.79       216
-weighted avg       0.85      0.86      0.85       216
 
-  Saved: ../trained_data/two_stage\stage2_post-inflammatory-erythema.pkl
+macro avg 0.81 0.78 0.79 216
+weighted avg 0.85 0.86 0.85 216
 
-[post-inflammatory-pigmentation] 1910 samples, classes: ['mild', 'moderate', 'severe']
-  Train: 99.35% | Test: 96.34%
-              precision    recall  f1-score   support
+Saved: ../trained_data_two_stage\stage2_post-inflammatory-erythema.pkl
+
+[post-inflammatory-pigmentation] 1910 samples, classes: [np.str_('mild'), np.str_('moderate'), np.str_('severe')]
+Train: 99.35% | Test: 96.34%
+precision recall f1-score support
 
         mild       0.97      0.95      0.96       128
     moderate       0.97      0.98      0.97       127
       severe       0.95      0.97      0.96       127
 
     accuracy                           0.96       382
-   macro avg       0.96      0.96      0.96       382
-weighted avg       0.96      0.96      0.96       382
 
-  Saved: ../trained_data/two_stage\stage2_post-inflammatory-pigmentation.pkl
+macro avg 0.96 0.96 0.96 382
+weighted avg 0.96 0.96 0.96 382
+
+Saved: ../trained_data_two_stage\stage2_post-inflammatory-pigmentation.pkl
 
 ==================================================
 DONE
 ==================================================
 Stage 1 conditions: 14
 Stage 2 severity models trained: 11
-Conditions with no severity model: {'acne-cyst', 'out-of-scope', 'acne-nodules'}
-PS C:\Codes\CAPSTONE\DermaScan\ai\train>
+Conditions with no severity model: {np.str*('out-of-scope'), np.str*('acne-cyst'), np.str\_('acne-nodules')}

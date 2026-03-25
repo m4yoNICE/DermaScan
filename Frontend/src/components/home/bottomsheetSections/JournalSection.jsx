@@ -12,7 +12,11 @@ import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import Button from "@/components/designs/Button";
 import { useHomeData } from "@/contexts/HomeDataContext";
 
-const MOODS = ["😊", "😐", "😞"];
+const MOODS = [
+  { value: "happy", label: "Happy", emoji: "😊" },
+  { value: "neutral", label: "Neutral", emoji: "😐" },
+  { value: "sad", label: "Sad", emoji: "😞" },
+];
 
 const JournalSection = ({ selectedDate }) => {
   const { journals, fetchJournals } = useHomeData();
@@ -21,9 +25,15 @@ const JournalSection = ({ selectedDate }) => {
 
   const currentJournal = journals[selectedDate];
 
+  // Normalize: support legacy emoji values → map to string
+  const normalizeMood = (m) => {
+    const legacy = { "😊": "happy", "😐": "neutral", "😞": "sad" };
+    return legacy[m] || m;
+  };
+
   useEffect(() => {
     setDraft(currentJournal?.text || "");
-    setMood(currentJournal?.mood || null);
+    setMood(currentJournal?.mood ? normalizeMood(currentJournal.mood) : null);
   }, [currentJournal?.id, selectedDate]);
 
   const handleSave = async () => {
@@ -67,11 +77,13 @@ const JournalSection = ({ selectedDate }) => {
       <View style={styles.moodRow}>
         {MOODS.map((m) => (
           <TouchableOpacity
-            key={m}
-            onPress={() => setMood(m === mood ? null : m)}
-            style={[styles.moodBtn, mood === m && styles.moodActive]}
+            key={m.value}
+            onPress={() => setMood(m.value === mood ? null : m.value)}
+            style={[styles.moodBtn, mood === m.value && styles.moodActive]}
+            accessibilityLabel={m.label}
+            accessibilityRole="button"
           >
-            <Text style={styles.moodEmoji}>{m}</Text>
+            <Text style={styles.moodEmoji}>{m.emoji}</Text>
           </TouchableOpacity>
         ))}
       </View>

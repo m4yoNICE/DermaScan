@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
 CACHE_DIR = "../trained_data/cache"
-OUT_DIR = "../trained_data/two_stage"
+OUT_DIR = "../trained_data_two_stage"
 os.makedirs(OUT_DIR, exist_ok=True)
 
 SEVERITY = {"mild", "moderate", "severe"}

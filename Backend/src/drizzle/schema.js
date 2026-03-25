@@ -21,7 +21,7 @@ export const journals = mysqlTable("journals", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
   journalDate: date("journal_date", { mode: "string" }).notNull(),
-  mood: varchar("mood", { length: 10 }).default(null), // 😊 😐 😞
+  mood: varchar("mood", { length: 10 }).default(null), // "happy" | "neutral" | "sad"
   createdAt: datetime("created_at", { mode: "string", fsp: 3 })
     .default(sql`CURRENT_TIMESTAMP(3)`)
     .notNull(),
@@ -63,7 +63,7 @@ export const skinAnalysis = mysqlTable("skin_analysis", {
   userId: int("user_id")
     .notNull()
     .references(() => users.id, {
-      onDelete: "restrict",
+      onDelete: "cascade",
       onUpdate: "cascade",
     }),
   status: varchar({ length: 255 }).notNull(),

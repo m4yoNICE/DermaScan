@@ -74,5 +74,8 @@ function groupHistoryRows(rows) {
       });
     }
   }
-  return Object.values(grouped);
+  return rows
+  .map((r) => r.analysisId)
+  .filter((id, i, arr) => arr.indexOf(id) === i) 
+  .map((id) => grouped[id]);
 }

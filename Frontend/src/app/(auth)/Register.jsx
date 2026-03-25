@@ -86,6 +86,15 @@ const Register = () => {
         "Please enter a valid email address",
       );
     }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "8+ chars, upper, lower, number & special char.",
+      );
+    }
     if (dob > new Date()) {
       return ToastMessage(
         "error",

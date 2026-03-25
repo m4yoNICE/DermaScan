@@ -7,6 +7,7 @@ const Api = {
   loginAccountAPI: (data) => Http.post("/api/auth/login", data),
   forgetPasswordAPI: (data) => Http.post("/api/auth/forgetpassword", data),
   checkOtpAPI: (data) => Http.post("/api/auth/checkOTP", data),
+  resetPasswordAPI: (data) => Http.put("/api/auth/resetpassword", data),
 
   // User
   getUserByTokenAPI: () => Http.get("/api/users"),

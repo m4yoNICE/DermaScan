@@ -7,13 +7,22 @@ import { formatTime } from "@/utils/formatTime";
 import dayjs from "dayjs";
 
 const RoutineFeed = () => {
-  const { routineProducts, reminderLogs, fetchReminderLogs } = useHomeData();
+  const { routineProducts, reminderLogs, fetchReminderLogs, routineSchedule } =
+    useHomeData();
 
   const today = dayjs().format("YYYY-MM-DD");
   const todayLogs = reminderLogs[today] ?? [];
-
   const now = dayjs();
-  const isAM = now.hour() < 12;
+
+  const morningTime = dayjs(
+    `${today} ${routineSchedule?.morningTime ?? "07:00:00"}`,
+  );
+  const eveningTime = dayjs(
+    `${today} ${routineSchedule?.eveningTime ?? "21:00:00"}`,
+  );
+
+  // active = which card is the "current" one the user should act on
+  const isMorningActive = now.isBefore(eveningTime);
 
   const morning = routineProducts.filter((p) =>
     p.schedule?.toLowerCase().includes("morning"),
@@ -22,22 +31,13 @@ const RoutineFeed = () => {
     p.schedule?.toLowerCase().includes("night"),
   );
 
-  const currentProducts = isAM ? morning : night;
-  const currentSchedule = isAM ? "Morning" : "Night";
-  const currentTime = isAM
-    ? (morning[0]?.timeRoutine ?? "07:00:00")
-    : (night[0]?.timeRoutine ?? "21:00:00");
-  const isDone = isAM
-    ? todayLogs.includes("Morning")
-    : todayLogs.includes("Night");
+  const isMorningDone = todayLogs.includes("Morning");
+  const isNightDone = todayLogs.includes("Night");
 
-  const handleMarkDone = async () => {
+  const handleMarkDone = async (schedule) => {
     try {
-      console.log("Marking done:", currentSchedule);
-      const res = await Api.completeScheduleAPI({ schedule: currentSchedule });
-      console.log("completeSchedule response:", res.data);
+      await Api.completeScheduleAPI({ schedule });
       await fetchReminderLogs();
-      console.log("reminderLogs after fetch:", reminderLogs);
     } catch (err) {
       console.error("Complete schedule error:", err);
     }
@@ -53,16 +53,29 @@ const RoutineFeed = () => {
     );
   }
 
-  if (!currentProducts.length) return null;
-
   return (
-    <RoutineCard
-      schedule={currentSchedule}
-      time={formatTime(currentTime)}
-      products={currentProducts}
-      isDone={isDone}
-      onMarkDone={handleMarkDone}
-    />
+    <View>
+      {morning.length > 0 && (
+        <RoutineCard
+          schedule="Morning"
+          time={formatTime(routineSchedule?.morningTime ?? "07:00:00")}
+          products={morning}
+          isDone={isMorningDone}
+          isActive={isMorningActive}
+          onMarkDone={() => handleMarkDone("Morning")}
+        />
+      )}
+      {night.length > 0 && (
+        <RoutineCard
+          schedule="Night"
+          time={formatTime(routineSchedule?.eveningTime ?? "21:00:00")}
+          products={night}
+          isDone={isNightDone}
+          isActive={!isMorningActive}
+          onMarkDone={() => handleMarkDone("Night")}
+        />
+      )}
+    </View>
   );
 };
 

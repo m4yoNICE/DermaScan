@@ -1,28 +1,43 @@
-import { createContext, useContext, useState, useMemo, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+} from "react";
+import { UserContext } from "./UserContext";
 import Api from "@/services/Api";
 
 const HomeDataContext = createContext();
 
 export const HomeDataProvider = ({ children }) => {
+  const { token, loading } = useContext(UserContext);
+
   const [journals, setJournals] = useState({});
   const [routineProducts, setRoutineProducts] = useState([]);
   const [reminderLogs, setReminderLogs] = useState({});
   const [analysisLogs, setAnalysisLogs] = useState({});
+  const [historyList, setHistoryList] = useState([]);
+  const [routineSchedule, setRoutineSchedule] = useState(null);
+  const [initialLoaded, setInitialLoaded] = useState(false);
 
   useEffect(() => {
-    const checkToken = async () => {
-      const token = await AsyncStorage.getItem("authToken");
+    if (loading) return;
 
-      if (token) {
-        fetchAll();
-      } else {
-        console.log("No token. Skipping fetch.");
-      }
-    };
+    if (!token) {
+      setJournals({});
+      setRoutineProducts([]);
+      setReminderLogs({});
+      setAnalysisLogs({});
+      setHistoryList([]);
+      setRoutineSchedule(null);
+      setInitialLoaded(false);
+      return;
+    }
 
-    checkToken();
-  }, []);
+    fetchAll();
+  }, [token, loading]);
 
   const fetchJournals = async () => {
     try {
@@ -37,7 +52,6 @@ export const HomeDataProvider = ({ children }) => {
         };
       });
       setJournals(normalized);
-      console.log("[HomeData] journals:", normalized);
     } catch (err) {
       console.error("[HomeData] journals error:", err);
     }
@@ -46,10 +60,19 @@ export const HomeDataProvider = ({ children }) => {
   const fetchRoutineProducts = async () => {
     try {
       const res = await Api.getRoutineProductsAPI();
-      setRoutineProducts(res.data);
       console.log("[HomeData] routineProducts:", res.data);
+      setRoutineProducts(res.data);
     } catch (err) {
       console.error("[HomeData] routineProducts error:", err);
+    }
+  };
+
+  const fetchRoutineSchedule = async () => {
+    try {
+      const res = await Api.getRoutineScheduleAPI();
+      setRoutineSchedule(res.data);
+    } catch (err) {
+      console.error("[HomeData] routineSchedule error:", err);
     }
   };
 
@@ -62,7 +85,6 @@ export const HomeDataProvider = ({ children }) => {
         normalized[log.completedDate].push(log.schedule);
       });
       setReminderLogs(normalized);
-      console.log("[HomeData] reminderLogs:", normalized);
     } catch (err) {
       console.error("[HomeData] reminderLogs error:", err);
     }
@@ -71,6 +93,7 @@ export const HomeDataProvider = ({ children }) => {
   const fetchAnalysisLogs = async () => {
     try {
       const res = await Api.getHistoryAPI();
+      setHistoryList(res.data);
       const normalized = {};
       res.data.forEach((entry) => {
         const date = entry.rawDate;
@@ -78,20 +101,28 @@ export const HomeDataProvider = ({ children }) => {
         normalized[date].push(entry);
       });
       setAnalysisLogs(normalized);
-      console.log("[HomeData] analysisLogs:", normalized);
     } catch (err) {
       console.error("[HomeData] analysisLogs error:", err);
     }
   };
 
-  const fetchAll = async () => {
-    await Promise.all([
-      fetchJournals(),
-      fetchRoutineProducts(),
-      fetchReminderLogs(),
-      fetchAnalysisLogs(),
-    ]);
-  };
+  const fetchAll = useCallback(async () => {
+    if (!token) {
+      setInitialLoaded(false);
+      return;
+    }
+    try {
+      await Promise.all([
+        fetchJournals(),
+        fetchRoutineProducts(),
+        fetchReminderLogs(),
+        fetchAnalysisLogs(),
+        fetchRoutineSchedule(),
+      ]);
+    } finally {
+      setInitialLoaded(true);
+    }
+  }, [token]);
 
   const value = useMemo(
     () => ({
@@ -99,13 +130,27 @@ export const HomeDataProvider = ({ children }) => {
       routineProducts,
       reminderLogs,
       analysisLogs,
+      historyList,
+      routineSchedule,
+      initialLoaded,
       fetchJournals,
       fetchRoutineProducts,
       fetchReminderLogs,
       fetchAnalysisLogs,
+      fetchRoutineSchedule,
       fetchAll,
+      dismissLoading: () => setInitialLoaded(true),
     }),
-    [journals, routineProducts, reminderLogs, analysisLogs],
+    [
+      journals,
+      routineProducts,
+      reminderLogs,
+      analysisLogs,
+      historyList,
+      routineSchedule,
+      initialLoaded,
+      fetchAll,
+    ],
   );
 
   return (

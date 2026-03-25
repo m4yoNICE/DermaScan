@@ -24,6 +24,7 @@ export async function login(req, res) {
 
     const { user, token } = await processLogin(email, password);
 
+    console.log("Welcome: ", user.email);
     res.status(200).json({
       message: "Login successful",
       user: { id: user.id, email: user.email, role: user.role },
@@ -144,7 +145,7 @@ export async function checkOtp(req, res) {
       return res.status(400).json({ error: "Email and OTP are required" });
     }
 
-    userId = await checkOtpProcess(email, otp);
+    const userId = await checkOtpProcess(email, otp);
 
     return res.status(200).json({
       message: "OTP verified successfully",
@@ -175,6 +176,8 @@ export async function checkOtp(req, res) {
 export async function resetPassword(req, res) {
   try {
     const { email, newPassword } = req.body;
+
+    console.log("Reset Password Pipeline: ", email, newPassword);
     if (!email || !newPassword) {
       return res
         .status(400)
