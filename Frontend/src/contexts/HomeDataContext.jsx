@@ -8,6 +8,7 @@ import {
 } from "react";
 import { UserContext } from "./UserContext";
 import Api from "@/services/Api";
+import { scheduleAllRoutineNotifications } from "@/utils/scheduleNotifications";
 
 const HomeDataContext = createContext();
 
@@ -71,6 +72,7 @@ export const HomeDataProvider = ({ children }) => {
     try {
       const res = await Api.getRoutineScheduleAPI();
       setRoutineSchedule(res.data);
+      await scheduleAllRoutineNotifications(res.data);
     } catch (err) {
       console.error("[HomeData] routineSchedule error:", err);
     }

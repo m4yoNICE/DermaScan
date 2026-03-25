@@ -89,7 +89,11 @@ export async function fetchRoutineSchedule(userId) {
 // ======= USER SCHEDULE CRUD =======
 
 export async function insertUserRoutine(userId, morningTime, eveningTime) {
-  await db.insert(userRoutine).values({ userId, morningTime, eveningTime });
+  //upsert using onDuplicateKeyUpdate
+  await db
+    .insert(userRoutine)
+    .values({ userId, morningTime, eveningTime })
+    .onDuplicateKeyUpdate({ set: { morningTime, eveningTime } });
   return await db.query.userRoutine.findFirst({
     where: eq(userRoutine.userId, userId),
   });
