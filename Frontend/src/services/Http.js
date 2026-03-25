@@ -35,14 +35,24 @@ const addAuthToken = async (config) => {
 
 const handleExpiryToken = async (error) => {
   const status = error.response?.status;
+  const url = error.config?.url || "";
 
-  if (status === 403) {
-    console.warn("Session expired — clearing storage and redirecting.");
+  // 401: no token, 403: invalid/expired token
+  const isAuthError = status === 401 || status === 403;
+  // 404 on /api/users = user deleted or no longer exists
+  const isUserNotFound = status === 404 && url.includes("/api/users");
+
+  if (isAuthError || isUserNotFound) {
+    console.warn("Session invalid — clearing storage and redirecting.");
 
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("user");
 
-    ToastMessage("error", "Session Expired", "Please log in again.");
+    ToastMessage(
+      "error",
+      isUserNotFound ? "Account Not Found" : "Session Expired",
+      "Please log in again."
+    );
     triggerLogout();
   }
 

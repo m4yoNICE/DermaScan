@@ -9,8 +9,9 @@ import ProductCard from "../designs/cards/ProductCard";
 import { useProduct } from "src/contexts/ProductContext";
 import { useState } from "react";
 import ProductSheet from "../designs/ProductSheet";
+
 export const RoutineSection = ({ title, description, products }) => {
-  const { setProduct } = useProduct();
+  const { product, setProduct } = useProduct();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -20,8 +21,11 @@ export const RoutineSection = ({ title, description, products }) => {
   };
 
   const handleAdd = (item) => {
+    if (addedIds.has(item.id)) return;
     setProduct((prev) => [...prev, item]);
   };
+
+  const addedIds = new Set(product.map((p) => p.id));
 
   return (
     <View style={styles.sectionContainer}>
@@ -42,7 +46,7 @@ export const RoutineSection = ({ title, description, products }) => {
             onPress={() => handleProductPress(item)}
             activeOpacity={0.7}
           >
-            <ProductCard key={index} item={item} />
+            <ProductCard item={item} isAdded={addedIds.has(item.id)} />
           </TouchableOpacity>
         ))}
       </ScrollView>

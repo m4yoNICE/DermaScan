@@ -22,6 +22,9 @@ async function getActiveOrLatestAnalysisId(userId) {
     where: eq(userRoutine.userId, userId),
   });
 
+  console.log("[routine] userRoutine row:", routine);
+  console.log("[routine] activeAnalysisId:", routine?.activeAnalysisId);
+
   if (routine?.activeAnalysisId) return routine.activeAnalysisId;
 
   const [latest] = await db
@@ -103,10 +106,29 @@ export async function updateUserRoutine(userId, morningTime, eveningTime) {
 }
 
 export async function updateActiveLoadout(userId, analysisId) {
-  await db
-    .update(userRoutine)
-    .set({ activeAnalysisId: analysisId })
-    .where(eq(userRoutine.userId, userId));
+  const analysis = await db.query.skinAnalysis.findFirst({
+    where: and(
+      eq(skinAnalysis.id, analysisId),
+      eq(skinAnalysis.userId, userId),
+    ),
+  });
+  if (!analysis)
+    throw new Error("Analysis not found or does not belong to user");
+
+  const existing = await db.query.userRoutine.findFirst({
+    where: eq(userRoutine.userId, userId),
+  });
+
+  if (existing) {
+    await db
+      .update(userRoutine)
+      .set({ activeAnalysisId: analysisId })
+      .where(eq(userRoutine.userId, userId));
+  } else {
+    await db
+      .insert(userRoutine)
+      .values({ userId, activeAnalysisId: analysisId });
+  }
 
   return await db.query.userRoutine.findFirst({
     where: eq(userRoutine.userId, userId),

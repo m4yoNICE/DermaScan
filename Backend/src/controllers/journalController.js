@@ -34,9 +34,9 @@ export async function getalljournal(req, res) {
 export async function createjournal(req, res) {
   try {
     const userId = req.user.id;
-    const { journalDate, journalText } = req.body;
-    console.log(journalDate, journalText, userId);
-    const journal = await createJournal(userId, journalText, journalDate);
+    const { journalDate, journalText, mood } = req.body;
+    console.log(journalDate, journalText, mood, userId);
+    const journal = await createJournal(userId, journalText, journalDate, mood);
     if (!journal) {
       return res.status(400).json({ error: journal });
     }
@@ -51,8 +51,8 @@ export async function updatejournal(req, res) {
   try {
     const userId = req.user.id;
     const journalId = req.params.id;
-    const { journalText } = req.body;
-    const updated = await updateJournal(userId, journalId, journalText);
+    const { journalText, mood } = req.body;
+    const updated = await updateJournal(userId, journalId, journalText, mood);
     if (!updated) {
       return res.status(404).json({ error: "Journal not found" });
     }

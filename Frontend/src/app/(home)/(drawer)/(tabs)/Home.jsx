@@ -17,8 +17,14 @@ import RoutineFeed from "@/components/home/routine/RoutineFeed";
 import { useHomeData } from "@/contexts/HomeDataContext";
 
 const Home = () => {
-  const { journals, reminderLogs, analysisLogs, fetchAll } = useHomeData();
-  const [loading, setLoading] = useState(false);
+  const {
+    journals,
+    reminderLogs,
+    analysisLogs,
+    fetchAll,
+    initialLoaded,
+    dismissLoading,
+  } = useHomeData();
   const [activeTab, setActiveTab] = useState("Journals");
   const [selectedDate, setSelectedDate] = useState(
     dayjs().format("YYYY-MM-DD"),
@@ -31,18 +37,14 @@ const Home = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const load = async () => {
-        setLoading(true);
-        await fetchAll();
-        setLoading(false);
-      };
-      load();
-    }, []),
+      fetchAll();
+    }, [fetchAll]),
   );
 
   return (
     <View style={styles.container}>
-      <LoadingModal visible={loading} />
+      <LoadingModal visible={!initialLoaded} onTimeout={dismissLoading} />
+
       <ScrollView>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>
@@ -68,14 +70,20 @@ const Home = () => {
           analysisLogs={analysisLogs}
           onDayPress={(dateString) => {
             setSelectedDate(dateString);
-            sheetRef.current?.expand();
+            if (activeTab !== "Routine") {
+              sheetRef.current?.expand();
+            }
           }}
         />
 
         <RoutineFeed />
       </ScrollView>
 
-      <HomeBottomSheet sheetRef={sheetRef} selectedDate={selectedDate} />
+      <HomeBottomSheet
+        sheetRef={sheetRef}
+        selectedDate={selectedDate}
+        calendarTab={activeTab}
+      />
     </View>
   );
 };

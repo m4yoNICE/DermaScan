@@ -3,4 +3,5 @@ training_data/*
 *.h5
 *.keras
 *.npy
+!AI/trained_data_two_stage/*.pkl
 *.pkl

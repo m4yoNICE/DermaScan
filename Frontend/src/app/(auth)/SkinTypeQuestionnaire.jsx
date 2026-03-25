@@ -12,7 +12,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 const OIL_QUESTIONS = [
   "How would you describe your overall skin type?",
   "How oily does your skin feel throughout the day?",
-  "After washing your face with soap, how does your skin feel within 5 seconds? (Tight and dry = 1, Very oily = 5)",
+  "After washing your face with soap, how does your skin feel within 5 seconds? (Very dry = 1, Very oily = 5)",
   "How much shine does your face show in photos?",
   "How oily is your T-zone (forehead and nose)?",
   "How clogged are your comedomes (whiteheads/blackheads)?",
@@ -70,13 +70,16 @@ const SkinTypeQuestionnaire = () => {
         senAnswers,
       );
 
-      await Api.createJournalAPI({ skinType, skinSensitivity });
+      await Api.createSkinDataAPI({
+        skin_type: skinType,
+        skin_sensitivity: skinSensitivity,
+      });
       ToastMessage(
         "success",
         "Done",
         `Your skin type: ${skinType}, ${skinSensitivity}`,
       );
-      router.push("/Home");
+      router.push("/");
     } catch (err) {
       console.error(err);
       ToastMessage("error", "Error", "Something went wrong.");

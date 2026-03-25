@@ -8,8 +8,10 @@ import BottomSheet, {
 import JournalSection from "./bottomsheetSections/JournalSection";
 import AnalysisSection from "./bottomsheetSections/AnalysisSection";
 
-const HomeBottomSheet = ({ sheetRef, selectedDate }) => {
-  const [activeTab, setActiveTab] = useState("Analysis");
+const HomeBottomSheet = ({ sheetRef, selectedDate, calendarTab }) => {
+  const [activeTab, setActiveTab] = useState(
+    calendarTab === "Analysis" ? "Analysis" : "Journal",
+  );
 
   return (
     <BottomSheet

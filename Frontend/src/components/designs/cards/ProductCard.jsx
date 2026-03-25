@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Api from "@/services/Api";
-const ProductCard = ({ item }) => {
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+const ProductCard = ({ item, isAdded = false }) => {
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
@@ -10,13 +12,25 @@ const ProductCard = ({ item }) => {
       setImageUrl(url);
     }
   }, [item]);
+
   return (
     <View style={styles.card}>
-      <Image
-        source={{ uri: imageUrl }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      <View style={styles.imageWrapper}>
+        <Image
+          source={{ uri: imageUrl }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+        {isAdded && (
+          <View style={styles.badge}>
+            <MaterialCommunityIcons
+              name="check-circle"
+              size={20}
+              color="#00CC99"
+            />
+          </View>
+        )}
+      </View>
       <Text style={styles.productName} numberOfLines={2}>
         {item.productName}
       </Text>
@@ -42,12 +56,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
   },
+  imageWrapper: {
+    position: "relative",
+    marginBottom: 6,
+  },
   image: {
     width: "100%",
     height: 90,
     borderRadius: 8,
-    marginBottom: 6,
     backgroundColor: "#f0f0f0",
+  },
+  badge: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    backgroundColor: "white",
+    borderRadius: 10,
   },
   productName: {
     fontSize: 12,

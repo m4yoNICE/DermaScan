@@ -14,19 +14,26 @@ import {
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CircularButton from "../designs/CircularButton";
+import Slider from "@react-native-community/slider";
 import Card from "../designs/cards/Card";
 import { router } from "expo-router";
 import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 
 const SkinCamera = () => {
-  const { setAnalysis, setRecommendation, setAnalysisDescription, setRecommendDescription } = useAnalysis();
+  const {
+    setAnalysis,
+    setRecommendation,
+    setAnalysisDescription,
+    setRecommendDescription,
+  } = useAnalysis();
   const [failMessage, setFailMessage] = useState(null);
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState("back");
   const [enableTorch, setEnableTorch] = useState(false);
   const [capturePic, setCapturePic] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [zoom, setZoom] = useState(0);
 
   const cameraRef = useRef(null);
   const shutterAnim = useRef(new Animated.Value(1)).current;
@@ -165,12 +172,13 @@ const SkinCamera = () => {
             style={styles.cameraBox}
             facing={facing}
             enableTorch={enableTorch}
+            autofocus="on"
+            zoom={zoom}
           />
         ) : (
           <Image source={{ uri: capturePic.uri }} style={styles.cameraBox} />
         )}
 
-        {/* FLASH/TORCH OVERLAY BUTTON */}
         {!capturePic && (
           <TouchableOpacity
             style={styles.topUtilityBtn}
@@ -189,14 +197,31 @@ const SkinCamera = () => {
             <ActivityIndicator size="large" color="#fff" />
           </View>
         )}
+      </View>
+      {!capturePic && (
+        <View style={styles.sliderContainer}>
+          <Text style={styles.zoomText}>Zoom</Text>
+          <Slider
+            style={{ width: 250, height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#00CC99"
+            maximumTrackTintColor="#99EBD6"
+            thumbTintColor="#00CC99"
+            value={zoom}
+            onValueChange={setZoom}
+          />
+        </View>
+      )}
 
-        {capturePic && !isLoading && (
+      <View style={styles.bottomTabEnclosure}>
+        {capturePic && !isLoading ? (
           <View style={styles.previewActionContainer}>
             <TouchableOpacity
               style={styles.previewActionBtn}
               onPress={handleRetake}
             >
-              <Text style={styles.previewActionText}>Retake</Text>
+              <Text style={styles.retakeText}>Retake</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.previewActionBtn, styles.usePhotoBtn]}
@@ -205,35 +230,30 @@ const SkinCamera = () => {
               <Text style={styles.previewActionText}>Use Photo</Text>
             </TouchableOpacity>
           </View>
-        )}
-      </View>
-      {/* Tab bar style that encloses the buttons */}
-      <View style={styles.bottomTabEnclosure}>
-        <View style={styles.controls}>
-          {/* GALLERY BUTTON */}
-          <CircularButton size={65} onPress={pickImage}>
-            <MaterialCommunityIcons
-              name="image-multiple"
-              size={28}
-              color="#fff"
-            />
-          </CircularButton>
-
-          {/* SHUTTER BUTTON */}
-          <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
-            <CircularButton size={95} onPress={handleCapture}>
-              <FontAwesome6 name="camera" size={30} color="#fff" />
+        ) : (
+          <View style={styles.controls}>
+            <CircularButton size={65} onPress={pickImage}>
+              <MaterialCommunityIcons
+                name="image-multiple"
+                size={28}
+                color="#fff"
+              />
             </CircularButton>
-          </Animated.View>
 
-          {/* CAMERA ROTATE BUTTON */}
-          <CircularButton
-            size={65}
-            onPress={() => setFacing(facing === "back" ? "front" : "back")}
-          >
-            <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
-          </CircularButton>
-        </View>
+            <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
+              <CircularButton size={95} onPress={handleCapture}>
+                <FontAwesome6 name="camera" size={30} color="#fff" />
+              </CircularButton>
+            </Animated.View>
+
+            <CircularButton
+              size={65}
+              onPress={() => setFacing(facing === "back" ? "front" : "back")}
+            >
+              <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
+            </CircularButton>
+          </View>
+        )}
       </View>
       <Modal visible={!!failMessage} transparent animationType="fade">
         <View style={styles.failOverlay}>
@@ -308,7 +328,8 @@ const styles = StyleSheet.create({
   previewActionContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    marginTop: 20,
+    alignItems: "center",
+    width: "100%",
   },
   previewActionBtn: {
     paddingVertical: 12,
@@ -316,6 +337,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#333",
+    width: "40%",
+    alignItems: "center",
   },
   usePhotoBtn: {
     backgroundColor: "#00CC99",
@@ -323,6 +346,11 @@ const styles = StyleSheet.create({
   },
   previewActionText: {
     fontWeight: "600",
+    color: "#fff",
+  },
+  retakeText: {
+    fontWeight: "600",
+    color: "#333",
   },
   centered: {
     flex: 1,
@@ -375,5 +403,19 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontWeight: "600",
+  },
+  sliderContainer: {
+    position: "absolute",
+    bottom: 180,
+    width: "100%",
+    alignItems: "center",
+    zIndex: 10,
+    backgroundColor: "rgb(255, 255, 255)",
+    paddingVertical: 8,
+  },
+  zoomText: {
+    color: "#00CC99",
+    fontWeight: "600",
+    marginBottom: -5,
   },
 });

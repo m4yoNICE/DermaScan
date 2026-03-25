@@ -136,11 +136,19 @@ export const reminderLogsRelations = relations(reminderLogs, ({ one }) => ({
     fields: [reminderLogs.userId],
     references: [users.id],
   }),
+  analysis: one(skinAnalysis, {
+    fields: [reminderLogs.analysisId],
+    references: [skinAnalysis.id],
+  }),
 }));
 
 export const userRoutineRelations = relations(userRoutine, ({ one }) => ({
   user: one(users, {
     fields: [userRoutine.userId],
     references: [users.id],
+  }),
+  activeAnalysis: one(skinAnalysis, {
+    fields: [userRoutine.activeAnalysisId],
+    references: [skinAnalysis.id],
   }),
 }));
