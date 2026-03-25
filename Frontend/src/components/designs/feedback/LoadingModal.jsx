@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Modal, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Modal,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 
 const LoadingModal = ({ visible, onTimeout }) => {
@@ -18,14 +25,27 @@ const LoadingModal = ({ visible, onTimeout }) => {
     return () => clearTimeout(timer);
   }, [visible]);
 
+  const handleDismiss = () => {
+    onTimeout?.();
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalContainer}>
         <View style={styles.loadingCard}>
           {timedOut ? (
-            <Text style={styles.errorText}>
-              Request timed out.{"\n"}Please try again.
-            </Text>
+            <>
+              <Text style={styles.errorText}>
+                Request timed out.{"\n"}Please try again.
+              </Text>
+              <TouchableOpacity
+                style={styles.closeBtn}
+                onPress={handleDismiss}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.closeBtnText}>Close</Text>
+              </TouchableOpacity>
+            </>
           ) : (
             <ActivityIndicator size="large" color="#00CC99" />
           )}
@@ -45,7 +65,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingCard: {
-    width: 100,
+    minWidth: 160,
     paddingVertical: 30,
     paddingHorizontal: 30,
     borderRadius: 15,
@@ -58,5 +78,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     textAlign: "center",
     lineHeight: 20,
+    marginBottom: 12,
+  },
+  closeBtn: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    backgroundColor: "#00CC99",
+    borderRadius: 8,
+  },
+  closeBtnText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
   },
 });

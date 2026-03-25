@@ -5,6 +5,7 @@ import {
   insertReminderLog,
   fetchReminderLogs,
   updateActiveLoadout,
+  fetchRoutineSchedule
 } from "../services/routineServices.js";
 
 export async function getRoutineProducts(req, res) {
@@ -12,6 +13,16 @@ export async function getRoutineProducts(req, res) {
     const result = await fetchRoutineProducts(req.user.id);
     console.log("fetchRoutineProducts result:", result);
 
+    res.status(200).json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function getRoutineSchedule(req, res) {
+  try {
+    const result = await fetchRoutineSchedule(req.user.id);
     res.status(200).json(result);
   } catch (err) {
     console.error(err);

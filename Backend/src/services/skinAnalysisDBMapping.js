@@ -14,10 +14,11 @@ export async function mapSkinResultToCatalog(user_id, skinResult) {
   const top1 = skinResult.top3[0];
   const top3 = skinResult.top3;
 
-  const condition = await findConditionByLabel(top1.label);
+  // use primary_prediction (concatenated) for DB lookup
+  const lookupLabel = skinResult.primary_prediction ?? top1.label;
+  const condition = await findConditionByLabel(lookupLabel);
   if (!condition) return null;
-  console.log("top3 scores:", JSON.stringify(top3));
-  console.log("condition canRecommend:", condition.canRecommend);
+
   const status = checkResults(top1, top3, condition);
   const transactionId = await insertTransaction(
     user_id,
@@ -97,7 +98,7 @@ export async function getTransactionWithCondition(transactionId) {
 }
 
 function checkResults(top1, top3, condition) {
-  if (top1.score < 0.55) return "out of scope";
+  if (top1.score < 0.5) return "out of scope";
   const margin = top1.score - top3[2].score;
   if (margin < 0.15) return "out of scope";
   if (condition.canRecommend.toLowerCase() === "no") return "flagged";

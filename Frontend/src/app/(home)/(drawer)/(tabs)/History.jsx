@@ -5,43 +5,32 @@ import HistoryCard from "@/components/designs/cards/HistoryCard";
 import Api from "@/services/Api";
 import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
+import { useHomeData } from "@/contexts/HomeDataContext";
 const History = () => {
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { historyList, fetchAnalysisLogs, initialLoaded, dismissLoading } = useHomeData();
 
   useFocusEffect(
     useCallback(() => {
-      const fetch = async () => {
-        try {
-          setLoading(true);
-          const res = await Api.getHistoryAPI();
-          setHistory(res.data);
-        } catch (err) {
-          console.error("History fetch error:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetch();
+      fetchAnalysisLogs();
     }, []),
   );
 
   return (
     <View style={styles.container}>
       <LoadingModal
-        visible={loading}
+        visible={!initialLoaded}
         onTimeout={() => {
-          setLoading(false);
+          dismissLoading();
           ToastMessage("error", "Request timed out", "Please try again.");
         }}
       />
       <FlatList
-        data={history}
+        data={historyList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <HistoryCard item={item} />}
         contentContainerStyle={{ paddingVertical: 10, paddingBottom: 100 }}
         ListEmptyComponent={
-          !loading && <Text style={styles.empty}>No history yet.</Text>
+          !initialLoaded ? null : <Text style={styles.empty}>No history yet.</Text>
         }
       />
     </View>

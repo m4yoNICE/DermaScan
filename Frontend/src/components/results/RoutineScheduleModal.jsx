@@ -8,13 +8,52 @@ import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { useUserData } from "@/contexts/UserDataContext";
 import dayjs from "dayjs";
 
+const defaultMorning = () => {
+  const d = new Date();
+  d.setHours(7, 0, 0, 0);
+  return d;
+};
+const defaultEvening = () => {
+  const d = new Date();
+  d.setHours(19, 0, 0, 0);
+  return d;
+};
+
 const ScheduleModal = ({ visible, onDone }) => {
   const { fetchUserData } = useUserData();
-  const [morningTime, setMorningTime] = useState(new Date());
-  const [eveningTime, setEveningTime] = useState(new Date());
+  const [morningTime, setMorningTime] = useState(defaultMorning);
+  const [eveningTime, setEveningTime] = useState(defaultEvening);
   const [showMorning, setShowMorning] = useState(false);
   const [showEvening, setShowEvening] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const handleMorningChange = (e, date) => {
+    setShowMorning(false);
+    if (!date) return;
+    if (date.getHours() >= 12) {
+      ToastMessage(
+        "error",
+        "Invalid Time",
+        "Morning time must be AM (before 12:00 PM).",
+      );
+      return;
+    }
+    setMorningTime(date);
+  };
+
+  const handleEveningChange = (e, date) => {
+    setShowEvening(false);
+    if (!date) return;
+    if (date.getHours() < 12) {
+      ToastMessage(
+        "error",
+        "Invalid Time",
+        "Evening time must be PM (12:00 PM or later).",
+      );
+      return;
+    }
+    setEveningTime(date);
+  };
 
   const handleSave = async () => {
     try {
@@ -71,10 +110,7 @@ const ScheduleModal = ({ visible, onDone }) => {
               value={morningTime}
               mode="time"
               is24Hour={false}
-              onChange={(e, date) => {
-                setShowMorning(false);
-                if (date) setMorningTime(date);
-              }}
+              onChange={handleMorningChange}
             />
           )}
 
@@ -83,10 +119,7 @@ const ScheduleModal = ({ visible, onDone }) => {
               value={eveningTime}
               mode="time"
               is24Hour={false}
-              onChange={(e, date) => {
-                setShowEvening(false);
-                if (date) setEveningTime(date);
-              }}
+              onChange={handleEveningChange}
             />
           )}
 

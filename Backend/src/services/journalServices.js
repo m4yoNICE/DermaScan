@@ -17,13 +17,19 @@ export async function getSingleJournalByDate(user_id, date) {
 }
 
 // Create a new journal
-export async function createJournal(user_id, journal_text, journal_date) {
+export async function createJournal(
+  user_id,
+  journal_text,
+  journal_date,
+  mood = null,
+) {
   const [inserted] = await db
     .insert(journals)
     .values({
       journalText: journal_text,
       userId: user_id,
       journalDate: journal_date,
+      mood: mood ?? null,
     })
     .$returningId();
 
@@ -33,10 +39,18 @@ export async function createJournal(user_id, journal_text, journal_date) {
 }
 
 // Update a journal
-export async function updateJournal(user_id, journal_id, journal_text) {
+export async function updateJournal(
+  user_id,
+  journal_id,
+  journal_text,
+  mood = undefined,
+) {
+  const updates = { journalText: journal_text };
+  if (mood !== undefined) updates.mood = mood ?? null;
+
   await db
     .update(journals)
-    .set({ journalText: journal_text })
+    .set(updates)
     .where(and(eq(journals.id, journal_id), eq(journals.userId, user_id)));
 
   return await db.query.journals.findFirst({
@@ -46,9 +60,8 @@ export async function updateJournal(user_id, journal_id, journal_text) {
 
 // Delete a journal
 export async function deleteJournal(user_id, journal_id) {
-  const result = await db
+  const [result] = await db
     .delete(journals)
     .where(and(eq(journals.id, journal_id), eq(journals.userId, user_id)));
-
-  return result.affectedRows > 0;
+  return (result?.affectedRows ?? 0) > 0;
 }

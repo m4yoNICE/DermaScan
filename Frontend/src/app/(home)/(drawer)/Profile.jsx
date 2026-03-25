@@ -139,7 +139,7 @@ const Profile = () => {
       setShowDeleteModal(false);
       await Api.deleteUserAPI();
       ToastMessage("success", "Deleted", "Your account has been removed.");
-      await logout();
+      setTimeout(() => logout(), 1500);
     } catch (error) {
       ToastMessage(
         "error",
@@ -166,7 +166,7 @@ const Profile = () => {
                 "Skin Data Cleared",
                 "Your skin type has been reset.",
               );
-              router.push("/BaumannQuestionnaire");
+              router.push("/SkinTypeQuestionnaire");
             } catch (error) {
               ToastMessage(
                 "error",

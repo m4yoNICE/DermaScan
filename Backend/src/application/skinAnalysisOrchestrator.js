@@ -10,7 +10,6 @@ import { skinAnalysis } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
 
-
 export async function analyzeSkinOrchestrator(userId, imageBuffer) {
   const startTime = Date.now();
   console.log(
