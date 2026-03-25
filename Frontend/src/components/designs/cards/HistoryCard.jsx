@@ -9,11 +9,18 @@ import {
   LayoutAnimation,
 } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ProductCard from "./ProductCard";
 import Button from "../Button";
 import Api from "@/services/Api";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
+
+const getConditionLabel = (item) => {
+  if (item.status === "success") return item.condition ?? "Unknown Condition";
+  if (item.status === "flagged") return "Flagged Content";
+  return "Out of Bounds";
+};
 
 const HistoryCard = ({ item }) => {
   const { fetchRoutineProducts } = useHomeData();
@@ -30,7 +37,11 @@ const HistoryCard = ({ item }) => {
       setActivating(true);
       await Api.activateLoadoutAPI(item.id);
       await fetchRoutineProducts();
-      ToastMessage("success", "Loadout Activated", "Your routine has been updated.");
+      ToastMessage(
+        "success",
+        "Loadout Activated",
+        "Your routine has been updated.",
+      );
     } catch (err) {
       ToastMessage("error", "Error", err.message);
     } finally {
@@ -45,14 +56,22 @@ const HistoryCard = ({ item }) => {
         onPress={handleToggle}
         activeOpacity={0.8}
       >
-        <Image
-          source={{ uri: Api.getSkinImage(item.photoUrl) }}
-          style={styles.avatar}
-        />
+        {item.photoUrl ? (
+          <Image
+            source={{ uri: Api.getSkinImage(item.photoUrl) }}
+            style={styles.avatar}
+          />
+        ) : (
+          <View style={[styles.avatar, styles.avatarPlaceholder]}>
+            <MaterialCommunityIcons
+              name="image-off-outline"
+              size={28}
+              color="#ccc"
+            />
+          </View>
+        )}
         <View style={styles.headerText}>
-          <Text style={styles.condition}>
-            {item.condition ?? "Unrecognized Condition"}
-          </Text>
+          <Text style={styles.condition}>{getConditionLabel(item)}</Text>
           <Text style={styles.date}>{item.createdAt}</Text>
           <View
             style={[
@@ -131,6 +150,11 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: 16,
     backgroundColor: "#f0f0f0",
+  },
+  avatarPlaceholder: {
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerText: {
     flex: 1,

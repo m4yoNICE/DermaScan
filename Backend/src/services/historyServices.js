@@ -58,7 +58,12 @@ function groupHistoryRows(rows) {
         }),
         status: row.status,
         confidenceScores: row.confidenceScores,
-        condition: row.status === "success" ? row.condition : null,
+        condition:
+          row.status === "success"
+            ? row.condition
+            : row.status === "flagged"
+              ? null
+              : "Out of Scope",
         canRecommend: row.canRecommend,
         photoUrl: row.photoUrl,
         products: [],
@@ -75,7 +80,7 @@ function groupHistoryRows(rows) {
     }
   }
   return rows
-  .map((r) => r.analysisId)
-  .filter((id, i, arr) => arr.indexOf(id) === i) 
-  .map((id) => grouped[id]);
+    .map((r) => r.analysisId)
+    .filter((id, i, arr) => arr.indexOf(id) === i)
+    .map((id) => grouped[id]);
 }

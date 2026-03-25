@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import BottomSheet, {
   BottomSheetView,
@@ -12,6 +12,10 @@ const HomeBottomSheet = ({ sheetRef, selectedDate, calendarTab }) => {
   const [activeTab, setActiveTab] = useState(
     calendarTab === "Analysis" ? "Analysis" : "Journal",
   );
+
+  useEffect(() => {
+    setActiveTab(calendarTab === "Analysis" ? "Analysis" : "Journal");
+  }, [calendarTab]);
 
   return (
     <BottomSheet

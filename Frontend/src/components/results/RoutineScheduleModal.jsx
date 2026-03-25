@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, View, Text, StyleSheet, Platform } from "react-native";
+import { Modal, View, Text, StyleSheet } from "react-native";
 import Card from "../designs/cards/Card";
 import Button from "../designs/Button";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -7,6 +7,7 @@ import Api from "@/services/Api";
 import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { useUserData } from "@/contexts/UserDataContext";
 import dayjs from "dayjs";
+import { scheduleAllRoutineNotifications } from "@/utils/scheduleNotifications";
 
 const defaultMorning = () => {
   const d = new Date();
@@ -63,6 +64,11 @@ const ScheduleModal = ({ visible, onDone }) => {
         eveningTime: dayjs(eveningTime).format("HH:mm:ss"),
       });
       await fetchUserData();
+      await scheduleAllRoutineNotifications({
+        morningTime: dayjs(morningTime).format("HH:mm:ss"),
+        eveningTime: dayjs(eveningTime).format("HH:mm:ss"),
+      });
+
       ToastMessage(
         "success",
         "Schedule Set",

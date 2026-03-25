@@ -6,7 +6,7 @@ import Api from "@/services/Api";
 import { formatTime } from "@/utils/formatTime";
 import dayjs from "dayjs";
 
-const RoutineFeed = () => {
+const RoutineFeed = ({ onCardPress }) => {
   const { routineProducts, reminderLogs, fetchReminderLogs, routineSchedule } =
     useHomeData();
 
@@ -14,14 +14,10 @@ const RoutineFeed = () => {
   const todayLogs = reminderLogs[today] ?? [];
   const now = dayjs();
 
-  const morningTime = dayjs(
-    `${today} ${routineSchedule?.morningTime ?? "07:00:00"}`,
-  );
   const eveningTime = dayjs(
     `${today} ${routineSchedule?.eveningTime ?? "21:00:00"}`,
   );
 
-  // active = which card is the "current" one the user should act on
   const isMorningActive = now.isBefore(eveningTime);
 
   const morning = routineProducts.filter((p) =>
@@ -62,7 +58,14 @@ const RoutineFeed = () => {
           products={morning}
           isDone={isMorningDone}
           isActive={isMorningActive}
-          onMarkDone={() => handleMarkDone("Morning")}
+          onPress={() =>
+            onCardPress({
+              schedule: "Morning",
+              time: formatTime(routineSchedule?.morningTime ?? "07:00:00"),
+              products: morning,
+              onMarkDone: () => handleMarkDone("Morning"),
+            })
+          }
         />
       )}
       {night.length > 0 && (
@@ -72,7 +75,14 @@ const RoutineFeed = () => {
           products={night}
           isDone={isNightDone}
           isActive={!isMorningActive}
-          onMarkDone={() => handleMarkDone("Night")}
+          onPress={() =>
+            onCardPress({
+              schedule: "Night",
+              time: formatTime(routineSchedule?.eveningTime ?? "21:00:00"),
+              products: night,
+              onMarkDone: () => handleMarkDone("Night"),
+            })
+          }
         />
       )}
     </View>

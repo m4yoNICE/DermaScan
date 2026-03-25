@@ -14,6 +14,7 @@ import HomeBottomSheet from "@/components/home/HomeBottomSheet";
 import HomeCalendar from "@/components/home/HomeCalendar";
 import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import RoutineFeed from "@/components/home/routine/RoutineFeed";
+import ProductDetailSheet from "@/components/designs/ProductDetailSheet";
 import { useHomeData } from "@/contexts/HomeDataContext";
 
 const Home = () => {
@@ -30,7 +31,20 @@ const Home = () => {
     dayjs().format("YYYY-MM-DD"),
   );
   const [currentMonth, setCurrentMonth] = useState(dayjs());
+  const [sheetData, setSheetData] = useState(null);
   const sheetRef = useRef(null);
+  const productSheetRef = useRef(null);
+
+  const today = dayjs().format("YYYY-MM-DD");
+  const todayLogs = reminderLogs[today] ?? [];
+  const isSheetDone = sheetData
+    ? todayLogs.includes(sheetData.schedule)
+    : false;
+
+  const handleCardPress = (data) => {
+    setSheetData(data);
+    productSheetRef.current?.expand();
+  };
 
   const goToPrev = () => setCurrentMonth((m) => m.subtract(1, "month"));
   const goToNext = () => setCurrentMonth((m) => m.add(1, "month"));
@@ -76,13 +90,22 @@ const Home = () => {
           }}
         />
 
-        <RoutineFeed />
+        <RoutineFeed onCardPress={handleCardPress} />
       </ScrollView>
 
       <HomeBottomSheet
         sheetRef={sheetRef}
         selectedDate={selectedDate}
         calendarTab={activeTab}
+      />
+
+      <ProductDetailSheet
+        sheetRef={productSheetRef}
+        schedule={sheetData?.schedule}
+        time={sheetData?.time}
+        products={sheetData?.products ?? []}
+        isDone={isSheetDone}
+        onMarkDone={sheetData?.onMarkDone}
       />
     </View>
   );
