@@ -15,22 +15,22 @@ To get started, you'll need to install the **Expo Go** app on your phone.
 cd Backend
 npm install
 
-# Setup environment variables (copy and edit with your DB credentials)
+# Setup environment variables (copy and edit with your DB credentials but ask for dev help for the credentials)
 cp .env.example .env
 
 # Push database schema
 npx drizzle-kit push
 # Seed the database
-node src/drizzle/seed.js
+node src/drizzle/unmerge_seed.js
 ```
 
 **Start the servers:**
 
 Terminal 1 - Python AI Server:
-
+NOTE : I made this file dedicated for two way AI classification (generalized classification -> severity)
 ```bash
-cd AI/dermfoundation
-python server.py
+cd AI/server
+python twoway_server.py
 ```
 
 Terminal 2 - Node Backend:
@@ -48,7 +48,7 @@ In frontend directory:
 
 ```bash
 cd Frontend
-npm install                     # Install dependencies
+npm install                     
 npx expo start
 ```
 
@@ -63,6 +63,11 @@ Login to Hugging Face (if using models from HF):
 ```bash
 huggingface-cli login
 ```
+or
+```bash
+hg login
+```
+but idk i forgor the exact huggingface login command, it differs between hg versions.
 
 Download required Python packages:
 
