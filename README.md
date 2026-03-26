@@ -27,7 +27,8 @@ node src/drizzle/unmerge_seed.js
 **Start the servers:**
 
 Terminal 1 - Python AI Server:
-NOTE : I made this file dedicated for two way AI classification (generalized classification -> severity)
+NOTE : I made this file dedicated for two way AI classification 
+(generalized classification -> severity)
 ```bash
 cd AI/server
 python twoway_server.py
