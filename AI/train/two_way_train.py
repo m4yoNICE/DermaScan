@@ -70,6 +70,17 @@ print(f"Stage 1 Test:  {lr1.score(X_te, y_te):.2%}")
 print("\nPer-class report:")
 print(classification_report(y_te, lr1.predict(X_te), target_names=le1.classes_))
 
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+
+cm = confusion_matrix(y_te, lr1.predict(X_te))
+disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=le1.classes_)
+fig, ax = plt.subplots(figsize=(14, 14))
+disp.plot(ax=ax, xticks_rotation=45)
+plt.tight_layout()
+plt.savefig(os.path.join(OUT_DIR, "confusion_matrix_stage1.png"))
+print("Confusion matrix saved.")
+
 joblib.dump((lr1, le1), os.path.join(OUT_DIR, "stage1_condition.pkl"))
 print("Stage 1 saved.")
 

@@ -34,6 +34,9 @@ export async function skinAnalysis(req, res) {
       );
     }
 
+    console.log("analysis Result: ", analysisResult);
+    console.log("Recommendation Result: ", recommendationResult);
+
     const analysisDescription =
       analysisResult.payload.result === "success"
         ? buildAnalysisDescription(
@@ -46,6 +49,7 @@ export async function skinAnalysis(req, res) {
       analysisResult.payload.result === "success"
         ? buildRecommendDescription(conditionData, recommendationResult)
         : null;
+
 
     return res.status(analysisResult.statusCode).json({
       analysis: analysisResult.payload,

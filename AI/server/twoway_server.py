@@ -50,25 +50,25 @@ async def analyze(request: Request):
         print(f"  Embedding shape: {emb.shape}")
 
         print("  Running Stage 1...")
+
         proba1 = clf_stage1.predict_proba(emb)[0]
-        top_idx = np.argsort(proba1)[-3:][::-1]
-        top3 = [
+        top_idx = np.argsort(proba1)[::-1]
+        candidates  = [
             {"label": le_stage1.classes_[i], "score": float(proba1[i])}
             for i in top_idx
         ]
 
-        top_label = top3[0]["label"]
-        top_score = top3[0]["score"]
+        top_label = candidates[0]["label"]
+        top_score = candidates[0]["score"]
         print(f"  Top condition: {top_label} ({top_score:.2%})")
 
         # ------------------ CONFIDENCE GATE (STAGE 1 ONLY) -------------------
         if top_score < CONFIDENCE_THRESHOLD:
-            print(f"  Low confidence ({top_score:.2%}) — returning out-of-scope")
             return {
                 "primary_prediction": "out-of-scope",
                 "severity": None,
                 "confidence": top_score,
-                "top3": top3,
+                "candidates": candidates,
             }
 
         # ------------------ SECOND PHASE --------------------------------------
@@ -91,7 +91,7 @@ async def analyze(request: Request):
             "primary_prediction": primary,
             "severity": severity,
             "confidence": top_score,
-            "top3": top3,
+            "candidates": candidates,
         }
 
     except ImagePreprocessingError as e:

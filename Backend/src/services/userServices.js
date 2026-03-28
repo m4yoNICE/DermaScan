@@ -59,12 +59,13 @@ export async function createSkinData(userId, skin_type, skin_sensitivity) {
   console.log("User Came Here! ", userId, skin_sensitivity, skin_type);
   const [inserted] = await db
     .insert(skinProfile)
-    .values({
-      userId,
-      skinType: skin_type,
-      skinSensitivity: skin_sensitivity,
-    })
-    .$returningId();
+    .values({ userId, skinType: skin_type, skinSensitivity: skin_sensitivity })
+    .onDuplicateKeyUpdate({
+      set: {
+        skinType: skin_type,
+        skinSensitivity: skin_sensitivity,
+      },
+    });
 
   return await db.query.skinProfile.findFirst({
     where: eq(skinProfile.id, inserted.id),

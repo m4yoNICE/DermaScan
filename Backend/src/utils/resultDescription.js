@@ -1,16 +1,79 @@
+const MEDICAL_ONLY_CONDITIONS = new Set([
+  "acne-cyst",
+  "acne-nodules",
+  "psoriasis",
+  "out-of-scope",
+]);
+
 function formatLabel(rawLabel) {
-  // "acne-blackheads-mild" → "Acne Blackheads"
-  const parts = rawLabel.split("-");
+  if (!rawLabel) return "your skin condition";
   const severities = ["mild", "moderate", "severe"];
-  const filtered = parts.filter((p) => !severities.includes(p));
-  return filtered.map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  return rawLabel
+    .split("-")
+    .filter((p) => !severities.includes(p))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
 
-export function buildAnalysisDescription(analysisData, top3) {
-  if (!top3 || top3.length === 0) return null;
-  const label = formatLabel(top3[0].label);
-  return `Your skin shows signs of ${label}.`;
+export function buildAnalysisDescription(analysisData, candidates) {
+  if (!candidates || candidates.length === 0) return null;
+
+  const top3 = [];
+  let hadSkip = false;
+
+  for (const item of candidates) {
+    if (top3.length === 3) break;
+    if (MEDICAL_ONLY_CONDITIONS.has(item.label)) {
+      hadSkip = true;
+      continue;
+    }
+    top3.push(item);
+  }
+
+  const primary = formatLabel(top3[0]?.label ?? analysisData.condition_name);
+  const primaryScore = (top3[0]?.score * 100).toFixed(1);
+
+  let secondary = "";
+  if (top3[1] || top3[2]) {
+    const others = [top3[1], top3[2]]
+      .filter(Boolean)
+      .map(
+        (item) =>
+          `${formatLabel(item.label)} (${(item.score * 100).toFixed(1)}%)`,
+      )
+      .join(" and ");
+    secondary = ` Other conditions detected: ${others}.`;
+  }
+
+  const disclaimer = hadSkip
+    ? " Some secondary indicators may need professional evaluation — consider consulting a dermatologist for a more accurate diagnosis."
+    : "";
+
+  return `Your skin shows signs of ${primary} (${primaryScore}%).${secondary}${disclaimer}`;
 }
+
+// const MEDICAL_ONLY_CONDITIONS = new Set([
+//   "acne-nodularcystic",   // replaces acne-cyst and acne-nodules
+//   "psoriasis",
+//   "out-of-scope",
+// ]);
+
+// const LABEL_DISPLAY_OVERRIDE = {
+//   "acne-inflammatory": "Acne Inflammatory (Papules & Pustules)",
+//  "acne-nodularcystic": "Severe Nodular/Cystic Acne",
+// };
+
+// function formatLabel(rawLabel) {
+//   if (!rawLabel) return "your skin condition";
+//   const severities = ["mild", "moderate", "severe"];
+//   const base = rawLabel
+//     .split("-")
+//     .filter((p) => !severities.includes(p))
+//     .join("-");
+
+//   return LABEL_DISPLAY_OVERRIDE[base] ??
+//     base.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+// }
 
 export function buildRecommendDescription(conditionData, recommendationResult) {
   const condition = conditionData?.condition ?? "your condition";
