@@ -108,6 +108,7 @@ const SkinCamera = () => {
           createdAt: analysis.data.createdAt,
           updatedAt: analysis.data.updatedAt,
           image_url: analysis.data.image_url,
+          candidates: analysis.data.candidates,
         };
         console.log("Analysis Results: ", analysisResults);
         setAnalysis(analysisResults);

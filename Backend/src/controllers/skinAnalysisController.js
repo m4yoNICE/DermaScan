@@ -22,8 +22,24 @@ export async function skinAnalysis(req, res) {
       );
     }
 
+<<<<<<< Updated upstream
     console.log("analysis Result: ", analysisResult);
     console.log("Recommendation Result: ", recommendationResult);
+=======
+    let analysisDescription = null;
+    let recommendDescription = null;
+
+    if (analysisResult.payload.result === "success") {
+      analysisDescription = buildAnalysisDescription(
+        analysisResult.payload.data,
+        analysisResult.payload.data.candidates,
+      );
+      recommendDescription = buildRecommendDescription(
+        conditionData,
+        recommendationResult,
+      );
+    }
+>>>>>>> Stashed changes
 
     return res.status(analysisResult.statusCode).json({
       analysis: analysisResult.payload,

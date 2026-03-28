@@ -150,6 +150,10 @@ const Profile = () => {
   };
 
   const handleResetSkinType = () => {
+    if (!userData.skinType) {
+      router.push("/SkinTypeQuestionnaire");
+      return;
+    }
     Alert.alert(
       "Reset Skin Type",
       "Are you sure you want to reset your skin type data?",

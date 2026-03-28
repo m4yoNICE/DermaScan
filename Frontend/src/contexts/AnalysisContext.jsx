@@ -20,18 +20,23 @@ export const AnalysisProvider = ({ children }) => {
   const [recommendation, setRecommendation] = useState([
     {
       id: null,
-      productName: null,
-      productImage: null,
-      ingredient: null,
-      description: null,
-      productType: null,
-      locality: null,
-      skinType: null,
-      dermaTested: null,
-      timeRoutine: null,
-      score: null,
-    },
-  ]);
+      userId: null,
+      imageId: null,
+      conditionId: null,
+      confidenceScores: null,
+      status: null,
+      condition_name: null,
+      canRecommend: null,
+      createdAt: null,
+      updatedAt: null,
+      image_url: null,
+      candidates: null,
+    });
+    setRecommendation([]);
+    setAnalysisDescription(null);
+    setRecommendDescription(null);
+  };
+
   const value = useMemo(
     () => ({
       analysis,

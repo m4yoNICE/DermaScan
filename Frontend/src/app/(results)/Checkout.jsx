@@ -27,6 +27,7 @@ const Checkout = () => {
       const productIds = product.map((item) => item.id);
       const saveData = { analysisId: analysis.id, productIds };
       await Api.saveRecommendationApi(saveData);
+      await Api.activateLoadoutAPI(analysis.id);
       setProduct([]);
       setRecommendation([]);
       setAnalysis(null);

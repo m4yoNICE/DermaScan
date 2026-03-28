@@ -130,6 +130,7 @@ export async function analyzeSkinOrchestrator(userId, imageBuffer) {
           createdAt: transaction.createdAt,
           updatedAt: transaction.updatedAt,
           image_url: imageUrl,
+          candidates: skinResult.candidates,
         },
       },
     };
