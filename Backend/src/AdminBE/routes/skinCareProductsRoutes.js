@@ -39,5 +39,23 @@ router.delete(
   checkAdmin,
   skinCareController.deleteProduct,
 );
+router.get(
+  "/getConditionCounts",
+  verifyToken,
+  checkAdmin,
+  skinCareController.getConditionCounts,
+);
+router.get(
+  "/getConditionCountsByProduct",
+  verifyToken,
+  checkAdmin,
+  skinCareController.handleFetchConditionProducts,
+);
+router.get(
+  "/getAllProductImages",
+  verifyToken,
+  checkAdmin,
+  skinCareController.handleGetAllProductImages,
+);
 
 export default router;

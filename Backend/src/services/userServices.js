@@ -33,8 +33,8 @@ export async function updateUser(
 }
 
 export async function deleteUser(userId) {
-  const result = await db.delete(users).where(eq(users.id, userId));
-  return result.affectedRows > 0;
+  const [result] = await db.delete(users).where(eq(users.id, userId));
+  return (result?.affectedRows ?? 0) > 0;
 }
 
 export async function getUserWithSkinData(userId) {
@@ -47,8 +47,6 @@ export async function getUserWithSkinData(userId) {
       birthdate: users.birthdate,
       skinType: skinProfile.skinType,
       skinSensitivity: skinProfile.skinSensitivity,
-      pigmentation: skinProfile.pigmentation,
-      aging: skinProfile.aging,
     })
     .from(users)
     .leftJoin(skinProfile, eq(skinProfile.userId, users.id))
@@ -57,13 +55,8 @@ export async function getUserWithSkinData(userId) {
   return result[0] || null;
 }
 
-export async function createSkinData(
-  userId,
-  skin_type,
-  skin_sensitivity,
-  pigmentation,
-  aging,
-) {
+export async function createSkinData(userId, skin_type, skin_sensitivity) {
+  console.log("User Came Here! ", userId, skin_sensitivity, skin_type);
   const [inserted] = await db
     .insert(skinProfile)
     .values({ userId, skinType: skin_type, skinSensitivity: skin_sensitivity })
@@ -80,8 +73,8 @@ export async function createSkinData(
 }
 
 export async function deleteSkinData(userId) {
-  const result = await db
+  const [result] = await db
     .delete(skinProfile)
     .where(eq(skinProfile.userId, userId));
-  return result.affectedRows > 0;
+  return (result?.affectedRows ?? 0) > 0;
 }

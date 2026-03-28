@@ -5,7 +5,7 @@ import {
   getuserid,
   createskindata,
   deleteskindata,
-} from "../controllers/userControllers.js";
+} from "../controllers/userController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 const router = express.Router();
 

@@ -1,22 +1,30 @@
 import { createContext, useContext, useState, useMemo, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserContext } from "./UserContext";
 import Api from "@/services/Api";
 
 const UserDataContext = createContext();
 
 export const UserDataProvider = ({ children }) => {
+  const { token } = useContext(UserContext);
   const [userData, setUserData] = useState(null);
 
+  const [userRoutine, setUserRoutine] = useState(null);
+
   useEffect(() => {
-    AsyncStorage.getItem("authToken").then((token) => {
-      if (token) fetchUserData();
-    });
-  }, []);
+    if (!token) {
+      setUserData(null);
+      setUserRoutine(null);
+    } else {
+      fetchUserData();
+    }
+  }, [token]);
 
   const fetchUserData = async () => {
+    if (!token) return;
     try {
       const res = await Api.getUserByTokenAPI();
-      setUserData(res.data);
+      setUserData(res.data.user);
+      setUserRoutine(res.data.routine ?? null);
     } catch (err) {
       console.error("UserData fetch error:", err);
     }
@@ -26,9 +34,11 @@ export const UserDataProvider = ({ children }) => {
     () => ({
       userData,
       setUserData,
+      userRoutine,
+      setUserRoutine,
       fetchUserData,
     }),
-    [userData],
+    [userData, userRoutine],
   );
 
   return (

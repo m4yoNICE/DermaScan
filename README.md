@@ -76,6 +76,14 @@ Download required Python packages:
 pip install scikit-learn pillow tensorflow huggingface_hub opencv-python fastapi uvicorn joblib numpy
 ```
 
+### FOR OTHER DEVCICE THAT NEEDS TO BYPASS THEIR EXECUTION POLICY
+in windows-key button, search Powershell
+then copy and paste this command
+
+```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
 **Note:** Use `pip install tensorflow-cpu` if you don't have a GPU.
 
 ---

@@ -1,6 +1,6 @@
 import { users, role } from "../../drizzle/schema.js";
 import { db } from "../../config/db.js";
-import { eq } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 /**
@@ -160,4 +160,14 @@ export async function findAdminByEmail(email) {
     ...user,
     role: roleData || null,
   };
+}
+/**
+ * Get user count
+ */
+export async function countUsersProcess() {
+  const result = await db
+    .select({ count: count() })
+    .from(users);
+
+  return result[0].count;
 }

@@ -11,7 +11,8 @@ import {
   productRecommendations,
   skinCareProducts,
   conditionProducts,
-  routineNotifications,
+  reminderLogs,
+  userRoutine,
 } from "./schema.js";
 
 export const journalsRelations = relations(journals, ({ one }) => ({
@@ -27,7 +28,11 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   skinAnalysis: many(skinAnalysis),
   skinProfile: many(skinProfile),
   storedImages: many(storedImages),
-  routineNotifications: many(routineNotifications),
+  reminderLogs: many(reminderLogs),
+  userRoutine: one(userRoutine, {
+    fields: [users.id],
+    references: [userRoutine.userId],
+  }),
   role: one(role, {
     fields: [users.roleId],
     references: [role.id],
@@ -93,15 +98,28 @@ export const roleRelations = relations(role, ({ many }) => ({
 export const skinCareProductsRelations = relations(
   skinCareProducts,
   ({ many }) => ({
-    conditionProducts: many(conditionProducts),
     recommendations: many(productRecommendations),
-    routineNotifications: many(routineNotifications),
+    conditionProducts: many(conditionProducts),
+  }),
+);
+
+export const conditionProductsRelations = relations(
+  conditionProducts,
+  ({ one }) => ({
+    condition: one(skinConditions, {
+      fields: [conditionProducts.conditionId],
+      references: [skinConditions.id],
+    }),
+    product: one(skinCareProducts, {
+      fields: [conditionProducts.productId],
+      references: [skinCareProducts.id],
+    }),
   }),
 );
 
 export const productRecommendationsRelations = relations(
   productRecommendations,
-  ({ one, many }) => ({
+  ({ one }) => ({
     analysis: one(skinAnalysis, {
       fields: [productRecommendations.analysisId],
       references: [skinAnalysis.id],
@@ -110,24 +128,27 @@ export const productRecommendationsRelations = relations(
       fields: [productRecommendations.productId],
       references: [skinCareProducts.id],
     }),
-    routineNotifications: many(routineNotifications),
   }),
 );
 
-export const routineNotificationsRelations = relations(
-  routineNotifications,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [routineNotifications.userId],
-      references: [users.id],
-    }),
-    recommendation: one(productRecommendations, {
-      fields: [routineNotifications.recommendationId],
-      references: [productRecommendations.id],
-    }),
-    product: one(skinCareProducts, {
-      fields: [routineNotifications.productId],
-      references: [skinCareProducts.id],
-    }),
+export const reminderLogsRelations = relations(reminderLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [reminderLogs.userId],
+    references: [users.id],
   }),
-);
+  analysis: one(skinAnalysis, {
+    fields: [reminderLogs.analysisId],
+    references: [skinAnalysis.id],
+  }),
+}));
+
+export const userRoutineRelations = relations(userRoutine, ({ one }) => ({
+  user: one(users, {
+    fields: [userRoutine.userId],
+    references: [users.id],
+  }),
+  activeAnalysis: one(skinAnalysis, {
+    fields: [userRoutine.activeAnalysisId],
+    references: [skinAnalysis.id],
+  }),
+}));

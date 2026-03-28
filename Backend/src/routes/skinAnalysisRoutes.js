@@ -1,5 +1,5 @@
 import express from "express";
-import { skinAnalysis } from "../controllers/skinAnalysisController.js";
+import { skinAnalysis, getAnalysisLogsByUser } from "../controllers/skinAnalysisController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { memorySaveMulter } from "../middleware/memorySaveMulter.js";
 
@@ -11,4 +11,5 @@ router.post(
   memorySaveMulter().single("image"),
   skinAnalysis,
 );
+router.get("/", verifyToken, getAnalysisLogsByUser);
 export default router;

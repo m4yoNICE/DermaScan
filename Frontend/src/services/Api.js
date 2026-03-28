@@ -7,12 +7,13 @@ const Api = {
   loginAccountAPI: (data) => Http.post("/api/auth/login", data),
   forgetPasswordAPI: (data) => Http.post("/api/auth/forgetpassword", data),
   checkOtpAPI: (data) => Http.post("/api/auth/checkOTP", data),
+  resetPasswordAPI: (data) => Http.put("/api/auth/resetpassword", data),
 
   // User
   getUserByTokenAPI: () => Http.get("/api/users"),
   editUserAPI: (data) => Http.put("/api/users", data),
   deleteUserAPI: () => Http.delete("/api/users"),
-  updateSkinDataAPI: (data) => Http.post("/api/users/skin", data),
+  createSkinDataAPI: (data) => Http.post("/api/users/skin", data),
   resetSkinDataAPI: () => Http.delete("/api/users/skinreset"),
 
   // Journal
@@ -22,18 +23,27 @@ const Api = {
   updateJournalAPI: (id, data) => Http.put("/api/journals/" + id, data),
   deleteJournalAPI: (id) => Http.delete("/api/journals/" + id),
 
-  //recommendation
+  // Recommendations
   saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
+  getHistoryAPI: () => Http.get("/api/recommendations"),
 
+  // Routine
+  getRoutineScheduleAPI: () => Http.get("/api/routines/schedule"),
+  setUserRoutineAPI: (data) => Http.post("/api/routines/schedule", data),
+  editUserRoutineAPI: (data) => Http.put("/api/routines/schedule", data),
+  getRoutineProductsAPI: () => Http.get("/api/routines/products"),
+  completeScheduleAPI: (data) => Http.post("/api/routines/complete", data),
+  getReminderLogsAPI: () => Http.get("/api/routines/logs"),
+  activateLoadoutAPI: (analysisId) =>
+    Http.patch("/api/routines/activate", { analysisId }),
   // Uploads & Images
-  getSkinImage: (data) => {
-    return Http.defaults.baseURL + "/api/uploads/skin-images/" + data;
-  },
-  getProductImage: (data) => {
-    return Http.defaults.baseURL + "/api/uploads/product-images/" + data;
-  },
-
-  //FormData
+  getSkinImage: (data) =>
+    Http.defaults.baseURL + "/api/uploads/skin-images/" + data,
+  getProductImage: (data) =>
+    data?.startsWith("http")
+      ? data
+      : Http.defaults.baseURL + "/api/uploads/product-images/" + data,
+  // FormData
   uploadSkinImageAPI: (formData) => FormsData("/api/conditions/skin", formData),
   uploadProfilePicAPI: (formData) => FormsData("/api/profile/pic", formData),
 };

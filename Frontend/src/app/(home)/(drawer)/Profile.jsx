@@ -12,8 +12,9 @@ import React, { useState, useCallback } from "react";
 import { useFocusEffect, router } from "expo-router";
 import { useUser } from "@/contexts/UserContext";
 import { useUserData } from "@/contexts/UserDataContext";
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import ScheduleModal from "@/components/results/RoutineScheduleModal";
 import Logo from "@/components/designs/Logo";
 import Api from "@/services/Api";
 
@@ -39,6 +40,7 @@ const Profile = () => {
     new: "",
     confirm: "",
   });
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const [showPicker, setShowPicker] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -139,7 +141,7 @@ const Profile = () => {
       setShowDeleteModal(false);
       await Api.deleteUserAPI();
       ToastMessage("success", "Deleted", "Your account has been removed.");
-      await logout();
+      setTimeout(() => logout(), 1500);
     } catch (error) {
       ToastMessage(
         "error",
@@ -170,7 +172,7 @@ const Profile = () => {
                 "Skin Data Cleared",
                 "Your skin type has been reset.",
               );
-              router.push("/BaumannQuestionnaire");
+              router.push("/SkinTypeQuestionnaire");
             } catch (error) {
               ToastMessage(
                 "error",
@@ -258,6 +260,25 @@ const Profile = () => {
 
         <View style={styles.sectionDivider} />
 
+        <Text style={styles.label}>Skin Profile</Text>
+
+        <View style={styles.skinRow}>
+          <View style={styles.skinBadge}>
+            <Text style={styles.skinBadgeLabel}>Skin Type</Text>
+            <Text style={styles.skinBadgeValue}>
+              {userData.skinType ?? "Not set"}
+            </Text>
+          </View>
+          <View style={styles.skinBadge}>
+            <Text style={styles.skinBadgeLabel}>Sensitivity</Text>
+            <Text style={styles.skinBadgeValue}>
+              {userData.skinSensitive ?? "Not set"}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionDivider} />
+
         <Text style={styles.label}>Current Password</Text>
         <TextInput
           style={styles.fullInput}
@@ -293,6 +314,13 @@ const Profile = () => {
       </View>
 
       {/* Action Buttons */}
+      <TouchableOpacity
+        style={styles.editBtn}
+        onPress={() => setShowScheduleModal(true)}
+      >
+        <Text style={styles.editBtnText}>Update Routine Schedule</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.editBtn} onPress={handleResetSkinType}>
         <Text style={styles.editBtnText}>Reset Skin Type</Text>
       </TouchableOpacity>
@@ -329,6 +357,10 @@ const Profile = () => {
           </View>
         </View>
       </Modal>
+      <ScheduleModal
+        visible={showScheduleModal}
+        onDone={() => setShowScheduleModal(false)}
+      />
     </ScrollView>
   );
 };
@@ -419,5 +451,29 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#E5E5E5",
     marginVertical: 20,
+  },
+  skinRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 15,
+  },
+  skinBadge: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#00CC99",
+    borderRadius: 10,
+    padding: 12,
+    alignItems: "center",
+  },
+  skinBadgeLabel: {
+    fontSize: 12,
+    color: "#999",
+    marginBottom: 4,
+  },
+  skinBadgeValue: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#00CC99",
+    textTransform: "capitalize",
   },
 });

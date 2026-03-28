@@ -1,17 +1,23 @@
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Accordion from "@/components/designs/Accordian";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import Api from "@/services/Api";
 import RoutineView from "@/components/results/RoutineView";
-import LoadingModal from "@/components/designs/LoadingModal";
 import DermaAlert, {
   dermaAlertTextStyle,
-} from "@/components/designs/DermaAlert";
+} from "@/components/designs/feedback/DermaAlert";
 
 const Results = () => {
-  const { analysis } = useAnalysis();
+  const { analysis, analysisDescription, recommendDescription } = useAnalysis();
   const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
@@ -52,17 +58,19 @@ const Results = () => {
         />
       );
     }
-
-    return <LoadingModal />;
+    return (
+      <View style={styles.imagePlaceholder}>
+        <ActivityIndicator size="small" color="#00CC99" />
+      </View>
+    );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.imgWrapper}>{getImageContent()}</View>
 
-      {/* Analysis Accordion */}
       <View style={styles.accordionWrapper}>
-        <Accordion title="Analysis">
+        <Accordion title="Analysis" defaultOpen={true}>
           {analysis.status === "flagged" ? (
             <DermaAlert>
               <Text style={dermaAlertTextStyle}>
@@ -75,20 +83,40 @@ const Results = () => {
             </DermaAlert>
           ) : (
             <View style={styles.analysisContent}>
-              <Text style={styles.analysisText}>
-                The system has detected signs of
-                <Text style={styles.highlight}>{analysis.condition_name}</Text>
-                with a confidence level of
-                <Text style={styles.highlight}>
-                  {(Number(analysis.confidenceScores) * 100).toFixed(2)}%{" "}
+              <View style={styles.descriptionBlock}>
+                <View style={styles.descriptionLabelRow}>
+                  <MaterialCommunityIcons
+                    name="magnify"
+                    size={16}
+                    color="#00CC99"
+                  />
+                  <Text style={styles.descriptionLabel}>Detection</Text>
+                </View>
+                <Text style={styles.descriptionText}>
+                  {analysisDescription}
                 </Text>
-              </Text>
+              </View>
+
+              <View style={styles.divider} />
+
+              <View style={styles.descriptionBlock}>
+                <View style={styles.descriptionLabelRow}>
+                  <MaterialCommunityIcons
+                    name="flask-outline"
+                    size={16}
+                    color="#00CC99"
+                  />
+                  <Text style={styles.descriptionLabel}>Key Ingredients</Text>
+                </View>
+                <Text style={styles.descriptionText}>
+                  {recommendDescription}
+                </Text>
+              </View>
             </View>
           )}
         </Accordion>
       </View>
 
-      {/* Recommendation Accordion */}
       <View style={styles.accordionWrapper}>
         <Accordion title="Recommendation">
           {analysis.status === "flagged" || analysis.canRecommend === "No" ? (
@@ -110,11 +138,7 @@ const Results = () => {
 export default Results;
 
 const styles = StyleSheet.create({
-  container: {
-    paddingBottom: 40,
-    alignItems: "center",
-  },
-
+  container: { paddingBottom: 40, alignItems: "center" },
   imgWrapper: {
     width: "100%",
     height: 300,
@@ -122,31 +146,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: { width: "100%", height: "100%" },
-  accordionWrapper: {
-    width: "100%",
-    marginTop: 2,
-  },
-  analysisContent: {
-    padding: 10,
-  },
-  analysisText: {
-    fontSize: 18,
-    lineHeight: 26,
-    color: "#333",
-  },
-  highlight: {
-    fontWeight: "700",
-    color: "#00CC99",
-  },
-  standardContent: {
-    padding: 10,
-  },
-  standardText: {
-    fontSize: 16,
-    color: "#444",
-  },
+  accordionWrapper: { width: "100%", marginTop: 2 },
+  analysisContent: { padding: 10 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-
   flaggedPlaceholder: {
     width: "100%",
     height: "100%",
@@ -155,8 +157,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  flaggedPlaceholderText: {
-    fontSize: 13,
-    color: "#b0bec5",
+  flaggedPlaceholderText: { fontSize: 13, color: "#b0bec5" },
+  descriptionBlock: { paddingVertical: 10 },
+  descriptionLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 6,
   },
+  descriptionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#00CC99",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  descriptionText: { fontSize: 14, color: "#666", lineHeight: 22 },
+  divider: { height: 1, backgroundColor: "#f0f0f0", marginVertical: 4 },
+  imagePlaceholder: { flex: 1, justifyContent: "center", alignItems: "center" },
 });

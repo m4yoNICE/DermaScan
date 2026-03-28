@@ -15,10 +15,16 @@ export const AnalysisProvider = ({ children }) => {
     createdAt: null,
     updatedAt: null,
     image_url: null,
+    top3: null,
   });
 
-  const [recommendation, setRecommendation] = useState([
-    {
+  const [analysisDescription, setAnalysisDescription] = useState(null);
+  const [recommendDescription, setRecommendDescription] = useState(null);
+
+  const [recommendation, setRecommendation] = useState([]);
+
+  const clearAnalysis = () => {
+    setAnalysis({
       id: null,
       userId: null,
       imageId: null,
@@ -43,8 +49,13 @@ export const AnalysisProvider = ({ children }) => {
       setAnalysis,
       recommendation,
       setRecommendation,
+      analysisDescription,
+      setAnalysisDescription,
+      recommendDescription,
+      setRecommendDescription,
+      clearAnalysis,
     }),
-    [analysis, recommendation],
+    [analysis, recommendation, analysisDescription, recommendDescription],
   );
   return (
     <AnalysisContext.Provider value={value}>

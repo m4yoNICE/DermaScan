@@ -1,26 +1,26 @@
 import {
   filterBySkinType,
   getSkinData,
-  matchProductByCondition,
+  unionProductFilter,
   scoreProducts,
 } from "../services/productRecommendationServices.js";
 
-export async function recommendOrchestrator(user_id, condition_id) {
+export async function recommendOrchestrator(analysis_id, user_id, condition_id) {
   try {
     const skinData = await getSkinData(user_id);
     console.log("Phase 1 - skinData:", skinData);
     if (!skinData) return null;
 
-    const matchedProducts = await matchProductByCondition(condition_id);
-    console.log("Phase 2 - matchedProducts:", matchedProducts);
+    const matchedProducts = await unionProductFilter(condition_id);
+    console.log("Phase 2 - matchedProducts:", matchedProducts.length);
     if (!matchedProducts.length) return null;
 
     const filteredProducts = filterBySkinType(matchedProducts, skinData);
-    console.log("Phase 3 - filteredProducts:", filteredProducts);
+    console.log("Phase 3 - filteredProducts:", filteredProducts.length);
     if (!filteredProducts.length) return null;
 
     const scoredProducts = scoreProducts(filteredProducts);
-    console.log("Phase 4 - scoredProducts:", scoredProducts);
+    console.log("Phase 4 - scoredProducts:", scoredProducts.length);
 
     return scoredProducts;
   } catch (error) {

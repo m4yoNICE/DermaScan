@@ -14,11 +14,11 @@ import {
   Keyboard,
 } from "react-native";
 import Button from "@/components/designs/Button";
-import LoadingModal from "@/components/designs/LoadingModal";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import { UserContext } from "src/contexts/UserContext";
 import Api from "src/services/Api.js";
 
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 const Register = () => {
@@ -86,6 +86,15 @@ const Register = () => {
         "Please enter a valid email address",
       );
     }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "8+ chars, upper, lower, number & special char.",
+      );
+    }
     if (dob > new Date()) {
       return ToastMessage(
         "error",
@@ -113,7 +122,7 @@ const Register = () => {
           "Registration Successful!",
           "Welcome aboard 👋",
         );
-        router.push("/BaumannQuestionnaire");
+        router.push("/SkinTypeQuestionnaire");
       }
     } catch (err) {
       const message =
@@ -126,7 +135,13 @@ const Register = () => {
 
   return (
     <View style={styles.root}>
-      <LoadingModal visible={loading} />
+      <LoadingModal
+        visible={loading}
+        onTimeout={() => {
+          setLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
       {/* Top Background Section */}
       <View style={styles.backgroundWrapper}>
         <View style={styles.landingScale}>
