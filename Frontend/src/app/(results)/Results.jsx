@@ -12,9 +12,7 @@ import Accordion from "@/components/designs/Accordian";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import Api from "@/services/Api";
 import RoutineView from "@/components/results/RoutineView";
-import DermaAlert, {
-  dermaAlertTextStyle,
-} from "@/components/designs/feedback/DermaAlert";
+import { getResultConfig } from "@/utils/analysisResultConfig";
 
 const Results = () => {
   const { analysis, analysisDescription, recommendDescription } = useAnalysis();
@@ -27,7 +25,7 @@ const Results = () => {
     }
   }, [analysis]);
 
-  if (!analysis) {
+  if (!analysis?.status) {
     return (
       <View style={styles.centered}>
         <Text>No analysis data available.</Text>
@@ -35,8 +33,10 @@ const Results = () => {
     );
   }
 
+  const config = getResultConfig(analysis.status);
+
   const getImageContent = () => {
-    if (analysis.status === "flagged") {
+    if (!config.showImage) {
       return (
         <View style={styles.flaggedPlaceholder}>
           <MaterialCommunityIcons
@@ -65,71 +65,58 @@ const Results = () => {
     );
   };
 
+  const renderAnalysisContent = () => {
+    if (config.analysisContent) {
+      return config.analysisContent(analysis);
+    }
+
+    // success
+    return (
+      <View style={styles.analysisContent}>
+        <View style={styles.descriptionBlock}>
+          <View style={styles.descriptionLabelRow}>
+            <MaterialCommunityIcons name="magnify" size={16} color="#00CC99" />
+            <Text style={styles.descriptionLabel}>Detection</Text>
+          </View>
+          <Text style={styles.descriptionText}>{analysisDescription}</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.descriptionBlock}>
+          <View style={styles.descriptionLabelRow}>
+            <MaterialCommunityIcons
+              name="flask-outline"
+              size={16}
+              color="#00CC99"
+            />
+            <Text style={styles.descriptionLabel}>Key Ingredients</Text>
+          </View>
+          <Text style={styles.descriptionText}>{recommendDescription}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderRecommendContent = () => {
+    if (config.recommendContent) {
+      return config.recommendContent(analysis);
+    }
+    return <RoutineView />;
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.imgWrapper}>{getImageContent()}</View>
 
       <View style={styles.accordionWrapper}>
         <Accordion title="Analysis" defaultOpen={true}>
-          {analysis.status === "flagged" ? (
-            <DermaAlert>
-              <Text style={dermaAlertTextStyle}>
-                Our system cannot detect this as it may be outside of scope or
-                it may need expert intervention.
-              </Text>
-              <Text style={dermaAlertTextStyle}>
-                Please see a dermatologist for proper care.
-              </Text>
-            </DermaAlert>
-          ) : (
-            <View style={styles.analysisContent}>
-              <View style={styles.descriptionBlock}>
-                <View style={styles.descriptionLabelRow}>
-                  <MaterialCommunityIcons
-                    name="magnify"
-                    size={16}
-                    color="#00CC99"
-                  />
-                  <Text style={styles.descriptionLabel}>Detection</Text>
-                </View>
-                <Text style={styles.descriptionText}>
-                  {analysisDescription}
-                </Text>
-              </View>
-
-              <View style={styles.divider} />
-
-              <View style={styles.descriptionBlock}>
-                <View style={styles.descriptionLabelRow}>
-                  <MaterialCommunityIcons
-                    name="flask-outline"
-                    size={16}
-                    color="#00CC99"
-                  />
-                  <Text style={styles.descriptionLabel}>Key Ingredients</Text>
-                </View>
-                <Text style={styles.descriptionText}>
-                  {recommendDescription}
-                </Text>
-              </View>
-            </View>
-          )}
+          {renderAnalysisContent()}
         </Accordion>
       </View>
 
       <View style={styles.accordionWrapper}>
-        <Accordion title="Recommendation">
-          {analysis.status === "flagged" || analysis.canRecommend === "No" ? (
-            <DermaAlert>
-              <Text style={dermaAlertTextStyle}>
-                This concern may require professional consultation. Please see a
-                dermatologist for proper care.
-              </Text>
-            </DermaAlert>
-          ) : (
-            <RoutineView />
-          )}
-        </Accordion>
+        <Accordion title="Recommendation">{renderRecommendContent()}</Accordion>
       </View>
     </ScrollView>
   );

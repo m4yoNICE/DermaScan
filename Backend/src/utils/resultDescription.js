@@ -1,47 +1,47 @@
-// const MEDICAL_ONLY_CONDITIONS = new Set([
-//   "acne-cyst",
-//   "acne-nodules",
-//   "psoriasis",
-//   "out-of-scope",
-// ]);
-
-// function formatLabel(rawLabel) {
-//   if (!rawLabel) return "your skin condition";
-//   const severities = ["mild", "moderate", "severe"];
-//   return rawLabel
-//     .split("-")
-//     .filter((p) => !severities.includes(p))
-//     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-//     .join(" ");
-// }
-
 const MEDICAL_ONLY_CONDITIONS = new Set([
-  "acne-nodularcystic", // replaces acne-cyst and acne-nodules
+  "acne-cyst",
+  "acne-nodules",
   "psoriasis",
   "out-of-scope",
 ]);
 
-const LABEL_DISPLAY_OVERRIDE = {
-  "acne-inflammatory": "Acne Inflammatory (Papules & Pustules)",
-  "acne-nodularcystic": "Severe Nodular/Cystic Acne",
-};
-
 function formatLabel(rawLabel) {
   if (!rawLabel) return "your skin condition";
   const severities = ["mild", "moderate", "severe"];
-  const base = rawLabel
+  return rawLabel
     .split("-")
     .filter((p) => !severities.includes(p))
-    .join("-");
-
-  return (
-    LABEL_DISPLAY_OVERRIDE[base] ??
-    base
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ")
-  );
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
 }
+
+// const MEDICAL_ONLY_CONDITIONS = new Set([
+//   "acne-nodularcystic", // replaces acne-cyst and acne-nodules
+//   "psoriasis",
+//   "out-of-scope",
+// ]);
+
+// const LABEL_DISPLAY_OVERRIDE = {
+//   "acne-inflammatory": "Acne Inflammatory (Papules & Pustules)",
+//   "acne-nodularcystic": "Severe Nodular/Cystic Acne",
+// };
+
+// function formatLabel(rawLabel) {
+//   if (!rawLabel) return "your skin condition";
+//   const severities = ["mild", "moderate", "severe"];
+//   const base = rawLabel
+//     .split("-")
+//     .filter((p) => !severities.includes(p))
+//     .join("-");
+
+//   return (
+//     LABEL_DISPLAY_OVERRIDE[base] ??
+//     base
+//       .split("-")
+//       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+//       .join(" ")
+//   );
+// }
 
 export function buildAnalysisDescription(analysisData, candidates) {
   if (!candidates || candidates.length === 0) return null;

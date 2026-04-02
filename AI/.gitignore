@@ -1,4 +1,5 @@
 training_data/*
+training_data_new/*
 
 *.h5
 *.keras

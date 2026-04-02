@@ -96,6 +96,17 @@ const SkinCamera = () => {
         return;
       }
 
+      if (analysis.result === "consult") {
+        setAnalysis({
+          status: "consult",
+          condition_name: analysis.data.condition_name,
+          confidenceScores: analysis.data.confidenceScores,
+        });
+        router.push("/Results");
+        return;
+      }
+
+
       if (analysis.result === "flagged") {
         setAnalysis({ status: "flagged" });
         router.push("/Results");

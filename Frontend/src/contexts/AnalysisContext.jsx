@@ -15,7 +15,7 @@ export const AnalysisProvider = ({ children }) => {
     createdAt: null,
     updatedAt: null,
     image_url: null,
-    top3: null,
+    candidates: null,
   });
 
   const [analysisDescription, setAnalysisDescription] = useState(null);
