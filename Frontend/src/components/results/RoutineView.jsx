@@ -3,9 +3,26 @@ import { router } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import { RoutineSection } from "./RoutineSection";
+import { useProduct } from "@/contexts/ProductContext";
 import Button from "../designs/Button";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
+
 const RoutineView = () => {
   const { recommendation } = useAnalysis();
+  const { product } = useProduct();
+
+  const handleViewRoutine = () => {
+    if (product.length === 0) {
+      ToastMessage(
+        "error",
+        "No Products Selected",
+        "Add at least one product first.",
+      );
+      return;
+    }
+    router.push("/Checkout");
+  };
+
   const typeText = {
     Cleanser:
       "A cleanser removes dirt, oil, makeup, and impurities from your skin. It's the first and most essential step in any skincare routine, helping keep pores clear and preventing breakouts.",
@@ -43,7 +60,7 @@ const RoutineView = () => {
       {/* put the button here */}
       <Button
         title="View My Routine"
-        onPress={() => router.push("/Checkout")}
+        onPress={handleViewRoutine}
         style={{ margin: 10 }}
       />
     </View>

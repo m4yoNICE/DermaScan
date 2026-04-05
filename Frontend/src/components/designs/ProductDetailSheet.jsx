@@ -5,7 +5,6 @@ import BottomSheet, {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 import Button from "@/components/designs/Button";
-import Api from "@/services/Api";
 
 const ProductDetailSheet = ({
   sheetRef,

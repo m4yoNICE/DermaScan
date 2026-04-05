@@ -7,7 +7,6 @@ import {
   BottomSheetBackdrop,
   BottomSheetFooter,
 } from "@gorhom/bottom-sheet";
-import Api from "@/services/Api";
 
 const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
   const bottomSheetRef = useRef(null);

@@ -14,20 +14,43 @@ const AnalysisLayout = () => {
         headerTintColor: "#fff",
         headerTitleStyle: { fontWeight: "700" },
         headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => {
-              clearAnalysis();
-              router.back();
-            }}
-            style={{ marginLeft: 5 }}
-          >
+          <TouchableOpacity style={{ marginLeft: 5 }}>
             <Ionicons name="arrow-back" size={24} color="#fff" />
           </TouchableOpacity>
         ),
       }}
     >
-      <Stack.Screen name="Results" options={{ title: "Scan Results" }} />
-      <Stack.Screen name="Checkout" options={{ title: "My Routine" }} />
+      <Stack.Screen
+        name="Results"
+        options={{
+          title: "Scan Results",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => {
+                clearAnalysis();
+                router.back();
+              }}
+              style={{ marginLeft: 5 }}
+            >
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Checkout"
+        options={{
+          title: "My Routine",
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{ marginLeft: 5 }}
+            >
+              <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 };

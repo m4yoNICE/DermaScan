@@ -19,6 +19,7 @@ import Card from "../designs/cards/Card";
 import { router } from "expo-router";
 import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const SkinCamera = () => {
   const {
@@ -75,7 +76,20 @@ const SkinCamera = () => {
     try {
       animateShutter();
       const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
-      setCapturePic(photo);
+
+      // Crop to square based on width
+      const size = Math.min(photo.width, photo.height);
+      const originX = (photo.width - size) / 2;
+      const originY = (photo.height - size) / 2;
+
+      const cropped = await ImageManipulator.ImageManipulator.manipulate(
+        photo.uri,
+      )
+        .crop({ originX, originY, width: size, height: size })
+        .renderAsync();
+
+      const result = await cropped.saveAsync({ compress: 1 });
+      setCapturePic(result);
     } catch (err) {
       console.log("Capture error:", err);
     }
@@ -105,7 +119,6 @@ const SkinCamera = () => {
         router.push("/Results");
         return;
       }
-
 
       if (analysis.result === "flagged") {
         setAnalysis({ status: "flagged" });
