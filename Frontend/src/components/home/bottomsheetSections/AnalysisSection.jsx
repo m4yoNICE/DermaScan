@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View, FlatList, Text, Image } from "react-native";
 import { useHomeData } from "@/contexts/HomeDataContext";
-import Api from "@/services/Api";
 
 const AnalysisSection = ({ selectedDate }) => {
   const { analysisLogs } = useHomeData();
