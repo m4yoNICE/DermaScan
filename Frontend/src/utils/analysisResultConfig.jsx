@@ -93,8 +93,10 @@ export function getResultConfig(status) {
 
   if (status === "consult") {
     return {
-      showImage: true,
-      analysisContent: (analysis) => <ConsultAnalysisContent analysis={analysis} />,
+      showImage: false,
+      analysisContent: (analysis) => (
+        <ConsultAnalysisContent analysis={analysis} />
+      ),
       recommendContent: () => <ConsultRecommendContent />,
     };
   }
