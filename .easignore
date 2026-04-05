@@ -1,0 +1,12 @@
+Backend/
+Admin/
+AI/
+dermascan-backend/
+__tests__/
+Frontend/android/
+Frontend/ios/
+Frontend/node_modules/
+Frontend/.git/
+.git/
+*.pyc
+__pycache__/
