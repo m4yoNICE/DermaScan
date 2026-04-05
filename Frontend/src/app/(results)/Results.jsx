@@ -10,7 +10,6 @@ import React, { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Accordion from "@/components/designs/Accordian";
 import { useAnalysis } from "src/contexts/AnalysisContext";
-import Api from "@/services/Api";
 import RoutineView from "@/components/results/RoutineView";
 import { getResultConfig } from "@/utils/analysisResultConfig";
 
