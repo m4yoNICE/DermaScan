@@ -57,10 +57,7 @@ const HistoryCard = ({ item }) => {
         activeOpacity={0.8}
       >
         {item.photoUrl ? (
-          <Image
-            source={{ uri: Api.getSkinImage(item.photoUrl) }}
-            style={styles.avatar}
-          />
+          <Image source={{ uri: item.photoUrl }} style={styles.avatar} />
         ) : (
           <View style={[styles.avatar, styles.avatarPlaceholder]}>
             <MaterialCommunityIcons

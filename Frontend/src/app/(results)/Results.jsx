@@ -20,8 +20,7 @@ const Results = () => {
 
   useEffect(() => {
     if (analysis?.image_url) {
-      const url = Api.getSkinImage(analysis.image_url);
-      setImageUrl(url);
+      setImageUrl(analysis.image_url);
     }
   }, [analysis]);
 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
-import Api from "@/services/Api";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const ProductCard = ({ item, isAdded = false }) => {
@@ -8,8 +7,7 @@ const ProductCard = ({ item, isAdded = false }) => {
 
   useEffect(() => {
     if (item?.productImage) {
-      const url = Api.getProductImage(item.productImage);
-      setImageUrl(url);
+      setImageUrl(item.productImage);
     }
   }, [item]);
 

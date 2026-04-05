@@ -89,7 +89,7 @@ const Checkout = () => {
         {product.map((item, index) => (
           <View key={index} style={styles.productRow}>
             <Image
-              source={{ uri: Api.getProductImage(item.productImage) }}
+              source={{ uri: item.productImage }}
               style={styles.thumbnail}
             />
             <View style={styles.itemDetails}>

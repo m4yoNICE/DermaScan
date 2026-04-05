@@ -21,9 +21,9 @@ const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
     }
   }, [isVisible]);
 
-  const imageUrl = product?.productImage
-    ? Api.getProductImage(product.productImage)
-    : null;
+  const imageUrl = product?.productImage ?? null;
+
+
 
   // 1. Define the Footer separately using BottomSheetFooter
   const renderFooter = useCallback(

@@ -55,7 +55,7 @@ const ProductDetailSheet = ({
           <View key={i}>
             <View style={styles.productRow}>
               <Image
-                source={{ uri: Api.getProductImage(p.productImage) }}
+                source={{ uri: p.productImage }}
                 style={styles.productImg}
               />
               <View style={styles.productBody}>

@@ -22,7 +22,7 @@ const AnalysisSection = ({ selectedDate }) => {
       renderItem={({ item }) => (
         <View style={styles.card}>
           <Image
-            source={{ uri: Api.getSkinImage(item.photoUrl) }}
+            source={{ uri: item.photoUrl }}
             style={styles.image}
             resizeMode="cover"
           />
