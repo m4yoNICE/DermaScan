@@ -29,7 +29,8 @@
           "icon": "./assets/notif/notif.png",
           "color": "#00CC99"
         }
-      ]
+      ],
+      "react-native-vision-camera"
     ],
     "experiments": {
       "typedRoutes": true,

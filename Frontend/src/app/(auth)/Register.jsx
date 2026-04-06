@@ -122,7 +122,7 @@ const Register = () => {
           "Registration Successful!",
           "Welcome aboard 👋",
         );
-        router.push("/SkinTypeQuestionnaire");
+        router.replace("/SkinTypeQuestionnaire");
       }
     } catch (err) {
       const message =
