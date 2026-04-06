@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "DermaScan",
-    "slug": "Frontend",
+    "name": "DermaScan+",
+    "slug": "DermaScan+",
     "icon": "./assets/logo/dermascan-logo.png",
     "android": {
       "adaptiveIcon": {

@@ -1,7 +1,7 @@
 import Landing4 from "@/components/landing/Landing4";
 import BottomSheet, {
-  BottomSheetView,
-  BottomSheetTextInput, // ADD THIS
+  BottomSheetTextInput,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Link, router } from "expo-router";
@@ -157,6 +157,7 @@ const Register = () => {
         enablePanDownToClose={false}
         handleComponent={null}
         enableContentPanningGesture={false}
+        enableHandlePanningGesture={false}
         keyboardBehavior="extend"
         keyboardBlurBehavior="restore"
         android_keyboardInputMode="adjustResize"
@@ -166,7 +167,10 @@ const Register = () => {
           borderRadius: 40,
         }}
       >
-        <BottomSheetView style={styles.sheetContent}>
+        <BottomSheetScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[styles.sheetContent, { minHeight: "130%" }]}
+        >
           {/* BACK BUTTON */}
           <View style={styles.backRow}>
             <Link href="/Login">
@@ -190,6 +194,7 @@ const Register = () => {
             <BottomSheetTextInput
               style={styles.input}
               placeholder="Email address"
+              placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
@@ -209,6 +214,7 @@ const Register = () => {
               <BottomSheetTextInput
                 style={styles.input}
                 placeholder="First Name"
+                placeholderTextColor="#999"
                 value={firstname}
                 onChangeText={setfirstname}
               />
@@ -217,6 +223,7 @@ const Register = () => {
               <BottomSheetTextInput
                 style={styles.input}
                 placeholder="Last Name"
+                placeholderTextColor="#999"
                 value={lastname}
                 onChangeText={setlastname}
               />
@@ -262,6 +269,7 @@ const Register = () => {
             <BottomSheetTextInput
               style={styles.input}
               placeholder="Password"
+              placeholderTextColor="#999"
               value={password}
               secureTextEntry={!showPass}
               onChangeText={setPassword}
@@ -286,6 +294,7 @@ const Register = () => {
             <BottomSheetTextInput
               style={styles.input}
               placeholder="Confirm Password"
+              placeholderTextColor="#999"
               value={confirmPassword}
               secureTextEntry={!showConfirmPass}
               onChangeText={setConfirmPassword}
@@ -307,7 +316,7 @@ const Register = () => {
             onPress={registerAccount}
             style={styles.regBtn}
           />
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </BottomSheet>
     </View>
   );
@@ -321,12 +330,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#05d6b2",
   },
   backgroundWrapper: {
-    height: "40%",
+    height: "22%",
     justifyContent: "center",
     alignItems: "center",
+    overflow: "visible",
+    paddingTop: 120,
   },
   landingScale: {
-    transform: [{ scale: 0.6 }],
+    transform: [{ scale: 0.5 }],
   },
   sheetContent: {
     paddingHorizontal: 30,
