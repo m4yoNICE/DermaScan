@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Table from "@/components/Table";
 import { fetchAnalysis } from "@/redux/slices/analysisSlice.js";
-import Api from "@/services/Api";
+import Api from "@/services/Api.js";
 
 const AnalysisPage = () => {
   const dispatch = useDispatch();
