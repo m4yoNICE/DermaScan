@@ -1,10 +1,12 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
   ScrollView,
+  BackHandler,
+  Alert,
 } from "react-native";
 import { useFocusEffect } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -54,6 +56,18 @@ const Home = () => {
       fetchAll();
     }, [fetchAll]),
   );
+
+  //if user press back
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      Alert.alert("Exit App", "Are you sure you want to quit?", [
+        { text: "Cancel", style: "cancel" },
+        { text: "Quit", onPress: () => BackHandler.exitApp() },
+      ]);
+      return true;
+    });
+    return () => sub.remove();
+  }, []);
 
   return (
     <View style={styles.container}>

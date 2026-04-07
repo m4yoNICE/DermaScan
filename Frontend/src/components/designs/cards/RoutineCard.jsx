@@ -8,6 +8,7 @@ const RoutineCard = ({
   isDone,
   isActive,
   onPress,
+  isLoading,
 }) => {
   const isMorning = schedule === "Morning";
 
@@ -17,6 +18,7 @@ const RoutineCard = ({
         style={styles.row}
         onPress={onPress}
         activeOpacity={0.8}
+        disabled={isDone || isLoading}
       >
         <Text style={styles.emoji}>{isMorning ? "🌅" : "🌙"}</Text>
         <View style={styles.info}>

@@ -1,14 +1,17 @@
 {
   "expo": {
     "name": "DermaScan+",
-    "slug": "DermaScan+",
+    "slug": "Frontend",
     "icon": "./assets/logo/dermascan-logo.png",
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#00CC99",
         "foregroundImage": "./assets/logo/dermascan-logo.png"
       },
-      "package": "com.dermascan.app"
+      "package": "com.dermascan.app",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "plugins": [
       [
@@ -41,6 +44,7 @@
       "eas": {
         "projectId": "407c5758-380e-439c-8b7c-c74e00d0a601"
       }
-    }
+    },
+    "owner": "m4yonice"
   }
 }
