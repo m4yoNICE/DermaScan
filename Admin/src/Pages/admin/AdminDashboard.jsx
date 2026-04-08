@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useMemo } from "react";
-import { getUserCount } from "../../redux/slices/userSlice.js";
-import { getSkinConditions } from "@/redux/slices/skinTypeSlice.js";
 import { fetchUsers } from "../../redux/slices/userSlice.js";
-import { getConditionCounts, getConditionCountsByProduct, getAllProductImages } from "../../redux/slices/skinProductSlice.js";
-import { fetchProducts } from "../../redux/slices/skinProductSlice.js";
-
+import { getSkinConditions } from "@/redux/slices/skinTypeSlice.js";
+import {
+  getConditionCounts,
+  getConditionCountsByProduct,
+  getAllProductImages,
+  fetchProducts,
+} from "../../redux/slices/skinProductSlice.js";
 import Api from "../../services/Api.js";
 
 // -------------------- BASIC COMPONENTS --------------------
 function Card({ children, className = "" }) {
-  return <div className={`bg-white rounded-2xl shadow-sm border ${className}`}>{children}</div>;
+  return (
+    <div className={`bg-white rounded-2xl shadow-sm border ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 function CardHeader({ children, className = "" }) {
@@ -64,7 +69,7 @@ function List({ items, renderItem }) {
 }
 
 function ProductColumn({ title, products }) {
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
@@ -121,25 +126,30 @@ function ProductColumn({ title, products }) {
   );
 }
 
+// -------------------- MAIN DASHBOARD --------------------
 export default function AdminDashboard() {
   const dispatch = useDispatch();
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const itemsPerPage = 4;
 
   const Users = useSelector((state) => state.user?.users || []);
-  const usercount = Users.length; 
-  const status = useSelector((state) => state.user?.status); 
-  const [scanData, setScanData] = React.useState([]);
-  const skinConditions = useSelector((state) => state.skinType?.skinConditions || []);
+  const userCount = Users.length;
+  const status = useSelector((state) => state.user?.status);
+  const skinConditions = useSelector(
+    (state) => state.skinType?.skinConditions || []
+  );
+  const conditionCounts = useSelector(
+    (state) => state.products?.getConditionCounts || []
+  );
+  const conditionProduct = useSelector(
+    (state) => state.products.getConditionCountsByProduct || []
+  );
+  const productImages = useSelector(
+    (state) => state.products.getAllProductImages || []
+  );
+
+  const [scanData, setScanData] = useState(0);
+  const [noRecommendationData, setNoRecommendationData] = useState(0);
 
   useEffect(() => {
-  console.log("Skin conditions state:", skinConditions);
-}, [skinConditions]);
-
-
-
-  useEffect(() => {
-    dispatch(getUserCount());
     dispatch(fetchUsers());
     dispatch(getSkinConditions());
     dispatch(getConditionCounts());
@@ -151,100 +161,84 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchScanPerDay = async () => {
       try {
-      const res = await Api.fetchScansPerDay();
-      const data = res.data.map(item => Number(item.count));
-        setScanData(data);
+        const res = await Api.fetchScansPerDay();
+        const total = res.data.reduce(
+          (sum, item) => sum + Number(item.count),
+          0
+        );
+        setScanData(total);
       } catch (error) {
-        console.error("Error fetching skin types:", error);
+        console.error("Error fetching scans per day:", error);
       }
     };
-
     fetchScanPerDay();
   }, []);
 
-  const conditionCounts = useSelector((state) => state.products?.getConditionCounts || []);
-  const getProducts = useSelector((state) => state.products?.products || []);
-  const conditionProduct = useSelector((state) => state.products.getConditionCountsByProduct || []);
-  const productImages = useSelector((state) => state.products.getAllProductImages || []);
+  useEffect(() => {
+    const fetchNoRecommendation = async () => {
+      try {
+        const res = await Api.getRecommendationNoData();
+        const count = res.data.data?.[0]?.count || 0;
+        setNoRecommendationData(count);
+      } catch (error) {
+        console.error("Error fetching no recommendation data:", error);
+      }
+    };
+    fetchNoRecommendation();
+  }, []);
 
+  const uniqueProducts = useMemo(
+    () =>
+      Array.from(
+        new Map(productImages.map((item) => [item.productId, item])).values()
+      ),
+    [productImages]
+  );
 
-// Use the product images array directly
-const products = productImages || []; // <-- JSON array from API
+  const popularProducts = useMemo(() => {
+    if (!conditionCounts.length || !conditionProduct.length) return [];
 
-// Remove duplicates by productId
-const uniqueProducts = Array.from(
-  new Map(products.map(item => [item.productId, item])).values()
-);
+    const productMap = {};
 
-console.log("Unique products:", uniqueProducts);
+    conditionProduct.forEach((cp) => {
+      const count =
+        conditionCounts.find((c) => c.conditionId === cp.conditionId)?.count ||
+        0;
 
+      if (!productMap[cp.productId]) {
+        productMap[cp.productId] = {
+          productId: cp.productId,
+          name: cp.productName,
+          score: 0,
+        };
+      }
 
-const popularProducts = useMemo(() => {
-  if (!conditionCounts.length || !conditionProduct.length) {
-    console.log("useMemo early return - waiting for data", { conditionCounts, conditionProduct });
-    return [];
-  }
+      productMap[cp.productId].score += count;
+    });
 
-  const productMap = {};
+    return Object.values(productMap)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+  }, [conditionCounts, conditionProduct]);
 
-  // Create a map of productId to productName and score
-  conditionProduct.forEach(cp => {
-    const count = conditionCounts.find(c => c.conditionId === cp.conditionId)?.count || 0;
+  const selectedProductIds = useMemo(
+    () => popularProducts.map((p) => p.productId),
+    [popularProducts]
+  );
 
-    if (!productMap[cp.productId]) {
-      productMap[cp.productId] = { productId: cp.productId, name: cp.productName, score: 0 };
-    }
+  const selectedProducts = useMemo(
+    () => uniqueProducts.filter((p) => selectedProductIds.includes(p.productId)),
+    [uniqueProducts, selectedProductIds]
+  );
 
-    productMap[cp.productId].score += count;
-  });
+  const nonSelectedProducts = useMemo(
+    () =>
+      uniqueProducts.filter((p) => !selectedProductIds.includes(p.productId)),
+    [uniqueProducts, selectedProductIds]
+  );
 
-  const result = Object.values(productMap)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
-
-  return result;
-}, [conditionCounts, conditionProduct]);
-
-const selectedProductIds = popularProducts.map(p => p.productId);
-
-const selectedProducts = uniqueProducts.filter(p =>
-  selectedProductIds.includes(p.productId)
-);
-
-const nonSelectedProducts = uniqueProducts.filter(
-  p => !selectedProductIds.includes(p.productId)
-);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = nonSelectedProducts.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(nonSelectedProducts.length / itemsPerPage);
-
-// Log the popular products for debugging
-useEffect(() => {
-}, [popularProducts]);
-
-// No recommendation data for dashboard stats
-const [noRecommendationData, setNoRecommendationData] = React.useState([]);
-
-// Fetch no recommendation data on component mount
-useEffect(() => {
-  const fetchNoRecommendation = async () => {
-    try {
-      const res = await Api.getRecommendationNoData();
-      const count = res.data.data?.[0]?.count || 0;
-      setNoRecommendationData(count);
-      console.log("No recommendation data:", res.data);
-    } catch (error) {
-      console.error("Error fetching no recommendation data:", error);
-    }
-}
-fetchNoRecommendation();
-}, []);
-
-// Prepare stats data for rendering
   const stats = [
-    { title: "Users", value: usercount },
+    { title: "Users", value: userCount },
     { title: "Scans per day", value: scanData },
     { title: "Out of Scope", value: noRecommendationData },
   ];
@@ -265,58 +259,42 @@ fetchNoRecommendation();
 
       {/* Middle Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Recommended Products */}
         <Card className="lg:col-span-2">
           <CardHeader>
-    <h3 className="font-semibold">Selected Recommended Products</h3>
-  </CardHeader>
-  <CardContent>
-    <div className="grid grid-cols-2 gap-4">
-      {/* Selected products */}
-      <ProductColumn title="Selected" products={selectedProducts} />
-
-      {/* Non-selected products with pagination */}
-      <div className="flex flex-col gap-2">
-        <ProductColumn title="Non-Selected" products={currentProducts} />
-
-        {totalPages > 1 && (
-          <div className="flex justify-center gap-2 mt-2">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className="px-2 py-1 bg-gray-200 rounded"
-            >
-              Prev
-            </button>
-            <span className="px-2 py-1">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              className="px-2 py-1 bg-gray-200 rounded"
-            >
-              Next
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  </CardContent>
+            <h3 className="font-semibold">Selected Recommended Products</h3>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <ProductColumn title="Selected" products={selectedProducts} />
+              <ProductColumn title="Non-Selected" products={nonSelectedProducts} />
+            </div>
+          </CardContent>
         </Card>
 
+        {/* Skin Conditions — scrollable */}
         <Card>
           <CardHeader>
-            <h3 className="text-emerald-600 font-semibold text-sm">COMMON SKIN CONDITION DETECTED</h3>
+            <h3 className="text-emerald-600 font-semibold text-sm">
+              COMMON SKIN CONDITION DETECTED
+            </h3>
           </CardHeader>
-          <CardContent> 
-            <List items={skinConditions} renderItem={(item, i) => ( 
-              <KeyValueItem key={i} left={item.conditon} right="-" 
-              /> )} 
-            /> 
-            </CardContent>
+          <CardContent>
+            <div className="overflow-y-auto max-h-60 pr-1">
+              <List
+                items={skinConditions}
+                renderItem={(item, i) => (
+                  <KeyValueItem key={i} left={item.conditon} right="-" />
+                )}
+              />
+            </div>
+          </CardContent>
         </Card>
       </div>
 
       {/* Bottom Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Users */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <h3 className="font-semibold">Users</h3>
@@ -328,11 +306,16 @@ fetchNoRecommendation();
               <p>No users found</p>
             ) : (
               Users.map((user) => (
-                <UserItem key={user.id} name={`${user.firstName} ${user.lastName}`} />
+                <UserItem
+                  key={user.id}
+                  name={`${user.firstName} ${user.lastName}`}
+                />
               ))
             )}
           </CardContent>
         </Card>
+
+        {/* Popular Recommendations */}
         <Card>
           <CardHeader>
             <h3 className="text-emerald-600 font-semibold text-sm">
