@@ -24,7 +24,11 @@ const app = express();
 const PORT = ENV.PORT || 6969;
 
 //8081 is for mobile, while 5173 is for admin web
-const allowedOrigins = ["http://localhost:8081", "http://localhost:5173"];
+const allowedOrigins = [
+  "http://localhost:8081",
+  "http://localhost:5173",
+  "https://dermascan-admin.vercel.app",
+];
 
 app.use(
   cors({
@@ -33,16 +37,6 @@ app.use(
   }),
 );
 app.use(express.json());
-
-//static
-app.use(
-  "/api/uploads/skin-images",
-  express.static(path.join(process.cwd(), "skinUploads")),
-);
-app.use(
-  "/api/uploads/product-images",
-  express.static(path.join(process.cwd(), "productUploads")),
-);
 
 //users
 app.use("/api/auth", authRoutes);

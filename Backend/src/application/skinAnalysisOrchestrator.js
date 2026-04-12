@@ -1,4 +1,3 @@
-import { saveBufferImage } from "../utils/saveBufferImage.js";
 import { checkImgPython } from "../utils/python.checkImageQuality.js";
 import { skinAnalyze } from "../utils/python.serverSkinAnalysis.js";
 import { createStoredImage } from "../services/imagesServices.js";
@@ -9,6 +8,7 @@ import {
 import { skinAnalysis } from "../drizzle/schema.js";
 import { db } from "../config/db.js";
 import { eq } from "drizzle-orm";
+import { uploadToImageKit } from "../utils/imageKitUpload.js";
 
 export async function analyzeSkinOrchestrator(userId, imageBuffer) {
   const startTime = Date.now();
@@ -68,17 +68,12 @@ export async function analyzeSkinOrchestrator(userId, imageBuffer) {
 
     //SAVING IMAGE LOGIC
     if (status === "flagged" || status === "success") {
-      console.log(`[${Date.now() - startTime}ms] Saving image to storage...`);
-
-      const savedImage = await saveImageLogic(userId, imageBuffer);
-
       console.log(
-        `[${Date.now() - startTime}ms] Image saved. ID: ${savedImage.id}. Updating transaction...`,
+        `[${Date.now() - startTime}ms] Saving image to storage (background)...`,
       );
+      const savedImage = await saveImageLogic(userId, imageBuffer);
       await updateTransactionImage(transaction.id, savedImage.id);
       imageUrl = savedImage.photoUrl;
-      transaction = await getTransactionWithCondition(transaction.id);
-      console.log("Image URL: ", imageUrl);
     }
 
     if (status === "flagged") {
@@ -166,8 +161,17 @@ export async function analyzeSkinOrchestrator(userId, imageBuffer) {
 
 //===== HELPER FUNCTION ==========================
 async function saveImageLogic(userId, imageBuffer) {
-  const savedPath = await saveBufferImage(imageBuffer);
-  return await createStoredImage(userId, savedPath);
+  const fileName = `skin-${userId}-${Date.now()}.jpg`;
+  console.log(`  → Uploading to ImageKit...`);
+  const photoUrl = await uploadToImageKit(
+    imageBuffer,
+    fileName,
+    "/skin-analysis",
+  );
+  console.log(`  → ImageKit done. Saving to DB...`);
+  const result = await createStoredImage(userId, photoUrl);
+  console.log(`  → DB insert done.`);
+  return result;
 }
 
 async function updateTransactionImage(transactionId, imageId) {
