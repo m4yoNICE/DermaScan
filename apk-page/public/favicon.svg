@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- Background circle -->
+  <circle cx="24" cy="24" r="24" fill="#00cc99"/>
+
+  <!-- Skin scan circle rings -->
+  <circle cx="24" cy="24" r="17" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+  <circle cx="24" cy="24" r="12" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+
+  <!-- Crosshair lines -->
+  <line x1="24" y1="6"  x2="24" y2="11"  stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="24" y1="37" x2="24" y2="42"  stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="6"  y1="24" x2="11" y2="24"  stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="37" y1="24" x2="42" y2="24"  stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- "D+" letter mark -->
+  <!-- D -->
+  <path d="M14 18 L14 30 L19 30 Q25 30 25 24 Q25 18 19 18 Z"
+        fill="none" stroke="white" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- + -->
+  <line x1="28" y1="24" x2="34" y2="24" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="31" y1="21" x2="31" y2="27" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
