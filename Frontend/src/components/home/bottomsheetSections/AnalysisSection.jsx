@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View, FlatList, Text, Image } from "react-native";
 import { useHomeData } from "@/contexts/HomeDataContext";
+import { formatConditionName } from "@/utils/formatConditionName";
 
 const AnalysisSection = ({ selectedDate }) => {
   const { analysisLogs } = useHomeData();
@@ -26,7 +27,9 @@ const AnalysisSection = ({ selectedDate }) => {
             resizeMode="cover"
           />
           <View style={styles.info}>
-            <Text style={styles.condition}>{item.condition}</Text>
+            <Text style={styles.condition}>
+              {formatConditionName(item.condition, item.status)}
+            </Text>
             <Text style={styles.confidence}>
               {(item.confidenceScores * 100).toFixed(2)}% confidence
             </Text>

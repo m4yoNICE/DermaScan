@@ -24,6 +24,7 @@ import { router } from "expo-router";
 import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import * as ImageManipulator from "expo-image-manipulator";
+import CameraLoadingModal from "./CameraLoadingModal";
 
 const SkinCamera = () => {
   const {
@@ -210,12 +211,6 @@ const SkinCamera = () => {
             />
           </TouchableOpacity>
         )}
-
-        {isLoading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#fff" />
-          </View>
-        )}
       </View>
 
       {!capturePic && (
@@ -293,6 +288,14 @@ const SkinCamera = () => {
           </Card>
         </View>
       </Modal>
+
+      <CameraLoadingModal
+        visible={isLoading}
+        onTimeout={() => {
+          setIsLoading(false);
+          setCapturePic(null);
+        }}
+      />
     </View>
   );
 };
@@ -309,12 +312,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cameraBox: { flex: 1 },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   bottomTabEnclosure: {
     position: "absolute",
     bottom: 0,
