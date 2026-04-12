@@ -132,6 +132,7 @@ const ScheduleModal = ({ visible, onDone }) => {
           <Button
             title={loading ? "Saving..." : "Confirm"}
             onPress={handleSave}
+            disabled={loading}
           />
           <Button
             title="Skip for now"

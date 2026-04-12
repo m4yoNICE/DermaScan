@@ -1,13 +1,14 @@
 import { router } from "expo-router";
-import { useState, useRef } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useState, useRef, useEffect } from "react";
+import { StyleSheet, Text, View, BackHandler } from "react-native";
 import ZhangSlider from "@/components/designs/ZhangSlider";
 import Button from "@/components/designs/Button";
 import { calculateSkinType } from "@/utils/skinCalculator";
 import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import Api from "@/services/Api";
-import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import ConfirmLeaveModal from "@/components/designs/feedback/ConfirmLeaveModal";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
 
 const OIL_QUESTIONS = [
   "How would you describe your overall skin type?",
@@ -32,15 +33,24 @@ const SkinTypeQuestionnaire = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [oilAnswers, setOilAnswers] = useState(Array(6).fill(3));
   const [senAnswers, setSenAnswers] = useState(Array(5).fill(3));
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
   const sheetRef = useRef(null);
 
   const questions = section === 0 ? OIL_QUESTIONS : SEN_QUESTIONS;
   const answers = section === 0 ? oilAnswers : senAnswers;
   const setAnswers = section === 0 ? setOilAnswers : setSenAnswers;
-  const totalSections = 2;
   const totalQuestions = questions.length;
 
   const currentValue = answers[questionIndex];
+
+  // Intercept Android hardware back
+  useEffect(() => {
+    const handler = BackHandler.addEventListener("hardwareBackPress", () => {
+      setShowLeaveModal(true);
+      return true;
+    });
+    return () => handler.remove();
+  }, []);
 
   const handleSlider = (val) => {
     const updated = [...answers];
@@ -79,7 +89,7 @@ const SkinTypeQuestionnaire = () => {
         "Done",
         `Your skin type: ${skinType}, ${skinSensitivity}`,
       );
-      router.push("/");
+      router.replace("/");
     } catch (err) {
       console.error(err);
       ToastMessage("error", "Error", "Something went wrong.");
@@ -159,6 +169,10 @@ const SkinTypeQuestionnaire = () => {
           </View>
         </BottomSheetView>
       </BottomSheet>
+      <ConfirmLeaveModal
+        visible={showLeaveModal}
+        onContinue={() => setShowLeaveModal(false)}
+      />
     </View>
   );
 };

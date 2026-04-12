@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import RoutineCard from "@/components/designs/cards/RoutineCard";
 import Api from "@/services/Api";
 import { formatTime } from "@/utils/formatTime";
 import dayjs from "dayjs";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 
 const RoutineFeed = ({ onCardPress }) => {
   const { routineProducts, reminderLogs, fetchReminderLogs, routineSchedule } =
@@ -30,12 +31,24 @@ const RoutineFeed = ({ onCardPress }) => {
   const isMorningDone = todayLogs.includes("Morning");
   const isNightDone = todayLogs.includes("Night");
 
+  const [completing, setCompleting] = useState(null);
+
   const handleMarkDone = async (schedule) => {
+    if (completing) return;
+    setCompleting(schedule);
     try {
       await Api.completeScheduleAPI({ schedule });
       await fetchReminderLogs();
+      ToastMessage(
+        "success",
+        "Routine Complete",
+        `${schedule} routine marked as done.`,
+      );
     } catch (err) {
       console.error("Complete schedule error:", err);
+      ToastMessage("error", "Failed", "Could not mark routine as done.");
+    } finally {
+      setCompleting(null);
     }
   };
 
@@ -66,6 +79,7 @@ const RoutineFeed = ({ onCardPress }) => {
               onMarkDone: () => handleMarkDone("Morning"),
             })
           }
+          isLoading={completing === "Morning"}
         />
       )}
       {night.length > 0 && (
@@ -83,6 +97,7 @@ const RoutineFeed = ({ onCardPress }) => {
               onMarkDone: () => handleMarkDone("Night"),
             })
           }
+          isLoading={completing === "Night"}
         />
       )}
     </View>

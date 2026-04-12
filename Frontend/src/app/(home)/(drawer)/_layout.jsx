@@ -1,10 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { Drawer } from "expo-router/drawer";
 import Logo from "@/components/designs/Logo";
 import { DrawerItemList } from "@react-navigation/drawer";
+import { useUser } from "@/contexts/UserContext";
 
 function CustomDrawerContent(props) {
+  const { logout } = useUser();
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.header}>
@@ -12,6 +14,10 @@ function CustomDrawerContent(props) {
         <Text style={styles.title}>DermaScan+</Text>
       </View>
       <DrawerItemList {...props} />
+
+      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -40,10 +46,6 @@ export const Drawerlayout = () => {
         name="Profile"
         options={{ title: "Settings", headerShown: true }}
       />
-      <Drawer.Screen
-        name="Logout"
-        options={{ title: "Logout", drawerLabelStyle: { color: "red" } }}
-      />
     </Drawer>
   );
 };
@@ -69,5 +71,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#eee",
     padding: 20,
+  },
+  logoutBtn: {
+    marginTop: "auto",
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+  },
+  logoutText: {
+    color: "red",
+    fontWeight: "600",
+    fontSize: 15,
   },
 });

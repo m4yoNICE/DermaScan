@@ -15,12 +15,7 @@ import Button from "../Button";
 import Api from "@/services/Api";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
-
-const getConditionLabel = (item) => {
-  if (item.status === "success") return item.condition ?? "Unknown Condition";
-  if (item.status === "flagged") return "Flagged Content";
-  return "Out of Bounds";
-};
+import { formatConditionName } from "@/utils/formatConditionName";
 
 const HistoryCard = ({ item }) => {
   const { fetchRoutineProducts } = useHomeData();
@@ -68,7 +63,9 @@ const HistoryCard = ({ item }) => {
           </View>
         )}
         <View style={styles.headerText}>
-          <Text style={styles.condition}>{getConditionLabel(item)}</Text>
+          <Text style={styles.condition}>
+            {formatConditionName(item.condition, item.status)}
+          </Text>
           <Text style={styles.date}>{item.createdAt}</Text>
           <View
             style={[

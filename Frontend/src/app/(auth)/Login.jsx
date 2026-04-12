@@ -134,6 +134,7 @@ const Login = () => {
             <BottomSheetTextInput
               style={styles.input}
               placeholder="Email address"
+              placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -152,6 +153,7 @@ const Login = () => {
             <BottomSheetTextInput
               style={styles.input}
               placeholder="Password"
+              placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPass}
