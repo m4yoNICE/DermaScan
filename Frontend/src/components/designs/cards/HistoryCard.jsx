@@ -18,9 +18,10 @@ import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { formatConditionName } from "@/utils/formatConditionName";
 
 const HistoryCard = ({ item }) => {
-  const { fetchRoutineProducts } = useHomeData();
+  const { fetchRoutineProducts, deleteAnalysisLog } = useHomeData();
   const [expanded, setExpanded] = useState(false);
   const [activating, setActivating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const handleToggle = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -41,6 +42,18 @@ const HistoryCard = ({ item }) => {
       ToastMessage("error", "Error", err.message);
     } finally {
       setActivating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setDeleting(true);
+      await deleteAnalysisLog(item.id);
+      ToastMessage("success", "Deleted", "History entry removed.");
+    } catch (err) {
+      ToastMessage("error", "Delete failed", err.message);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -104,14 +117,27 @@ const HistoryCard = ({ item }) => {
             </View>
           </ScrollView>
 
-          {item.status === "success" && (
+          <View
+            style={{
+              marginHorizontal: 16,
+              marginTop: 12,
+              marginBottom: 4,
+              gap: 8,
+            }}
+          >
+            {item.status === "success" && (
+              <Button
+                title={activating ? "Activating..." : "Use this Routine"}
+                onPress={handleActivate}
+                disabled={activating}
+              />
+            )}
             <Button
-              title={activating ? "Activating..." : "Use this Routine"}
-              onPress={handleActivate}
-              disabled={activating}
-              style={{ marginHorizontal: 16, marginTop: 12, marginBottom: 4 }}
+              title={deleting ? "Deleting..." : "Delete"}
+              onPress={handleDelete}
+              disabled={deleting}
             />
-          )}
+          </View>
         </Animated.View>
       )}
     </View>

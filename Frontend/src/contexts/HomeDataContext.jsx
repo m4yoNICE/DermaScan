@@ -107,6 +107,19 @@ export const HomeDataProvider = ({ children }) => {
       console.error("[HomeData] analysisLogs error:", err);
     }
   };
+  // putting delete here
+  const deleteAnalysisLog = useCallback(async (analysisId) => {
+    await Api.deleteHistoryApi(analysisId);
+    setHistoryList((prev) => prev.filter((item) => item.id !== analysisId));
+    setAnalysisLogs((prev) => {
+      const updated = { ...prev };
+      for (const date in updated) {
+        updated[date] = updated[date].filter((e) => e.id !== analysisId);
+        if (!updated[date].length) delete updated[date];
+      }
+      return updated;
+    });
+  }, []);
 
   const fetchAll = useCallback(async () => {
     if (!token) {
@@ -141,6 +154,7 @@ export const HomeDataProvider = ({ children }) => {
       fetchAnalysisLogs,
       fetchRoutineSchedule,
       fetchAll,
+      deleteAnalysisLog,
       dismissLoading: () => setInitialLoaded(true),
     }),
     [
@@ -152,6 +166,7 @@ export const HomeDataProvider = ({ children }) => {
       routineSchedule,
       initialLoaded,
       fetchAll,
+      deleteAnalysisLog,
     ],
   );
 
@@ -160,6 +175,6 @@ export const HomeDataProvider = ({ children }) => {
       {children}
     </HomeDataContext.Provider>
   );
-};
+};;
 
 export const useHomeData = () => useContext(HomeDataContext);

@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-  ActivityIndicator,
   StyleSheet,
   Image,
   Animated,
@@ -24,6 +23,7 @@ import { router } from "expo-router";
 import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
 import * as ImageManipulator from "expo-image-manipulator";
+import { ToastMessage } from "../designs/feedback/ToastMessage";
 import CameraLoadingModal from "./CameraLoadingModal";
 
 const SkinCamera = () => {
@@ -40,6 +40,7 @@ const SkinCamera = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [failMessage, setFailMessage] = useState(null);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
   const cameraRef = useRef(null);
   const shutterAnim = useRef(new Animated.Value(1)).current;
@@ -93,6 +94,10 @@ const SkinCamera = () => {
   };
 
   const handleCapture = async () => {
+    if (!cameraRef.current || !isCameraReady) {
+      ToastMessage("error", "Camera not ready");
+      return;
+    }
     try {
       animateShutter();
       const photo = await cameraRef.current.takePhoto({
@@ -113,6 +118,7 @@ const SkinCamera = () => {
       setCapturePic(result);
     } catch (err) {
       console.log("Capture error:", err);
+      ToastMessage("error", "Capture failed", err.message);
     }
   };
 
@@ -194,6 +200,7 @@ const SkinCamera = () => {
             torch={enableTorch ? "on" : "off"}
             zoom={zoom}
             onTouchEnd={handleFocus}
+            onInitialized={() => setIsCameraReady(true)}
           />
         ) : (
           <Image source={{ uri: capturePic.uri }} style={styles.cameraBox} />

@@ -26,6 +26,7 @@ const Api = {
   // Recommendations
   saveRecommendationApi: (data) => Http.post("/api/recommendations/", data),
   getHistoryAPI: () => Http.get("/api/recommendations"),
+  deleteHistoryApi: (id) => Http.delete("/api/recommendations/" + id),
 
   // Routine
   getRoutineScheduleAPI: () => Http.get("/api/routines/schedule"),

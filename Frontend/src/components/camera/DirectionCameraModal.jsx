@@ -23,8 +23,8 @@ const DirectionCameraModal = ({ visible, onClose }) => {
 
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Added the reference image here */}
-            <Image 
-              source={require('../../../assets/images/face.png')} 
+            <Image
+              source={require("../../../assets/images/face.png")}
               style={styles.referenceImage}
               resizeMode="cover"
             />
@@ -37,23 +37,32 @@ const DirectionCameraModal = ({ visible, onClose }) => {
 
             <View style={styles.instructionContainer}>
               <Text style={styles.text}>
-                <Text style={styles.bold}>Clean & Bare:</Text> No makeup, just fresh skin.
+                <Text style={styles.bold}>No Obstructions:</Text> Remove hats,
+                masks, and glasses.
+              </Text>
+              <Text style={styles.text}>
+                <Text style={styles.bold}>Clean & Bare:</Text> No makeup, just
+                fresh skin.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>Good Lighting:</Text> Natural or soft lighting, no harsh shadows.
+                <Text style={styles.bold}>Good Lighting:</Text> Natural or soft
+                lighting, no harsh shadows.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>Focus on Your Face:</Text> Keep your face in frame, no distractions.
+                <Text style={styles.bold}>Focus on Your Face:</Text> Keep your
+                face in frame, no distractions.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>Close-Up:</Text> Make sure we can clearly see your skin.
+                <Text style={styles.bold}>Close-Up:</Text> Make sure we can
+                clearly see your skin.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>Stay Still:</Text> Hold your phone steady for a sharp shot.
+                <Text style={styles.bold}>Stay Still:</Text> Hold your phone
+                steady for a sharp shot.
               </Text>
             </View>
 
