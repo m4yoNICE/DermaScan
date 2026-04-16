@@ -36,10 +36,12 @@ const DirectionCameraModal = ({ visible, onClose }) => {
             </Text>
 
             <View style={styles.instructionContainer}>
+
               <Text style={styles.text}>
                 <Text style={styles.bold}>No Obstructions:</Text> Remove hats,
                 masks, and glasses.
               </Text>
+              
               <Text style={styles.text}>
                 <Text style={styles.bold}>Clean & Bare:</Text> No makeup, just
                 fresh skin.

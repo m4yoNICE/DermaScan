@@ -175,6 +175,6 @@ export const HomeDataProvider = ({ children }) => {
       {children}
     </HomeDataContext.Provider>
   );
-};;
+};
 
 export const useHomeData = () => useContext(HomeDataContext);
