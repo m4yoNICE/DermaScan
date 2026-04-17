@@ -23,13 +23,14 @@ export async function getSkinData(user_id) {
 
 //centralized recommendation products
 export async function unionProductFilter(condition_id) {
+  //process all matching at once
   const [subProcessOne, subProcessTwo, subProcessThree] = await Promise.all([
     matchProductByCondition(condition_id),
     matchProductByTargetIngredient(condition_id),
     matchProductByHighlightIngredient(condition_id),
   ]);
 
-  //compiles from 3 processes
+  //compiles from 3 processes and filters out duplicates
   const combined = [...subProcessOne, ...subProcessTwo, ...subProcessThree];
   const isExist = {};
   const result = [];

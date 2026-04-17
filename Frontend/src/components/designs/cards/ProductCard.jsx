@@ -33,6 +33,11 @@ const ProductCard = ({ item, isAdded = false }) => {
         {item.productName}
       </Text>
       <Text style={styles.productType}>{item.productType}</Text>
+      {item.routine && (
+        <View style={styles.routinePill}>
+          <Text style={styles.routinePillText}>{item.routine}</Text>
+        </View>
+      )}
       {item.score != null && (
         <Text style={styles.productScore}>Score: {item.score}</Text>
       )}
@@ -79,4 +84,13 @@ const styles = StyleSheet.create({
   },
   productType: { fontSize: 11, color: "#888", marginBottom: 2 },
   productScore: { fontSize: 11, color: "#00CC99", fontWeight: "600" },
+  routinePill: {
+    backgroundColor: "#e8f8f3",
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    alignSelf: "flex-start",
+    marginBottom: 2,
+  },
+  routinePillText: { fontSize: 10, color: "#00CC99", fontWeight: "600" },
 });

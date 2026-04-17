@@ -62,6 +62,9 @@ const ProductDetailSheet = ({
                 <View style={styles.typeBadge}>
                   <Text style={styles.typeText}>{p.productType}</Text>
                 </View>
+                {p.routine && (
+                  <Text style={styles.routineText}>{p.routine}</Text>
+                )}
                 <Text style={styles.instructions}>{p.instructions}</Text>
               </View>
             </View>
@@ -170,5 +173,9 @@ const styles = StyleSheet.create({
   },
   buttonDoneText: {
     color: "#00CC99",
+  },
+  routineText: {
+    fontSize: 11,
+    color: "#aaa",
   },
 });
