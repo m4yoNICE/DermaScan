@@ -117,25 +117,21 @@ const HistoryCard = ({ item }) => {
             </View>
           </ScrollView>
 
-          <View
-            style={{
-              marginHorizontal: 16,
-              marginTop: 12,
-              marginBottom: 4,
-              gap: 8,
-            }}
-          >
+          <View style={styles.buttonRow}>
             {item.status === "success" && (
               <Button
                 title={activating ? "Activating..." : "Use this Routine"}
                 onPress={handleActivate}
                 disabled={activating}
+                style={styles.activateBtn}
               />
             )}
             <Button
-              title={deleting ? "Deleting..." : "Delete"}
+              title={deleting ? "Deleting..." : "🗑 Delete"}
               onPress={handleDelete}
               disabled={deleting}
+              style={styles.deleteBtn}
+              textStyle={styles.deleteBtnText}
             />
           </View>
         </Animated.View>
@@ -239,5 +235,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     gap: 12,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    gap: 8,
+  },
+  activateBtn: {
+    flex: 1,
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  jsdeleteBtn: {
+    flex: 1,
+    marginTop: 0,
+    marginBottom: 0,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ff5252",
+  },
+  deleteBtnText: {
+    color: "#ff5252",
   },
 });

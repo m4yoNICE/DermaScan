@@ -15,6 +15,8 @@ function CustomDrawerContent(props) {
       </View>
       <DrawerItemList {...props} />
 
+      <View style={styles.separator} />
+
       <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
@@ -73,14 +75,19 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logoutBtn: {
-    marginTop: "auto",
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
+    padding: 16,
+    paddingHorizontal: 20,
+    marginTop: 4,
   },
   logoutText: {
     color: "red",
     fontWeight: "600",
     fontSize: 15,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginHorizontal: 16,
+    marginTop: 8,
   },
 });
