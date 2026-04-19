@@ -9,7 +9,7 @@ import {
   LayoutAnimation,
 } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import ProductCard from "./ProductCard";
 import Button from "../Button";
 import Api from "@/services/Api";
@@ -126,13 +126,13 @@ const HistoryCard = ({ item }) => {
                 style={styles.activateBtn}
               />
             )}
-            <Button
-              title={deleting ? "Deleting..." : "🗑 Delete"}
+            <TouchableOpacity
+              style={styles.deleteBtn}
               onPress={handleDelete}
               disabled={deleting}
-              style={styles.deleteBtn}
-              textStyle={styles.deleteBtnText}
-            />
+            >
+              <Feather name="trash-2" size={20} color="#ff5252" />
+            </TouchableOpacity>
           </View>
         </Animated.View>
       )}
@@ -248,15 +248,14 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 0,
   },
-  jsdeleteBtn: {
-    flex: 1,
-    marginTop: 0,
-    marginBottom: 0,
+  deleteBtn: {
+    width: 48,
+    alignSelf: "stretch",
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#ff5252",
-  },
-  deleteBtnText: {
-    color: "#ff5252",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

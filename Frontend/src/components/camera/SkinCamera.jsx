@@ -110,11 +110,11 @@ const SkinCamera = () => {
       const originX = (photo.width - size) / 2;
       const originY = (photo.height - size) / 2;
 
-      const cropped = await ImageManipulator.ImageManipulator.manipulate(uri)
-        .crop({ originX, originY, width: size, height: size })
-        .renderAsync();
-
-      const result = await cropped.saveAsync({ compress: 1 });
+      const result = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ crop: { originX, originY, width: size, height: size } }],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
+      );
       setCapturePic(result);
     } catch (err) {
       console.log("Capture error:", err);
