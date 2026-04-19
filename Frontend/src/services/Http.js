@@ -1,27 +1,16 @@
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Platform } from "react-native";
 import { triggerLogout } from "../utils/logoutReference";
 
-import Constants from "expo-constants";
-
-const hostUri = Constants.expoConfig?.hostUri;
-const lanIP = hostUri ? hostUri.split(":")[0] : null;
-
-// 🟢 Android Emulator fallback → 10.0.2.2 (correct)
-// 🟢 iOS Emulator fallback → localhost
-// 🟢 LAN fallback if Expo not running with hostUri
-const fallbackIP = Platform.OS === "android" ? "10.0.2.2" : "127.0.0.1";
-
-const host = lanIP || fallbackIP;
-const baseURL = `http://${host}:3000`;
-console.log(host);
+const baseURL = "https://dermascan-backend.up.railway.app";
 
 export const Http = axios.create({
   baseURL: baseURL,
   headers: { "Content-Type": "application/json" },
 });
+
+console.log("Base URL:", Http.defaults.baseURL);
 
 const addAuthToken = async (config) => {
   const token = await AsyncStorage.getItem("authToken");
@@ -35,14 +24,24 @@ const addAuthToken = async (config) => {
 
 const handleExpiryToken = async (error) => {
   const status = error.response?.status;
+  const url = error.config?.url || "";
 
-  if (status === 403) {
-    console.warn("Session expired — clearing storage and redirecting.");
+  // 401: no token, 403: invalid/expired token
+  const isAuthError = status === 401 || status === 403;
+  // 404 on /api/users = user deleted or no longer exists
+  const isUserNotFound = status === 404 && url.includes("/api/users");
+
+  if (isAuthError || isUserNotFound) {
+    console.warn("Session invalid — clearing storage and redirecting.");
 
     await AsyncStorage.removeItem("authToken");
     await AsyncStorage.removeItem("user");
 
-    ToastMessage("error", "Session Expired", "Please log in again.");
+    ToastMessage(
+      "error",
+      isUserNotFound ? "Account Not Found" : "Session Expired",
+      "Please log in again."
+    );
     triggerLogout();
   }
 

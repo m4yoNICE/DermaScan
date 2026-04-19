@@ -24,6 +24,7 @@ package-lock.json
 *.sw?
 .env
 skinUploads/*
+productUploads/*
 !skinUploads/.gitkeep
 
 generated/

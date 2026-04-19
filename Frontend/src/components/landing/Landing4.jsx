@@ -4,12 +4,10 @@ const Landing4 = () => (
   <View style={styles.page}>
     <View style={styles.imageWrapper}>
       <Image
-        source={require("../../../assets/images/landing1.png")}
+        source={require("../../../assets/images/Landing4.png")}
         style={styles.image}
       />
-      <View style={styles.textOverlay}>
-        <Text style={styles.title}>DermaScan+</Text>
-      </View>
+      <Text style={styles.title}>DermaScan+</Text>
     </View>
   </View>
 );
@@ -27,22 +25,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     position: "relative",
   },
-  image: {
-    width: 300,
-    height: 300,
-    resizeMode: "contain",
-  },
-  textOverlay: {
-    position: "absolute",
-    bottom: 15,
-    width: "100%",
-    alignItems: "center",
-  },
   title: {
     fontSize: 30,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "white",
-    marginBottom: 20,
     textAlign: "center",
+    letterSpacing: 0,
+    lineHeight: 22,
+    marginBottom: 10,
+  },
+  image: {
+    width: 300,
+    height: 200,
+    resizeMode: "contain",
   },
 });

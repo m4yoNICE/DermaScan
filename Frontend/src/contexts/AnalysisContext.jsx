@@ -15,31 +15,47 @@ export const AnalysisProvider = ({ children }) => {
     createdAt: null,
     updatedAt: null,
     image_url: null,
+    candidates: null,
   });
 
-  const [recommendation, setRecommendation] = useState([
-    {
+  const [analysisDescription, setAnalysisDescription] = useState(null);
+  const [recommendDescription, setRecommendDescription] = useState(null);
+
+  const [recommendation, setRecommendation] = useState([]);
+
+  const clearAnalysis = () => {
+    setAnalysis({
       id: null,
-      productName: null,
-      productImage: null,
-      ingredient: null,
-      description: null,
-      productType: null,
-      locality: null,
-      skinType: null,
-      dermaTested: null,
-      timeRoutine: null,
-      score: null,
-    },
-  ]);
+      userId: null,
+      imageId: null,
+      conditionId: null,
+      confidenceScores: null,
+      status: null,
+      condition_name: null,
+      canRecommend: null,
+      createdAt: null,
+      updatedAt: null,
+      image_url: null,
+      candidates: null,
+    });
+    setRecommendation([]);
+    setAnalysisDescription(null);
+    setRecommendDescription(null);
+  };
+
   const value = useMemo(
     () => ({
       analysis,
       setAnalysis,
       recommendation,
       setRecommendation,
+      analysisDescription,
+      setAnalysisDescription,
+      recommendDescription,
+      setRecommendDescription,
+      clearAnalysis,
     }),
-    [analysis, recommendation],
+    [analysis, recommendation, analysisDescription, recommendDescription],
   );
   return (
     <AnalysisContext.Provider value={value}>

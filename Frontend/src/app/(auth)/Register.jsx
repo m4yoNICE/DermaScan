@@ -1,7 +1,7 @@
 import Landing4 from "@/components/landing/Landing4";
 import BottomSheet, {
-  BottomSheetView,
-  BottomSheetTextInput, // ADD THIS
+  BottomSheetTextInput,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Link, router } from "expo-router";
@@ -14,11 +14,11 @@ import {
   Keyboard,
 } from "react-native";
 import Button from "@/components/designs/Button";
-import LoadingModal from "@/components/designs/LoadingModal";
+import LoadingModal from "@/components/designs/feedback/LoadingModal";
 import { UserContext } from "src/contexts/UserContext";
 import Api from "src/services/Api.js";
 
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 const Register = () => {
@@ -86,6 +86,15 @@ const Register = () => {
         "Please enter a valid email address",
       );
     }
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "8+ chars, upper, lower, number & special char.",
+      );
+    }
     if (dob > new Date()) {
       return ToastMessage(
         "error",
@@ -113,7 +122,7 @@ const Register = () => {
           "Registration Successful!",
           "Welcome aboard 👋",
         );
-        router.push("/BaumannQuestionnaire");
+        router.replace("/SkinTypeQuestionnaire");
       }
     } catch (err) {
       const message =
@@ -126,7 +135,13 @@ const Register = () => {
 
   return (
     <View style={styles.root}>
-      <LoadingModal visible={loading} />
+      <LoadingModal
+        visible={loading}
+        onTimeout={() => {
+          setLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
       {/* Top Background Section */}
       <View style={styles.backgroundWrapper}>
         <View style={styles.landingScale}>
@@ -142,6 +157,7 @@ const Register = () => {
         enablePanDownToClose={false}
         handleComponent={null}
         enableContentPanningGesture={false}
+        enableHandlePanningGesture={false}
         keyboardBehavior="extend"
         keyboardBlurBehavior="restore"
         android_keyboardInputMode="adjustResize"
@@ -151,7 +167,10 @@ const Register = () => {
           borderRadius: 40,
         }}
       >
-        <BottomSheetView style={styles.sheetContent}>
+        <BottomSheetScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[styles.sheetContent, { minHeight: "130%" }]}
+        >
           {/* BACK BUTTON */}
           <View style={styles.backRow}>
             <Link href="/Login">
@@ -175,6 +194,7 @@ const Register = () => {
             <BottomSheetTextInput
               style={styles.input}
               placeholder="Email address"
+              placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
@@ -194,6 +214,7 @@ const Register = () => {
               <BottomSheetTextInput
                 style={styles.input}
                 placeholder="First Name"
+                placeholderTextColor="#999"
                 value={firstname}
                 onChangeText={setfirstname}
               />
@@ -202,6 +223,7 @@ const Register = () => {
               <BottomSheetTextInput
                 style={styles.input}
                 placeholder="Last Name"
+                placeholderTextColor="#999"
                 value={lastname}
                 onChangeText={setlastname}
               />
@@ -245,11 +267,15 @@ const Register = () => {
               style={styles.inputIcon}
             />
             <BottomSheetTextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { color: "#333", fontFamily: "sans-serif" },
+              ]}
               placeholder="Password"
+              placeholderTextColor="#999"
               value={password}
-              secureTextEntry={!showPass}
               onChangeText={setPassword}
+              secureTextEntry={!showPass}
             />
             <TouchableOpacity onPress={() => setShowPass(!showPass)}>
               <Feather
@@ -269,11 +295,15 @@ const Register = () => {
               style={styles.inputIcon}
             />
             <BottomSheetTextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              secureTextEntry={!showConfirmPass}
-              onChangeText={setConfirmPassword}
+              style={[
+                styles.input,
+                { color: "#333", fontFamily: "sans-serif" },
+              ]}
+              placeholder="Password"
+              placeholderTextColor="#999"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPass}
             />
             <TouchableOpacity
               onPress={() => setShowConfirmPass(!showConfirmPass)}
@@ -292,7 +322,7 @@ const Register = () => {
             onPress={registerAccount}
             style={styles.regBtn}
           />
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </BottomSheet>
     </View>
   );
@@ -306,12 +336,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#05d6b2",
   },
   backgroundWrapper: {
-    height: "40%",
+    height: "22%",
     justifyContent: "center",
     alignItems: "center",
+    overflow: "visible",
+    paddingTop: 120,
   },
   landingScale: {
-    transform: [{ scale: 0.6 }],
+    transform: [{ scale: 0.5 }],
   },
   sheetContent: {
     paddingHorizontal: 30,

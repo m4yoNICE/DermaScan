@@ -1,0 +1,10 @@
+import Toast from "react-native-toast-message";
+
+export const ToastMessage = (type, message, description) => {
+  Toast.show({
+    type,
+    text1: message,
+    text2: description,
+    visibilityTime: 3000,
+  });
+};

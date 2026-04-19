@@ -9,7 +9,7 @@ const Landing1 = () => (
     />
     <View style={styles.imageWrapper}>
       <Image
-        source={require("../../../assets/images/landing1.png")}
+        source={require("../../../assets/images/Landing4.png")}
         style={styles.image}
       />
       <View style={styles.textOverlay}>
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   image: {
-    width: 400,
+    width: 200,
     height: 400,
     resizeMode: "contain",
   },

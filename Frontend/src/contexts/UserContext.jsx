@@ -50,9 +50,9 @@ export const UserProvider = ({ children }) => {
   const logout = async () => {
     setToken(null);
     setUser(null);
-    await AsyncStorage.removeItem("authToken");
-    await AsyncStorage.removeItem("user");
-    router.push("/");
+    router.replace("/");
+    AsyncStorage.removeItem("authToken");
+    AsyncStorage.removeItem("user");
   };
   useEffect(() => {
     setLogoutCallback(logout);

@@ -37,7 +37,7 @@ const HomeLayout = () => {
             size={28}
             color="#fff"
             style={{ marginLeft: 15 }}
-            onPress={() => navigation.openDrawer()} // Opens drawer
+            onPress={() => navigation.openDrawer()}
           />
         ),
       }}

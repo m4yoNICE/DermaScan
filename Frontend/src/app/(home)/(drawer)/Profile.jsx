@@ -12,10 +12,12 @@ import React, { useState, useCallback } from "react";
 import { useFocusEffect, router } from "expo-router";
 import { useUser } from "@/contexts/UserContext";
 import { useUserData } from "@/contexts/UserDataContext";
-import { ToastMessage } from "@/components/designs/ToastMessage";
+import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import ScheduleModal from "@/components/results/RoutineScheduleModal";
 import Logo from "@/components/designs/Logo";
 import Api from "@/services/Api";
+import { Feather } from "@expo/vector-icons";
 
 const Profile = () => {
   const { logout } = useUser();
@@ -39,6 +41,11 @@ const Profile = () => {
     new: "",
     confirm: "",
   });
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const [showPicker, setShowPicker] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -139,7 +146,7 @@ const Profile = () => {
       setShowDeleteModal(false);
       await Api.deleteUserAPI();
       ToastMessage("success", "Deleted", "Your account has been removed.");
-      await logout();
+      setTimeout(() => logout(), 1500);
     } catch (error) {
       ToastMessage(
         "error",
@@ -150,6 +157,10 @@ const Profile = () => {
   };
 
   const handleResetSkinType = () => {
+    if (!userData.skinType) {
+      router.push("/SkinTypeQuestionnaire");
+      return;
+    }
     Alert.alert(
       "Reset Skin Type",
       "Are you sure you want to reset your skin type data?",
@@ -166,7 +177,7 @@ const Profile = () => {
                 "Skin Data Cleared",
                 "Your skin type has been reset.",
               );
-              router.push("/BaumannQuestionnaire");
+              router.push("/SkinTypeQuestionnaire");
             } catch (error) {
               ToastMessage(
                 "error",
@@ -254,41 +265,112 @@ const Profile = () => {
 
         <View style={styles.sectionDivider} />
 
+        <Text style={styles.label}>Skin Profile</Text>
+
+        <View style={styles.skinRow}>
+          <View style={styles.skinBadge}>
+            <Text style={styles.skinBadgeLabel}>Skin Type</Text>
+            <Text style={styles.skinBadgeValue}>
+              {userData.skinType ?? "Not set"}
+            </Text>
+          </View>
+          <View style={styles.skinBadge}>
+            <Text style={styles.skinBadgeLabel}>Sensitivity</Text>
+            <Text style={styles.skinBadgeValue}>
+              {userData.skinSensitive ?? "Not set"}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionDivider} />
+        {/* Password */}
         <Text style={styles.label}>Current Password</Text>
-        <TextInput
-          style={styles.fullInput}
-          placeholder="Current Password"
-          value={passwordData.current}
-          onChangeText={(text) =>
-            setPasswordData((prev) => ({ ...prev, current: text }))
-          }
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.fullInput,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <TextInput
+            style={{ flex: 1, fontSize: 16, color: "#333" }}
+            placeholder="Current Password"
+            placeholderTextColor="#999"
+            value={passwordData.current}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, current: text }))
+            }
+            secureTextEntry={!showCurrent}
+          />
+          <TouchableOpacity onPress={() => setShowCurrent(!showCurrent)}>
+            <Feather
+              name={showCurrent ? "eye-off" : "eye"}
+              size={18}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.label}>New Password</Text>
-        <TextInput
-          style={styles.fullInput}
-          placeholder="New Password (optional)"
-          value={passwordData.new}
-          onChangeText={(text) =>
-            setPasswordData((prev) => ({ ...prev, new: text }))
-          }
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.fullInput,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <TextInput
+            style={{ flex: 1, fontSize: 16, color: "#333" }}
+            placeholder="New Password (optional)"
+            placeholderTextColor="#999"
+            value={passwordData.new}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, new: text }))
+            }
+            secureTextEntry={!showNew}
+          />
+          <TouchableOpacity onPress={() => setShowNew(!showNew)}>
+            <Feather
+              name={showNew ? "eye-off" : "eye"}
+              size={18}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.label}>Confirm New Password</Text>
-        <TextInput
-          style={styles.fullInput}
-          placeholder="Confirm New Password"
-          value={passwordData.confirm}
-          onChangeText={(text) =>
-            setPasswordData((prev) => ({ ...prev, confirm: text }))
-          }
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.fullInput,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <TextInput
+            style={{ flex: 1, fontSize: 16, color: "#333" }}
+            placeholder="Confirm New Password"
+            placeholderTextColor="#999"
+            value={passwordData.confirm}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, confirm: text }))
+            }
+            secureTextEntry={!showConfirm}
+          />
+          <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+            <Feather
+              name={showConfirm ? "eye-off" : "eye"}
+              size={18}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Action Buttons */}
+      <TouchableOpacity
+        style={styles.editBtn}
+        onPress={() => setShowScheduleModal(true)}
+      >
+        <Text style={styles.editBtnText}>Update Routine Schedule</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.editBtn} onPress={handleResetSkinType}>
         <Text style={styles.editBtnText}>Reset Skin Type</Text>
       </TouchableOpacity>
@@ -325,6 +407,10 @@ const Profile = () => {
           </View>
         </View>
       </Modal>
+      <ScheduleModal
+        visible={showScheduleModal}
+        onDone={() => setShowScheduleModal(false)}
+      />
     </ScrollView>
   );
 };
@@ -354,6 +440,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 8,
     fontSize: 16,
+    color: "#333",
   },
   saveIcon: {
     fontSize: 32,
@@ -370,6 +457,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 15,
     justifyContent: "center",
+    color: "#333",
   },
   editBtn: {
     borderWidth: 1,
@@ -415,5 +503,29 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#E5E5E5",
     marginVertical: 20,
+  },
+  skinRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 15,
+  },
+  skinBadge: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#00CC99",
+    borderRadius: 10,
+    padding: 12,
+    alignItems: "center",
+  },
+  skinBadgeLabel: {
+    fontSize: 12,
+    color: "#999",
+    marginBottom: 4,
+  },
+  skinBadgeValue: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#00CC99",
+    textTransform: "capitalize",
   },
 });

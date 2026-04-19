@@ -1,39 +1,60 @@
-import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   Modal,
-  ActivityIndicator,
   StyleSheet,
   Image,
   Animated,
 } from "react-native";
+import {
+  Camera,
+  useCameraDevice,
+  useCameraPermission,
+} from "react-native-vision-camera";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CircularButton from "../designs/CircularButton";
-import Card from "../designs/Card";
+import Slider from "@react-native-community/slider";
+import Card from "../designs/cards/Card";
 import { router } from "expo-router";
 import Api from "@/services/Api";
 import { useAnalysis } from "src/contexts/AnalysisContext";
+import * as ImageManipulator from "expo-image-manipulator";
+import { ToastMessage } from "../designs/feedback/ToastMessage";
+import CameraLoadingModal from "./CameraLoadingModal";
 
 const SkinCamera = () => {
-  const { setAnalysis, setRecommendation } = useAnalysis();
-  const [failMessage, setFailMessage] = useState(null);
-  const [permission, requestPermission] = useCameraPermissions();
+  const {
+    setAnalysis,
+    setRecommendation,
+    setAnalysisDescription,
+    setRecommendDescription,
+  } = useAnalysis();
+
   const [facing, setFacing] = useState("back");
   const [enableTorch, setEnableTorch] = useState(false);
   const [capturePic, setCapturePic] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [failMessage, setFailMessage] = useState(null);
+  const [isCameraReady, setIsCameraReady] = useState(false);
 
   const cameraRef = useRef(null);
   const shutterAnim = useRef(new Animated.Value(1)).current;
 
-  if (!permission) return <View />;
+  const { hasPermission, requestPermission } = useCameraPermission();
+  const device = useCameraDevice(facing);
+  const handleFocus = useCallback(async (e) => {
+    const { locationX, locationY } = e.nativeEvent;
+    try {
+      await cameraRef.current?.focus({ x: locationX, y: locationY });
+    } catch {}
+  }, []);
 
-  if (!permission.granted) {
+  if (!hasPermission) {
     return (
       <View style={styles.centered}>
         <Text style={styles.permissionText}>
@@ -45,6 +66,14 @@ const SkinCamera = () => {
         >
           <Text style={styles.permissionBtnText}>Grant Permission</Text>
         </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (!device) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.permissionText}>No camera device found.</Text>
       </View>
     );
   }
@@ -65,20 +94,37 @@ const SkinCamera = () => {
   };
 
   const handleCapture = async () => {
+    if (!cameraRef.current || !isCameraReady) {
+      ToastMessage("error", "Camera not ready");
+      return;
+    }
     try {
       animateShutter();
-      const photo = await cameraRef.current.takePictureAsync({ quality: 1 });
-      setCapturePic(photo);
+      const photo = await cameraRef.current.takePhoto({
+        flash: enableTorch ? "on" : "off",
+        enableShutterSound: false,
+      });
+
+      const uri = `file://${photo.path}`;
+      const size = Math.min(photo.width, photo.height);
+      const originX = (photo.width - size) / 2;
+      const originY = (photo.height - size) / 2;
+
+      const result = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ crop: { originX, originY, width: size, height: size } }],
+        { compress: 1, format: ImageManipulator.SaveFormat.JPEG },
+      );
+      setCapturePic(result);
     } catch (err) {
       console.log("Capture error:", err);
+      ToastMessage("error", "Capture failed", err.message);
     }
   };
 
   const handleUsePhoto = async () => {
-    console.log("SKIN CAMERA");
     if (!capturePic) return;
     setIsLoading(true);
-    console.log("Analysing Image");
     try {
       const res = await Api.uploadSkinImageAPI(capturePic.uri);
       const { analysis, recommendation } = res.data;
@@ -88,15 +134,22 @@ const SkinCamera = () => {
         setFailMessage(analysis.message);
         return;
       }
-
+      if (analysis.result === "consult") {
+        setAnalysis({
+          status: "consult",
+          condition_name: analysis.data.condition_name,
+          confidenceScores: analysis.data.confidenceScores,
+        });
+        router.push("/Results");
+        return;
+      }
       if (analysis.result === "flagged") {
         setAnalysis({ status: "flagged" });
         router.push("/Results");
         return;
       }
-
       if (analysis.result === "success") {
-        const analysisResults = {
+        setAnalysis({
           id: analysis.data.id,
           userId: analysis.data.userId,
           imageId: analysis.data.imageId,
@@ -108,27 +161,11 @@ const SkinCamera = () => {
           createdAt: analysis.data.createdAt,
           updatedAt: analysis.data.updatedAt,
           image_url: analysis.data.image_url,
-        };
-        console.log("Analysis Results: ", analysisResults);
-        setAnalysis(analysisResults);
-
-        const recommendationResults =
-          recommendation?.map((item) => ({
-            id: item.id,
-            productName: item.productName,
-            productImage: item.productImage,
-            ingredient: item.ingredient,
-            description: item.description,
-            productType: item.productType,
-            locality: item.locality,
-            skinType: item.skinType,
-            dermaTested: item.dermaTested,
-            timeRoutine: item.timeRoutine,
-            score: item.score,
-          })) ?? [];
-        console.log("Recommendation Results: ", recommendationResults);
-        setRecommendation(recommendationResults);
-
+          candidates: analysis.data.candidates,
+        });
+        setAnalysisDescription(res.data.analysisDescription);
+        setRecommendDescription(res.data.recommendDescription);
+        setRecommendation(recommendation?.map((item) => ({ ...item })) ?? []);
         router.push("/Results");
       }
     } catch (err) {
@@ -142,32 +179,33 @@ const SkinCamera = () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [1, 1], // Match your cameraBox aspect ratio
+      aspect: [1, 1],
       quality: 1,
     });
-
     if (!result.canceled) {
       setCapturePic({ uri: result.assets[0].uri });
     }
   };
 
-  const handleRetake = () => setCapturePic(null);
-
   return (
     <View style={styles.container}>
       <View style={styles.cameraContainer}>
         {!capturePic ? (
-          <CameraView
+          <Camera
             ref={cameraRef}
-            style={styles.cameraBox}
-            facing={facing}
-            enableTorch={enableTorch}
+            style={StyleSheet.absoluteFill}
+            device={device}
+            isActive={true}
+            photo={true}
+            torch={enableTorch ? "on" : "off"}
+            zoom={zoom}
+            onTouchEnd={handleFocus}
+            onInitialized={() => setIsCameraReady(true)}
           />
         ) : (
           <Image source={{ uri: capturePic.uri }} style={styles.cameraBox} />
         )}
 
-        {/* FLASH/TORCH OVERLAY BUTTON */}
         {!capturePic && (
           <TouchableOpacity
             style={styles.topUtilityBtn}
@@ -180,20 +218,32 @@ const SkinCamera = () => {
             />
           </TouchableOpacity>
         )}
+      </View>
 
-        {isLoading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#fff" />
-          </View>
-        )}
+      {!capturePic && (
+        <View style={styles.sliderContainer}>
+          <Text style={styles.zoomText}>Zoom</Text>
+          <Slider
+            style={{ width: 250, height: 40 }}
+            minimumValue={1}
+            maximumValue={5}
+            minimumTrackTintColor="#00CC99"
+            maximumTrackTintColor="#99EBD6"
+            thumbTintColor="#00CC99"
+            value={zoom}
+            onValueChange={setZoom}
+          />
+        </View>
+      )}
 
-        {capturePic && !isLoading && (
+      <View style={styles.bottomTabEnclosure}>
+        {capturePic && !isLoading ? (
           <View style={styles.previewActionContainer}>
             <TouchableOpacity
               style={styles.previewActionBtn}
-              onPress={handleRetake}
+              onPress={() => setCapturePic(null)}
             >
-              <Text style={styles.previewActionText}>Retake</Text>
+              <Text style={styles.retakeText}>Retake</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.previewActionBtn, styles.usePhotoBtn]}
@@ -202,36 +252,32 @@ const SkinCamera = () => {
               <Text style={styles.previewActionText}>Use Photo</Text>
             </TouchableOpacity>
           </View>
+        ) : (
+          <View style={styles.controls}>
+            <CircularButton size={65} onPress={pickImage}>
+              <MaterialCommunityIcons
+                name="image-multiple"
+                size={28}
+                color="#fff"
+              />
+            </CircularButton>
+
+            <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
+              <CircularButton size={95} onPress={handleCapture}>
+                <FontAwesome6 name="camera" size={30} color="#fff" />
+              </CircularButton>
+            </Animated.View>
+
+            <CircularButton
+              size={65}
+              onPress={() => setFacing(facing === "back" ? "front" : "back")}
+            >
+              <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
+            </CircularButton>
+          </View>
         )}
       </View>
-      {/* Tab bar style that encloses the buttons */}
-      <View style={styles.bottomTabEnclosure}>
-        <View style={styles.controls}>
-          {/* GALLERY BUTTON */}
-          <CircularButton size={65} onPress={pickImage}>
-            <MaterialCommunityIcons
-              name="image-multiple"
-              size={28}
-              color="#fff"
-            />
-          </CircularButton>
 
-          {/* SHUTTER BUTTON */}
-          <Animated.View style={{ transform: [{ scale: shutterAnim }] }}>
-            <CircularButton size={95} onPress={handleCapture}>
-              <FontAwesome6 name="camera" size={30} color="#fff" />
-            </CircularButton>
-          </Animated.View>
-
-          {/* CAMERA ROTATE BUTTON */}
-          <CircularButton
-            size={65}
-            onPress={() => setFacing(facing === "back" ? "front" : "back")}
-          >
-            <FontAwesome6 name="camera-rotate" size={28} color="#fff" />
-          </CircularButton>
-        </View>
-      </View>
       <Modal visible={!!failMessage} transparent animationType="fade">
         <View style={styles.failOverlay}>
           <Card>
@@ -249,6 +295,14 @@ const SkinCamera = () => {
           </Card>
         </View>
       </Modal>
+
+      <CameraLoadingModal
+        visible={isLoading}
+        onTimeout={() => {
+          setIsLoading(false);
+          setCapturePic(null);
+        }}
+      />
     </View>
   );
 };
@@ -256,10 +310,7 @@ const SkinCamera = () => {
 export default SkinCamera;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
   cameraContainer: {
     width: "100%",
     aspectRatio: 1,
@@ -267,20 +318,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     overflow: "hidden",
   },
-  cameraBox: {
-    flex: 1,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  cameraBox: { flex: 1 },
   bottomTabEnclosure: {
     position: "absolute",
     bottom: 0,
     width: "100%",
-    height: 180, // Height to sufficiently enclose controls
+    height: 180,
     backgroundColor: "#fff",
     borderTopWidth: 1,
     borderTopColor: "#e0e0e0",
@@ -305,7 +348,8 @@ const styles = StyleSheet.create({
   previewActionContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    marginTop: 20,
+    alignItems: "center",
+    width: "100%",
   },
   previewActionBtn: {
     paddingVertical: 12,
@@ -313,14 +357,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#333",
+    width: "40%",
+    alignItems: "center",
   },
-  usePhotoBtn: {
-    backgroundColor: "#00CC99",
-    borderColor: "#00CC99",
-  },
-  previewActionText: {
-    fontWeight: "600",
-  },
+  usePhotoBtn: { backgroundColor: "#00CC99", borderColor: "#00CC99" },
+  previewActionText: { fontWeight: "600", color: "#fff" },
+  retakeText: { fontWeight: "600", color: "#333" },
   centered: {
     flex: 1,
     justifyContent: "center",
@@ -340,22 +382,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#00CC99",
   },
-  permissionBtnText: {
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: "600",
-  },
+  permissionBtnText: { fontSize: 16, color: "#fff", fontWeight: "600" },
   failOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.6)",
     justifyContent: "center",
     alignItems: "center",
   },
-  failTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
+  failTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
   failMsg: {
     fontSize: 15,
     color: "#444",
@@ -368,9 +402,15 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
   },
-  failBtnText: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "600",
+  failBtnText: { color: "white", textAlign: "center", fontWeight: "600" },
+  sliderContainer: {
+    position: "absolute",
+    bottom: 180,
+    width: "100%",
+    alignItems: "center",
+    zIndex: 10,
+    backgroundColor: "rgb(255, 255, 255)",
+    paddingVertical: 8,
   },
+  zoomText: { color: "#00CC99", fontWeight: "600", marginBottom: -5 },
 });

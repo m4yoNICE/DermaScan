@@ -8,6 +8,7 @@ import {
   getUserById,
   getAllUsers,
   deleteUser,
+  getCountUsers,
 } from "../controllers/adminUsersController.js";
 const router = express.Router();
 
@@ -17,5 +18,6 @@ router.get("/getById/:id", verifyToken, checkAdmin, getUserById);
 router.post("/", verifyToken, checkAdmin, createUsers);
 router.put("/:id", verifyToken, checkAdmin, updateUser);
 router.delete("/delete/:id", verifyToken, checkAdmin, deleteUser);
+router.get("/count", verifyToken, checkAdmin, getCountUsers);
 
 export default router;

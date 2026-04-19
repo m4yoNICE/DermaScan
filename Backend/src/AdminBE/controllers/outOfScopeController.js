@@ -1,7 +1,8 @@
 import {
     getScanPerDay,
     getOutOfScopeStatistics,
-    deleteOutOfScope
+    deleteOutOfScope,
+    fetchOutOfScopeNoRecommendation
 } from "../services/outOfScopeServices.js";
 
 export async function handleGetScanPerDay(req, res) {
@@ -29,4 +30,14 @@ export async function handleDeleteOutOfScope(req, res) {
         console.error("Delete out of scope error:", err);
         return res.status(500).json({ error: "Server error" });
     }
+}
+
+export async function handleFetchOutOfScopeNoRecommendation(req, res) {
+  try {
+    const result = await fetchOutOfScopeNoRecommendation(req, res);
+    return res.status(200).json({ success: true, message: "Fetched no recommendation conditions successfully.", data: result });
+  } catch (err) {
+    console.error("Fetch out of scope no recommendation error:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
 }

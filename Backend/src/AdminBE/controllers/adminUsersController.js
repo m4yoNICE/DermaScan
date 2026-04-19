@@ -5,6 +5,7 @@ import {
   createUsersProcess,
   deleteUserProcess,
   updateUserProcess,
+  countUsersProcess,
 } from "../services/adminUserServices.js";
 
 // Get admin data
@@ -138,5 +139,15 @@ export async function updateUser(req, res) {
     }
 
     return res.status(500).json({ error: "Server error while updating user" });
+  }
+}
+
+export async function getCountUsers(req, res) {
+  try {
+    const count = await countUsersProcess();
+    return res.status(200).json({ count });
+  } catch (err) {
+    console.error("Get user count error:", err);
+    return res.status(500).json({ error: "Server error fetching user count" });
   }
 }

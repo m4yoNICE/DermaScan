@@ -7,7 +7,6 @@ import {
   BottomSheetBackdrop,
   BottomSheetFooter,
 } from "@gorhom/bottom-sheet";
-import Api from "@/services/Api";
 
 const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
   const bottomSheetRef = useRef(null);
@@ -21,9 +20,7 @@ const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
     }
   }, [isVisible]);
 
-  const imageUrl = product?.productImage
-    ? Api.getProductImage(product.productImage)
-    : null;
+  const imageUrl = product?.productImage ?? null;
 
   // 1. Define the Footer separately using BottomSheetFooter
   const renderFooter = useCallback(
@@ -71,6 +68,9 @@ const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
     >
       <View style={styles.header}>
         <Text style={styles.categoryText}>{product?.productType}</Text>
+        {product?.routine && (
+          <Text style={styles.routineText}>{product.routine}</Text>
+        )}
         <TouchableOpacity onPress={onClose} style={styles.closeCircle}>
           <MaterialCommunityIcons name="close" size={22} color="#333" />
         </TouchableOpacity>
@@ -186,4 +186,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   addButtonText: { color: "#fff", fontSize: 18, fontWeight: "700" },
+  routineText: {
+    fontSize: 12,
+    color: "#aaa",
+    marginTop: 2,
+  },
 });

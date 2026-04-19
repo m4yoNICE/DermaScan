@@ -5,6 +5,7 @@ import {
   Modal,
   TouchableOpacity,
   ScrollView,
+  Image, 
 } from "react-native";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -21,38 +22,54 @@ const DirectionCameraModal = ({ visible, onClose }) => {
           </TouchableOpacity>
 
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.title}>Camera</Text>
+            {/* Added the reference image here */}
+            <Image
+              source={require("../../../assets/images/face.png")}
+              style={styles.referenceImage}
+              resizeMode="cover"
+            />
+
+            <Text style={styles.title}>Camera Guide</Text>
 
             <Text style={styles.subtitle}>
               To help us analyze your skin, please follow these simple steps:
             </Text>
 
             <View style={styles.instructionContainer}>
+
               <Text style={styles.text}>
-                <Text style={styles.bold}>1. Clean, Clear & Steady:</Text> Make
-                sure your face is clean and there’s no makeup on.
+                <Text style={styles.bold}>No Obstructions:</Text> Remove hats,
+                masks, and glasses.
+              </Text>
+              
+              <Text style={styles.text}>
+                <Text style={styles.bold}>Clean & Bare:</Text> No makeup, just
+                fresh skin.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>2. Good Lighting:</Text> Stand in
-                natural light or use a well-lit space. Avoid shadows and harsh
-                light.
+                <Text style={styles.bold}>Good Lighting:</Text> Natural or soft
+                lighting, no harsh shadows.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>3. Close-up Shot:</Text> Take a
-                close-up picture of your face, ensuring we can clearly see your
-                skin texture and any areas of concern.
+                <Text style={styles.bold}>Focus on Your Face:</Text> Keep your
+                face in frame, no distractions.
               </Text>
 
               <Text style={styles.text}>
-                <Text style={styles.bold}>4. Stay Still:</Text> Hold your phone
-                steady for a clear, focused image.
+                <Text style={styles.bold}>Close-Up:</Text> Make sure we can
+                clearly see your skin.
+              </Text>
+
+              <Text style={styles.text}>
+                <Text style={styles.bold}>Stay Still:</Text> Hold your phone
+                steady for a sharp shot.
               </Text>
             </View>
 
             <TouchableOpacity style={styles.agreeButton} onPress={onClose}>
-              <Text style={styles.agreeText}>I agree</Text>
+              <Text style={styles.agreeText}>I understand</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -68,15 +85,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.6)",
   },
   box: {
-    width: "95%", // Increased width to reach near edges
+    width: "90%", 
     backgroundColor: "white",
-    borderRadius: 20,
-    paddingHorizontal: 25,
-    paddingVertical: 30,
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 25,
     maxHeight: "85%",
+    overflow: "hidden", 
+  },
+  referenceImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 20,
   },
   closeBtn: {
     position: "absolute",
@@ -93,14 +117,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#000",
-    marginBottom: 10,
+    marginBottom: 8,
   },
   subtitle: {
-    fontSize: 15,
-    color: "#777",
+    fontSize: 14,
+    color: "#666",
     lineHeight: 20,
     marginBottom: 15,
   },
@@ -108,27 +132,26 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   text: {
-    fontSize: 15,
-    color: "#666",
-    marginBottom: 10,
+    fontSize: 14,
+    color: "#444",
+    marginBottom: 12,
     lineHeight: 20,
   },
   bold: {
     fontWeight: "bold",
-    color: "#444",
+    color: "#000",
   },
   agreeButton: {
     backgroundColor: "#4E8474",
     paddingVertical: 14,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
-    marginTop: 20,
-    alignSelf: "center",
-    width: "60%",
+    marginTop: 10,
+    width: "100%", 
   },
   agreeText: {
     color: "white",
-    fontSize: 18,
-    fontWeight: "500",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

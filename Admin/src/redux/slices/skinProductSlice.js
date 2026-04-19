@@ -72,9 +72,51 @@ export const deleteProduct = createAsyncThunk(
   },
 );
 
+export const getConditionCounts = createAsyncThunk(
+  "products/getConditionCounts",
+  (_, { rejectWithValue }) => {
+    return Api.getConditionCounts()
+      .then((response) => response.data)
+      .catch((err) => {
+        return rejectWithValue(
+          err.response?.data?.message || "Failed to fetch condition counts.",
+        );
+      });
+  },
+);
+
+export const getConditionCountsByProduct = createAsyncThunk(
+  "products/getConditionCountsByProduct",
+  (_, { rejectWithValue }) => {
+    return Api.getConditionCountsByProduct()
+      .then((response) => response.data)
+      .catch((err) => {
+        return rejectWithValue(
+          err.response?.data?.message || "Failed to fetch condition counts by product.",
+        );
+      });
+  },
+);
+
+export const getAllProductImages = createAsyncThunk(
+  "products/getAllProductImages",
+  (_, { rejectWithValue }) => {
+    return Api.getAllProductImages()
+      .then((response) => response.data)
+      .catch((err) => {
+        return rejectWithValue(
+          err.response?.data?.message || "Failed to fetch product images.",
+        );
+      });
+  },
+);
+
 //initial state
 const initialState = {
   products: [],
+  getConditionCounts: [],
+  getConditionCountsByProduct: [],
+  getAllProductImages: [],
   productsData: null,
   selectedProduct: null,
   loading: false,
@@ -177,6 +219,36 @@ const skinProductSlice = createSlice({
       .addCase(deleteProduct.rejected, (state, action) => {
         state.deleteLoading = false;
         state.deleteError = action.payload;
+      })
+      //GET CONDITION COUNTS
+      .addCase(getConditionCounts.pending, (state) => {
+        state.getConditionCounts = [];
+      })
+      .addCase(getConditionCounts.fulfilled, (state, action) => {
+        state.getConditionCounts = action.payload.data;
+      })
+      .addCase(getConditionCounts.rejected, (state, action) => {
+        state.getConditionCounts = [];
+      })
+      //GET CONDITION COUNTS BY PRODUCT
+      .addCase(getConditionCountsByProduct.pending, (state) => {
+        state.getConditionCountsByProduct = [];
+      })
+      .addCase(getConditionCountsByProduct.fulfilled, (state, action) => {
+        state.getConditionCountsByProduct = action.payload.data;
+      })
+      .addCase(getConditionCountsByProduct.rejected, (state, action) => {
+        state.getConditionCountsByProduct = [];
+      })
+      // GET ALL PRODUCT IMAGES
+      .addCase(getAllProductImages.pending, (state) => {
+        state.getAllProductImages = [];
+      })
+      .addCase(getAllProductImages.fulfilled, (state, action) => {
+        state.getAllProductImages = action.payload.data;
+      })
+      .addCase(getAllProductImages.rejected, (state, action) => {
+        state.getAllProductImages = [];
       });
   },
 });

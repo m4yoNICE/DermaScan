@@ -3,13 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import Table from "@/components/Table";
 import SearchBar from "@/components/SearchBar";
 import DeleteModal from "@/components/DeleteModal";
+import EditUserPageModal from "@/components/editUserPageModal";
 import { deleteUser, fetchUsers } from "@/redux/slices/userSlice";
-import { Trash2 } from "lucide-react";
+import { Trash2,Pencil } from "lucide-react";
+import Api from "@/services/Api";
 
 const UserPage = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   // Get users data from Redux store
@@ -116,27 +119,54 @@ const UserPage = () => {
     {
       key: "actions",
       label: "Actions",
-      width: "100px",
+      width: "120px",
       sortable: false,
       render: (value, row) => (
-        <button
-          onClick={() => handleData(row)}
-          className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
-          title="Delete user"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        <div className="flex gap-2">
+          {/* Edit Button */}
+          <button
+            onClick={() => setSelectedUser(row) || setIsEditModalOpen(true)}
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+            title="Edit user"
+          >
+            <Pencil className="w-4 h-4" />
+          </button>
+
+          {/* Delete Button */}
+          <button
+            onClick={() => handleData(row)}
+            className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+            title="Delete user"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       ),
     },
   ];
 
+  const handleGenerateUserReport = async () => {
+  const res = await Api.generateUserReport({ responseType: "blob" });
+  const url = window.URL.createObjectURL(new Blob([res.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "user-report.pdf");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
   return (
     <div>
-      {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          Users Management
-        </h1>
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">Users Management</h1>
+        <button
+          onClick={handleGenerateUserReport}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-xl shadow-sm hover:bg-blue-600 active:scale-95 transition-all"
+        >
+          📄 Generate Users Report
+        </button>
       </div>
 
       {/* Search Bar */}
@@ -149,21 +179,19 @@ const UserPage = () => {
         />
       </div>
 
-      {/* Loading State */}
+      {/* Loading */}
       {loading && (
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00CC99]"></div>
         </div>
       )}
 
-      {/* Error State */}
+      {/* Errors */}
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
       )}
-
-      {/* Delete error state */}
       {deleteError && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
           {deleteError}
@@ -171,23 +199,24 @@ const UserPage = () => {
       )}
 
       {/* Users Table */}
-      {!loading && !error && (
-        <Table data={filteredData} columns={columns} itemsPerPage={10} />
-      )}
+      {!loading && !error && <Table data={filteredData} columns={columns} itemsPerPage={10} />}
 
       {/* Delete Modal */}
       <DeleteModal
         isOpen={isDeleteModalOpen}
-        onClose={handleCloseModal}
+        onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        userName={
-          selectedUser
-            ? `${selectedUser.firstName} ${selectedUser.lastName}`
-            : ""
-        }
+        userName={selectedUser ? `${selectedUser.firstName} ${selectedUser.lastName}` : ""}
         userEmail={selectedUser?.email || ""}
         title="User"
         isLoading={deleteLoading}
+      />
+
+      {/* Edit Modal */}
+      <EditUserPageModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        user={selectedUser}
       />
     </div>
   );

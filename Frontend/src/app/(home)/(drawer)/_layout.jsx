@@ -1,22 +1,26 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { Drawer } from "expo-router/drawer";
 import Logo from "@/components/designs/Logo";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from "@react-navigation/drawer";
+import { DrawerItemList } from "@react-navigation/drawer";
+import { useUser } from "@/contexts/UserContext";
 
 function CustomDrawerContent(props) {
+  const { logout } = useUser();
   return (
-    <DrawerContentScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <View style={styles.header}>
-        <Logo style={{ width: 50, height: 50 }} />
+        <Logo style={{ width: 32, height: 32 }} />
         <Text style={styles.title}>DermaScan+</Text>
       </View>
-
       <DrawerItemList {...props} />
-    </DrawerContentScrollView>
+
+      <View style={styles.separator} />
+
+      <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -38,26 +42,11 @@ export const Drawerlayout = () => {
     >
       <Drawer.Screen
         name="(tabs)"
-        options={{
-          title: "Home",
-          headerShown: false,
-          drawerLabelStyle: { fontSize: 15, fontWeight: "600" },
-        }}
+        options={{ title: "Home", headerShown: false }}
       />
       <Drawer.Screen
         name="Profile"
-        options={{
-          title: "Settings",
-          headerShown: true,
-          drawerLabelStyle: { fontSize: 15, fontWeight: "600" },
-        }}
-      />
-      <Drawer.Screen
-        name="Logout"
-        options={{
-          title: "Logout",
-          drawerLabelStyle: { fontSize: 15, fontWeight: "600", color: "red" },
-        }}
+        options={{ title: "Settings", headerShown: true }}
       />
     </Drawer>
   );
@@ -69,15 +58,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 30,
-    paddingBottom: 20,
+    padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
-    marginBottom: 10,
   },
   title: {
-    fontSize: 25,
+    fontSize: 18,
     fontWeight: "bold",
     marginLeft: 10,
     color: "#081021",
@@ -87,5 +73,21 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#eee",
     padding: 20,
+  },
+  logoutBtn: {
+    padding: 16,
+    paddingHorizontal: 20,
+    marginTop: 4,
+  },
+  logoutText: {
+    color: "red",
+    fontWeight: "600",
+    fontSize: 15,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: "#eee",
+    marginHorizontal: 16,
+    marginTop: 8,
   },
 });

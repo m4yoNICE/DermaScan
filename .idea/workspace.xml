@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="14307844-3dbe-42ad-ac63-b5d3a3620781" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/.sequelizerc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/.package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/@types/profiles.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/@types/profiles.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/profiles/ca/defaults.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/profiles/ca/defaults.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/profiles/ca/proxies.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/lib/profiles/ca/proxies.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/aws-ssl-profiles/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/bcryptjs/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/bcryptjs/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/bcryptjs/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/bcryptjs/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/bcryptjs/umd/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/bcryptjs/umd/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/read.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/read.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/json.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/json.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/raw.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/raw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/text.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/text.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/urlencoded.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/types/urlencoded.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/lib/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/body-parser/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/body-parser/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/content-disposition/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/content-disposition/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/content-disposition/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/content-disposition/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/content-disposition/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/content-disposition/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/content-disposition/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/content-disposition/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/denque/CHANGELOG.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/denque/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/denque/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/denque/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/denque/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/denque/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/dotenv/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/dotenv/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/dotenv/lib/main.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/dotenv/lib/main.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/dotenv/lib/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/dotenv/lib/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/dotenv/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/dotenv/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/History.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/express/Readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/lib/application.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/express/lib/application.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/lib/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/express/lib/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/lib/response.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/express/lib/response.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/lib/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/express/lib/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/express/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/express/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/finalhandler/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/finalhandler/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/finalhandler/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/finalhandler/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/finalhandler/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/finalhandler/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/example.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/generate-function/test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/http-errors/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/http-errors/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/http-errors/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/http-errors/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/http-errors/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/http-errors/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/Changelog.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/lib/index.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/lib/index.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/lib/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/lib/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/iconv-lite/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/is-property/.npmignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/is-property/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/is-property/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/is-property/is-property.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/is-property/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jsonwebtoken/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jsonwebtoken/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jwa/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jwa/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jwa/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jwa/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jwa/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jwa/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jws/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jws/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jws/lib/sign-stream.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jws/lib/sign-stream.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jws/lib/verify-stream.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jws/lib/verify-stream.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jws/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jws/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/jws/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/jws/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/types.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/umd/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/umd/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/umd/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/long/umd/types.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru-cache/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru-cache/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru-cache/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru-cache/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru-cache/index.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru-cache/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/browser/lru.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/lib/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/lib/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/lib/index.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/lru.min/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mime-types/HISTORY.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/mime-types/HISTORY.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mime-types/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/mime-types/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mime-types/mimeScore.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/mime-types/mimeScore.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mime-types/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/mime-types/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/License" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_41.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_plugins/caching_sha2_password.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_plugins/caching_sha2_password.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_plugins/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_plugins/mysql_clear_password.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_plugins/mysql_native_password.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/auth_plugins/sha256_password.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/base/connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/base/pool.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/base/pool_connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/auth_switch.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/binlog_dump.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/change_user.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/client_handshake.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/close_statement.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/command.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/execute.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/ping.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/prepare.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/query.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/quit.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/register_slave.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/commands/server_handshake.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/compressed_protocol.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/connection_config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/charset_encodings.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/charsets.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/client.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/commands.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/cursor.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/encoding_charset.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/errors.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/field_flags.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/server_status.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/session_track.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/ssl_profiles.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/constants/types.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/create_connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/create_pool.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/create_pool_cluster.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/helpers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packet_parser.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/auth_next_factor.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/auth_switch_request.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/auth_switch_request_more_data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/auth_switch_response.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/binary_row.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/binlog_dump.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/binlog_query_statusvars.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/change_user.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/close_statement.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/column_definition.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/execute.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/handshake.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/handshake_response.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/packet.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/prepare_statement.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/prepared_statement_header.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/query.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/register_slave.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/resultset_header.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/ssl_request.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/packets/text_row.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/parsers/binary_parser.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/parsers/parser_cache.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/parsers/static_binary_parser.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/parsers/static_text_parser.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/parsers/string.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/parsers/text_parser.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/pool.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/pool_cluster.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/pool_config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/pool_connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/inherit_events.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/make_done_cb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/pool.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/pool_cluster.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/pool_connection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/promise/prepared_statement_info.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/results_stream.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/lib/server.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/promise.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/promise.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/LICENSE.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/info.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/Auth.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/Connection.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/Pool.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/PoolCluster.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/PoolConnection.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/Server.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/constants/CharsetToEncoding.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/constants/Charsets.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/constants/Types.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/constants/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/parsers/ParserCache.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/parsers/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/parsers/typeCast.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/Field.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/FieldPacket.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/OkPacket.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/ProcedurePacket.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/ResultSetHeader.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/RowDataPacket.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/params/ErrorPacketParams.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/packets/params/OkPacketParams.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/ExecutableBase.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/Prepare.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/Query.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/QueryableBase.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/Sequence.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/promise/ExecutableBase.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/mysql2/typings/mysql/lib/protocol/sequences/promise/QueryableBase.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/named-placeholders/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/named-placeholders/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/named-placeholders/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/named-placeholders/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/nodemon/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/nodemon/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/nodemon/lib/config/exec.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/nodemon/lib/config/exec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/nodemon/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/nodemon/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/.eslintrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/CHANGELOG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/dist/qs.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/dist/qs.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/lib/parse.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/lib/parse.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/lib/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/lib/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/test/parse.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/test/parse.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/test/stringify.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/test/stringify.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/qs/test/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/qs/test/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/raw-body/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/raw-body/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/send/HISTORY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/send/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/send/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/.jshintrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/.npmignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/AUTHORS" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/lib/.npmignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/lib/seq-queue.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/seq-queue/test/seq-queue-test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/serve-static/HISTORY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/serve-static/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/serve-static/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/serve-static/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/node_modules/serve-static/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/sqlstring/HISTORY.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/sqlstring/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/sqlstring/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/sqlstring/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/sqlstring/lib/SqlString.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/node_modules/sqlstring/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/AdminBE/controllers/adminAuthController.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/AdminBE/controllers/adminAuthController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/AdminBE/services/adminUserServices.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/AdminBE/services/adminUserServices.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/config/config.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/config/db.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/controllers/skinAnalysisController.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/controllers/skinAnalysisController.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251126043722-create-roles.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050520-create-users.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050617-create-otp.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050626-create-skincondition.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050637-create-skindata.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050647-create-storedimages.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050657-create-journal.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251127050707-create-skinanalysistransaction.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/migrations/20251203120623-create-skin-care-products.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/Journal.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/OTP.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/Role.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/SkinAnalysisTransaction.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/SkinCareProducts.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/SkinCondition.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/SkinData.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/StoredImage.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/models/User.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/seeders/20251126144722-seed-role.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/seeders/20251127052219-seed-skin-conditions.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/seeders/20251127052317-seed-users.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/seeders/20251128145624-seed-skindata.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/seeders/20251203120538-seed-skin-care-products.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/authServices.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/services/authServices.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/imagesServices.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/services/imagesServices.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/journalServices.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/services/journalServices.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/skinAnalysisDBMapping.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/services/skinAnalysisDBMapping.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/skinAnalysisOrchestrator.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/services/skinAnalysisOrchestrator.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/skinAnalysisServices.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/src/services/userServices.js" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/src/services/userServices.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/package.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="37yDjWgdJ3Dxi3ySpRJoxNOI0V9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Codes/CAPSTONE/DermaScan&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AndroidSdkUpdater&quot;
+  }
+}</component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="14307844-3dbe-42ad-ac63-b5d3a3620781" name="Changes" comment="" />
+      <created>1767866552409</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767866552409</updated>
+    </task>
+    <servers />
+  </component>
+</project>

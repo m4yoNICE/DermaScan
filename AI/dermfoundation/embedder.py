@@ -1,5 +1,7 @@
 import os
+import tf_keras
 import tensorflow as tf
+from tensorflow.saved_model import load as saved_model_load
 from huggingface_hub import snapshot_download
 import sys
 
@@ -13,7 +15,7 @@ from preprocessing.preprocess_image import (
 
 CACHE_DIR = os.path.expanduser("~/.cache/huggingface")
 model_dir = snapshot_download(repo_id="google/derm-foundation", cache_dir=CACHE_DIR)
-model = tf.saved_model.load(model_dir)
+model = saved_model_load(model_dir)
 infer = model.signatures["serving_default"]
 
 def get_embedding(image_data):
