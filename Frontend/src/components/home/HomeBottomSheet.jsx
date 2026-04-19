@@ -16,6 +16,37 @@ const HomeBottomSheet = ({ sheetRef, selectedDate, calendarTab }) => {
     setActiveTab(calendarTab === "Analysis" ? "Analysis" : "Journal");
   }, [calendarTab]);
 
+  const tabs = (
+    <View style={styles.tabContainer}>
+      <TouchableOpacity
+        onPress={() => setActiveTab("Analysis")}
+        style={[styles.tab, activeTab === "Analysis" && styles.activeTab]}
+      >
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === "Analysis" && styles.activeTabText,
+          ]}
+        >
+          Analysis
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => setActiveTab("Journal")}
+        style={[styles.tab, activeTab === "Journal" && styles.activeTab]}
+      >
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === "Journal" && styles.activeTabText,
+          ]}
+        >
+          Journal
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <BottomSheet
       ref={sheetRef}
@@ -32,45 +63,19 @@ const HomeBottomSheet = ({ sheetRef, selectedDate, calendarTab }) => {
       backgroundStyle={styles.sheetBackground}
       handleIndicatorStyle={{ backgroundColor: "#ccc" }}
     >
-      <View style={styles.content}>
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            onPress={() => setActiveTab("Analysis")}
-            style={[styles.tab, activeTab === "Analysis" && styles.activeTab]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Analysis" && styles.activeTabText,
-              ]}
-            >
-              Analysis
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setActiveTab("Journal")}
-            style={[styles.tab, activeTab === "Journal" && styles.activeTab]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Journal" && styles.activeTabText,
-              ]}
-            >
-              Journal
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.sectionWrapper}>
-          {activeTab === "Analysis" ? (
-            <AnalysisSection selectedDate={selectedDate} />
-          ) : (
-            <JournalSection selectedDate={selectedDate} />
-          )}
-        </View>
-      </View>
+      {activeTab === "Analysis" ? (
+        <AnalysisSection
+          selectedDate={selectedDate}
+          tabs={tabs}
+          setActiveTab={setActiveTab}
+        />
+      ) : (
+        <JournalSection
+          selectedDate={selectedDate}
+          tabs={tabs}
+          setActiveTab={setActiveTab}
+        />
+      )}
     </BottomSheet>
   );
 };
@@ -81,16 +86,12 @@ const styles = StyleSheet.create({
   sheetBackground: {
     borderRadius: 40,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
   tabContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     borderBottomWidth: 1,
     borderBottomColor: "#EEE",
+    paddingHorizontal: 20,
   },
   tab: {
     paddingVertical: 15,
@@ -108,9 +109,5 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     color: "#00CC99",
-  },
-  sectionWrapper: {
-    flex: 1,
-    paddingTop: 15,
   },
 });

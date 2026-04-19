@@ -17,6 +17,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import ScheduleModal from "@/components/results/RoutineScheduleModal";
 import Logo from "@/components/designs/Logo";
 import Api from "@/services/Api";
+import { Feather } from "@expo/vector-icons";
 
 const Profile = () => {
   const { logout } = useUser();
@@ -40,6 +41,10 @@ const Profile = () => {
     new: "",
     confirm: "",
   });
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   const [showPicker, setShowPicker] = useState(false);
@@ -278,39 +283,84 @@ const Profile = () => {
         </View>
 
         <View style={styles.sectionDivider} />
-
+        {/* Password */}
         <Text style={styles.label}>Current Password</Text>
-        <TextInput
-          style={styles.fullInput}
-          placeholder="Current Password"
-          value={passwordData.current}
-          onChangeText={(text) =>
-            setPasswordData((prev) => ({ ...prev, current: text }))
-          }
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.fullInput,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <TextInput
+            style={{ flex: 1, fontSize: 16, color: "#333" }}
+            placeholder="Current Password"
+            placeholderTextColor="#999"
+            value={passwordData.current}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, current: text }))
+            }
+            secureTextEntry={!showCurrent}
+          />
+          <TouchableOpacity onPress={() => setShowCurrent(!showCurrent)}>
+            <Feather
+              name={showCurrent ? "eye-off" : "eye"}
+              size={18}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.label}>New Password</Text>
-        <TextInput
-          style={styles.fullInput}
-          placeholder="New Password (optional)"
-          value={passwordData.new}
-          onChangeText={(text) =>
-            setPasswordData((prev) => ({ ...prev, new: text }))
-          }
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.fullInput,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <TextInput
+            style={{ flex: 1, fontSize: 16, color: "#333" }}
+            placeholder="New Password (optional)"
+            placeholderTextColor="#999"
+            value={passwordData.new}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, new: text }))
+            }
+            secureTextEntry={!showNew}
+          />
+          <TouchableOpacity onPress={() => setShowNew(!showNew)}>
+            <Feather
+              name={showNew ? "eye-off" : "eye"}
+              size={18}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.label}>Confirm New Password</Text>
-        <TextInput
-          style={styles.fullInput}
-          placeholder="Confirm New Password"
-          value={passwordData.confirm}
-          onChangeText={(text) =>
-            setPasswordData((prev) => ({ ...prev, confirm: text }))
-          }
-          secureTextEntry
-        />
+        <View
+          style={[
+            styles.fullInput,
+            { flexDirection: "row", alignItems: "center" },
+          ]}
+        >
+          <TextInput
+            style={{ flex: 1, fontSize: 16, color: "#333" }}
+            placeholder="Confirm New Password"
+            placeholderTextColor="#999"
+            value={passwordData.confirm}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, confirm: text }))
+            }
+            secureTextEntry={!showConfirm}
+          />
+          <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
+            <Feather
+              name={showConfirm ? "eye-off" : "eye"}
+              size={18}
+              color="#999"
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Action Buttons */}
@@ -390,6 +440,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 8,
     fontSize: 16,
+    color: "#333",
   },
   saveIcon: {
     fontSize: 32,
@@ -406,6 +457,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 15,
     justifyContent: "center",
+    color: "#333",
   },
   editBtn: {
     borderWidth: 1,

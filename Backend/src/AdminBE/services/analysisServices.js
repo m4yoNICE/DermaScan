@@ -1,5 +1,5 @@
 import { db } from "../../config/db.js";
-import { eq, desc } from "drizzle-orm";
+import { sql, desc, eq } from "drizzle-orm";
 import {
   skinAnalysis,
   skinConditions,
@@ -36,7 +36,13 @@ export async function getAllAnalysis() {
 
 export const getAllConditions = async () => {
   return await db
-    .select()
-    .from(skinConditions)
-    .where(eq(skinConditions.canRecommend, "Yes"));
+    .select({
+      condition: skinConditions.condition,
+      count: sql`COUNT(${skinAnalysis.id})`.as("count"),
+    })
+    .from(skinAnalysis)
+    .leftJoin(skinConditions, eq(skinAnalysis.conditionId, skinConditions.id))
+    .where(eq(skinAnalysis.status, "success"))
+    .groupBy(skinConditions.condition)
+    .orderBy(desc(sql`COUNT(${skinAnalysis.id})`));
 };

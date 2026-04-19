@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
-  ScrollView,
   StyleSheet,
   TextInput,
   View,
   Text,
   TouchableOpacity,
 } from "react-native";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import Api from "@/services/Api";
 import { ToastMessage } from "@/components/designs/feedback/ToastMessage";
 import Button from "@/components/designs/Button";
@@ -18,14 +18,13 @@ const MOODS = [
   { value: "sad", label: "Sad", emoji: "😞" },
 ];
 
-const JournalSection = ({ selectedDate }) => {
+const JournalSection = ({ selectedDate, tabs }) => {
   const { journals, fetchJournals } = useHomeData();
   const [draft, setDraft] = useState("");
   const [mood, setMood] = useState(null);
 
   const currentJournal = journals[selectedDate];
 
-  // Normalize: support legacy emoji values → map to string
   const normalizeMood = (m) => {
     const legacy = { "😊": "happy", "😐": "neutral", "😞": "sad" };
     return legacy[m] || m;
@@ -73,21 +72,22 @@ const JournalSection = ({ selectedDate }) => {
     : "Save";
 
   return (
-    <View style={styles.sheetContent}>
-      <View style={styles.moodRow}>
-        {MOODS.map((m) => (
-          <TouchableOpacity
-            key={m.value}
-            onPress={() => setMood(m.value === mood ? null : m.value)}
-            style={[styles.moodBtn, mood === m.value && styles.moodActive]}
-            accessibilityLabel={m.label}
-            accessibilityRole="button"
-          >
-            <Text style={styles.moodEmoji}>{m.emoji}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <ScrollView>
+    <BottomSheetScrollView contentContainerStyle={styles.container}>
+      {tabs}
+      <View style={styles.inner}>
+        <View style={styles.moodRow}>
+          {MOODS.map((m) => (
+            <TouchableOpacity
+              key={m.value}
+              onPress={() => setMood(m.value === mood ? null : m.value)}
+              style={[styles.moodBtn, mood === m.value && styles.moodActive]}
+              accessibilityLabel={m.label}
+              accessibilityRole="button"
+            >
+              <Text style={styles.moodEmoji}>{m.emoji}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         <TextInput
           style={styles.input}
           multiline
@@ -95,15 +95,22 @@ const JournalSection = ({ selectedDate }) => {
           onChangeText={setDraft}
           placeholder="How's your day..."
         />
-      </ScrollView>
-      <Button title={buttonLabel} onPress={handleSave} />
-    </View>
+        <Button title={buttonLabel} onPress={handleSave} />
+      </View>
+    </BottomSheetScrollView>
   );
 };
 
 export default JournalSection;
 
 const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 40,
+  },
+  inner: {
+    paddingHorizontal: 20,
+    paddingTop: 15,
+  },
   input: {
     height: 150,
     borderWidth: 1,
@@ -111,10 +118,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     textAlignVertical: "top",
     padding: 10,
-  },
-  sheetContent: {
-    flex: 1,
-    padding: 16,
   },
   moodRow: {
     flexDirection: "row",

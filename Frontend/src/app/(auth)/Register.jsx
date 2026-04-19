@@ -267,12 +267,15 @@ const Register = () => {
               style={styles.inputIcon}
             />
             <BottomSheetTextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { color: "#333", fontFamily: "sans-serif" },
+              ]}
               placeholder="Password"
               placeholderTextColor="#999"
               value={password}
-              secureTextEntry={!showPass}
               onChangeText={setPassword}
+              secureTextEntry={!showPass}
             />
             <TouchableOpacity onPress={() => setShowPass(!showPass)}>
               <Feather
@@ -292,12 +295,15 @@ const Register = () => {
               style={styles.inputIcon}
             />
             <BottomSheetTextInput
-              style={styles.input}
-              placeholder="Confirm Password"
+              style={[
+                styles.input,
+                { color: "#333", fontFamily: "sans-serif" },
+              ]}
+              placeholder="Password"
               placeholderTextColor="#999"
-              value={confirmPassword}
-              secureTextEntry={!showConfirmPass}
-              onChangeText={setConfirmPassword}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPass}
             />
             <TouchableOpacity
               onPress={() => setShowConfirmPass(!showConfirmPass)}

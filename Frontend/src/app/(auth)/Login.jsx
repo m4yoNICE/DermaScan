@@ -151,7 +151,10 @@ const Login = () => {
               style={styles.inputIcon}
             />
             <BottomSheetTextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { color: "#333", fontFamily: "sans-serif" },
+              ]}
               placeholder="Password"
               placeholderTextColor="#999"
               value={password}
@@ -247,6 +250,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
+    color: "#333",
   },
 
   signUp: {

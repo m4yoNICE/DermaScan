@@ -2,10 +2,9 @@ import React from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { formatConditionName } from "@/utils/formatConditionName";
-
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
-const AnalysisSection = ({ selectedDate }) => {
+const AnalysisSection = ({ selectedDate, tabs }) => {
   const { analysisLogs } = useHomeData();
   const entries = analysisLogs[selectedDate] ?? [];
 
@@ -13,6 +12,7 @@ const AnalysisSection = ({ selectedDate }) => {
     <BottomSheetFlatList
       data={entries}
       keyExtractor={(item) => item.id.toString()}
+      ListHeaderComponent={<View style={styles.header}>{tabs}</View>}
       renderItem={({ item }) => (
         <View style={styles.card}>
           <Image
@@ -43,8 +43,20 @@ const AnalysisSection = ({ selectedDate }) => {
 export default AnalysisSection;
 
 const styles = StyleSheet.create({
-  list: { paddingBottom: 20 },
-  empty: { flex: 1, justifyContent: "center", alignItems: "center" },
+  header: {
+    paddingTop: 10,
+    marginBottom: 15,
+  },
+  list: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  empty: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 40,
+  },
   emptyText: { color: "#999", fontSize: 14 },
   card: {
     flexDirection: "row",
@@ -53,11 +65,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: "#f0f0f0",
   },
   image: {
     width: 60,
