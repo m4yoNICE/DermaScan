@@ -57,6 +57,8 @@ const HistoryCard = ({ item }) => {
     }
   };
 
+  const isSuccess = item.status === "success";
+
   return (
     <View style={styles.card}>
       <TouchableOpacity
@@ -70,40 +72,39 @@ const HistoryCard = ({ item }) => {
           <View style={[styles.avatar, styles.avatarPlaceholder]}>
             <MaterialCommunityIcons
               name="image-off-outline"
-              size={28}
-              color="#ccc"
+              size={26}
+              color="#bbb"
             />
           </View>
         )}
         <View style={styles.headerText}>
-          <Text style={styles.condition}>
+          <Text style={styles.condition} numberOfLines={1}>
             {formatConditionName(item.condition, item.status)}
           </Text>
           <Text style={styles.date}>{item.createdAt}</Text>
           <View
-            style={[
-              styles.statusBadge,
-              item.status !== "success" && styles.statusBadgeError,
-            ]}
+            style={[styles.statusBadge, !isSuccess && styles.statusBadgeError]}
           >
+            <View
+              style={[styles.badgeDot, !isSuccess && styles.badgeDotError]}
+            />
             <Text
-              style={[
-                styles.statusText,
-                item.status !== "success" && styles.statusTextError,
-              ]}
+              style={[styles.statusText, !isSuccess && styles.statusTextError]}
             >
               {item.status}
             </Text>
           </View>
         </View>
-        <View style={styles.chevron}>
-          <Text style={styles.chevronText}>{expanded ? "▲" : "▼"}</Text>
-        </View>
+        <Animated.View
+          style={{ transform: [{ rotate: expanded ? "180deg" : "0deg" }] }}
+        >
+          <Feather name="chevron-down" size={16} color="#bbb" />
+        </Animated.View>
       </TouchableOpacity>
 
       {expanded && (
         <Animated.View
-          entering={FadeIn.duration(300)}
+          entering={FadeIn.duration(250)}
           exiting={FadeOut.duration(200)}
           style={styles.body}
         >
@@ -118,7 +119,7 @@ const HistoryCard = ({ item }) => {
           </ScrollView>
 
           <View style={styles.buttonRow}>
-            {item.status === "success" && (
+            {isSuccess && (
               <Button
                 title={activating ? "Activating..." : "Use this Routine"}
                 onPress={handleActivate}
@@ -127,11 +128,11 @@ const HistoryCard = ({ item }) => {
               />
             )}
             <TouchableOpacity
-              style={styles.deleteBtn}
+              style={[styles.deleteBtn, !isSuccess && styles.deleteBtnFull]}
               onPress={handleDelete}
               disabled={deleting}
             >
-              <Feather name="trash-2" size={20} color="#ff5252" />
+              <Feather name="trash-2" size={18} color="#888" />
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -147,86 +148,88 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 20,
     marginHorizontal: 16,
-    marginVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 5,
+    marginVertical: 6,
+    borderWidth: 0.5,
+    borderColor: "#e8e8e8",
     overflow: "hidden",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: 14,
     gap: 14,
   },
   avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 16,
+    width: 68,
+    height: 68,
+    borderRadius: 14,
     backgroundColor: "#f0f0f0",
   },
   avatarPlaceholder: {
-    backgroundColor: "#f5f5f5",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#f5f5f5",
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: 3,
+    minWidth: 0,
   },
   condition: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 15,
+    fontWeight: "400",
     color: "#1a1a1a",
-    textTransform: "capitalize",
   },
   date: {
     fontSize: 12,
-    color: "#999",
+    color: "#aaa",
   },
   statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     alignSelf: "flex-start",
-    backgroundColor: "#e6faf5",
+    backgroundColor: "#e1f5ee",
     borderRadius: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
     paddingVertical: 3,
     marginTop: 2,
+    gap: 5,
   },
   statusBadgeError: {
-    backgroundColor: "#ffe6e6",
+    backgroundColor: "#fcebeb",
   },
-  statusTextError: {
-    color: "#ff5252",
+  badgeDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#1d9e75",
+  },
+  badgeDotError: {
+    backgroundColor: "#e24b4a",
   },
   statusText: {
     fontSize: 11,
-    color: "#00CC99",
-    fontWeight: "600",
+    fontWeight: "400",
+    color: "#0f6e56",
     textTransform: "capitalize",
   },
-  chevron: {
-    paddingLeft: 8,
-  },
-  chevronText: {
-    fontSize: 10,
-    color: "#ccc",
+  statusTextError: {
+    color: "#a32d2d",
   },
   body: {
     paddingBottom: 16,
   },
   divider: {
-    height: 1,
-    backgroundColor: "#f0f0f0",
+    height: 0.5,
+    backgroundColor: "#ebebeb",
     marginHorizontal: 16,
     marginBottom: 14,
   },
   sectionLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#999",
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: "400",
+    color: "#aaa",
+    letterSpacing: 0.6,
     textTransform: "uppercase",
     paddingHorizontal: 16,
     marginBottom: 10,
@@ -234,7 +237,7 @@ const styles = StyleSheet.create({
   productRow: {
     flexDirection: "row",
     paddingHorizontal: 16,
-    gap: 12,
+    gap: 10,
   },
   buttonRow: {
     flexDirection: "row",
@@ -242,6 +245,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 4,
     gap: 8,
+    height: 49,
   },
   activateBtn: {
     flex: 1,
@@ -250,12 +254,14 @@ const styles = StyleSheet.create({
   },
   deleteBtn: {
     width: 48,
-    alignSelf: "stretch",
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ff5252",
-    borderRadius: 8,
+    backgroundColor: "#f5f5f5",
+    borderWidth: 0.5,
+    borderColor: "#e0e0e0",
+    borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",
+  },
+  deleteBtnFull: {
+    flex: 1,
   },
 });

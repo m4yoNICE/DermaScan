@@ -33,7 +33,7 @@ const HomeBottomSheet = ({ sheetRef, selectedDate, calendarTab }) => {
       backgroundStyle={styles.sheetBackground}
       handleIndicatorStyle={{ backgroundColor: "#ccc" }}
     >
-      <BottomSheetView style={styles.content}>
+      <View style={styles.content}>
         <View style={styles.tabContainer}>
           <TouchableOpacity
             onPress={() => setActiveTab("Analysis")}
@@ -71,7 +71,7 @@ const HomeBottomSheet = ({ sheetRef, selectedDate, calendarTab }) => {
             <JournalSection selectedDate={selectedDate} />
           )}
         </View>
-      </BottomSheetView>
+      </View>
     </BottomSheet>
   );
 };

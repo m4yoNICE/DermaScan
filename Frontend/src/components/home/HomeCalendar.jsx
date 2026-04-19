@@ -34,26 +34,28 @@ const HomeCalendar = ({
     }
 
     if (activeTab === "Journals") {
-      const hasJournal = !!journals[date.dateString];
+      const journal = journals[date.dateString];
+
+      const MOOD_EMOJI = { happy: "😊", neutral: "😐", sad: "😞" };
+      const emoji = journal?.mood ? MOOD_EMOJI[journal.mood] : null;
+
       return (
         <TouchableOpacity
           onPress={() => onDayPress(date.dateString)}
-          style={[
-            styles.dayContainer,
-            hasJournal && styles.journalDay,
-            isSelected && styles.daySelected,
-          ]}
+          style={[styles.dayContainer, isSelected && styles.daySelected]}
         >
-          <Text
-            style={[
-              styles.dayText,
-              state === "disabled" && styles.dayDisabled,
-              hasJournal && styles.journalDayText,
-              isSelected && styles.daySelectedText,
-            ]}
-          >
-            {date.day}
-          </Text>
+          {emoji ? (
+            <Text style={{ fontSize: 20 }}>{emoji}</Text>
+          ) : (
+            <Text
+              style={[
+                styles.dayText,
+                state === "disabled" && styles.dayDisabled,
+              ]}
+            >
+              {date.day}
+            </Text>
+          )}
         </TouchableOpacity>
       );
     }

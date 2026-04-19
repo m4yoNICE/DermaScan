@@ -9,9 +9,7 @@
         "foregroundImage": "./assets/logo/dermascan-logo.png"
       },
       "package": "com.dermascan.app",
-      "permissions": [
-        "android.permission.CAMERA"
-      ]
+      "permissions": ["android.permission.CAMERA", "android.permission.CAMERA"]
     },
     "plugins": [
       [
@@ -45,6 +43,20 @@
         "projectId": "213e8145-7b0f-4e80-99f8-39cab5899bb1"
       }
     },
-    "owner": "batmanorphosis112"
+    "owner": "batmanorphosis112",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/213e8145-7b0f-4e80-99f8-39cab5899bb1",
+      "requestHeaders": {
+        "expo-channel-name": "development"
+      }
+    },
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera"
+      }
+    }
   }
 }

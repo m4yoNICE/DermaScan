@@ -3,20 +3,14 @@ import { StyleSheet, View, FlatList, Text, Image } from "react-native";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { formatConditionName } from "@/utils/formatConditionName";
 
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+
 const AnalysisSection = ({ selectedDate }) => {
   const { analysisLogs } = useHomeData();
   const entries = analysisLogs[selectedDate] ?? [];
 
-  if (!entries.length) {
-    return (
-      <View style={styles.empty}>
-        <Text style={styles.emptyText}>No scans on this date.</Text>
-      </View>
-    );
-  }
-
   return (
-    <FlatList
+    <BottomSheetFlatList
       data={entries}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
@@ -36,6 +30,11 @@ const AnalysisSection = ({ selectedDate }) => {
           </View>
         </View>
       )}
+      ListEmptyComponent={
+        <View style={styles.empty}>
+          <Text style={styles.emptyText}>No scans on this date.</Text>
+        </View>
+      }
       contentContainerStyle={styles.list}
     />
   );

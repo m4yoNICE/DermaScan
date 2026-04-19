@@ -1,5 +1,5 @@
 export const formatConditionName = (name, status) => {
-  if (status === "flagged") return "Flagged Content";
+  if (status === "flagged") return "May Need Consultation";
   if (!name) return "Out of Scope";
 
   //format the words by splitting by "-" and upper case the first letter of each word
