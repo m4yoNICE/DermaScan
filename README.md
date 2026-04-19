@@ -1,91 +1,204 @@
-### How to Run
+# DermaScan+
+### A Mobile Skin Condition Detection and Personalized Skincare Recommender System for Young Adults
 
-To get started, you'll need to install the **Expo Go** app on your phone.
+DermaScan+ is a capstone research project that uses AI to detect skin conditions from photos and recommend personalized skincare routines. It combines Google's Derm Foundation as a frozen feature extractor with Logistic Regression classifier heads in a two-stage pipeline — first classifying the skin condition, then assessing severity.
 
-- [**Expo Go on Google Play**](https://play.google.com/store/apps/details?id=host.exp.exponent)
+> **Disclaimer**: This is an academic research project and is not intended for clinical or commercial use. Predictions are not a substitute for professional medical diagnosis. Always consult a licensed dermatologist for accurate skin condition assessment.
 
 ---
 
-### Running the Backend
+## Key Features
 
-**First time setup:**
+- AI-powered skin condition detection from camera or gallery photos
+- Two-stage classification: condition → severity
+- Personalized skincare product recommendations based on skin type and detected condition
+- Morning and evening routine scheduling with push notifications
+- Journal with mood tracking
+- Skin history with analysis logs
+- Admin dashboard for managing products, users, and analysis data
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Mobile App | React Native (Expo) |
+| Backend API | Node.js, Express.js |
+| AI Inference Server | Python, FastAPI |
+| Admin Dashboard | React (Vite) |
+| Database | MySQL (via Drizzle ORM) |
+| Image Storage | ImageKit |
+| ML Model | Google Derm Foundation + Logistic Regression |
+
+---
+
+## System Architecture
+
+```
+Mobile App (React Native)
+        │
+        ▼
+Backend API (Express.js) ──────► AI Inference Server (FastAPI)
+        │                                │
+        ▼                                ▼
+    MySQL DB                  Derm Foundation Embeddings
+                                   + LR Classifiers
+```
+
+---
+
+## ML Model
+
+Two-stage pipeline:
+
+- **Stage 1** — Skin condition classification (14 classes, 96.17% accuracy)
+- **Stage 2** — Severity classification per condition (mild / moderate / severe)
+
+Google's Derm Foundation serves as a frozen feature extractor generating 6144-dimensional embeddings. Logistic Regression classifier heads are trained on top.
+
+Conditions in scope: acne blackheads, acne fungal, acne papules/pustules (inflammatory), acne whiteheads, acne cyst/nodules (severe), eczema, enlarged pores, melasma, milia, post-inflammatory erythema, post-inflammatory hyperpigmentation.
+
+## AI Inference Server
+
+Deployed on Hugging Face Spaces via Docker.
+
+- `POST /analyze` — accepts raw image bytes, returns skin condition prediction and severity
+- `GET /health` — health check
+
+Built with FastAPI. Uses Google's Derm Foundation as a frozen feature extractor.
+
+- [Derm Foundation](https://developers.google.com/health-ai-developer-foundations/derm-foundation)
+- [HuggingFace Model](https://huggingface.co/google/derm-foundation)
+
+
+### File structure
+
+- `embedder.py` — loads Derm Foundation and generates embeddings
+- `twophase_server.py` — FastAPI inference server
+- `preprocessing/preprocess_image.py` — resizes and normalizes images to RGB 448×448
+- `trained_data_two_stage/` — trained Logistic Regression classifier heads (.pkl files)
+
+---
+
+## Project Structure
+
+```
+DermaScan/
+├── Frontend/       # React Native mobile app (Expo)
+├── Backend/        # Express.js API server
+├── AI/             # FastAPI inference server + trained models
+├── Admin/          # React admin dashboard
+└── apk-page/       # React landing page for APK download
+```
+
+---
+
+## Setup & Installation
+
+### Prerequisites
+
+- Node.js
+- Python 3.11+
+- Expo CLI
+- MySQL database
+
+---
+
+### Backend
 
 ```bash
-# Navigate to backend
 cd Backend
 npm install
 
-# Setup environment variables (copy and edit with your DB credentials but ask for dev help for the credentials)
+# Copy and configure environment variables
 cp .env.example .env
 
 # Push database schema
 npx drizzle-kit push
+
 # Seed the database
 node src/drizzle/unmerge_seed.js
-```
 
-**Start the servers:**
-
-Terminal 1 - Python AI Server:
-NOTE : I made this file dedicated for two way AI classification 
-(generalized classification -> severity)
-```bash
-cd AI/server
-python twoway_server.py
-```
-
-Terminal 2 - Node Backend:
-
-```bash
-cd Backend
+# Start the server
 npm run dev
 ```
 
 ---
 
-### Running the Frontend
+### AI Inference Server
 
-In frontend directory:
+```bash
+cd AI
+
+# Install dependencies
+pip install scikit-learn pillow tensorflow huggingface_hub opencv-python fastapi uvicorn joblib numpy
+
+# Note: use tensorflow-cpu if no GPU
+pip install tensorflow-cpu
+
+# Login to Hugging Face (required for Derm Foundation)
+huggingface-cli login
+
+# Start the server
+python twophase_server.py
+```
+
+> **Windows only**: If you get an execution policy error, run this first:
+> ```powershell
+> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+> ```
+
+---
+
+### Mobile App (Frontend)
 
 ```bash
 cd Frontend
-npm install                     
+npm install
 npx expo start
 ```
 
-Open the Expo Go app and scan the QR code in the terminal
+Scan the QR code with the Expo Go app, or install the APK directly from the [DermaScan+ landing page](https://dermascan-landing.vercel.app).
 
 ---
 
-### Python Setup (for AI/ML features)
-
-Login to Hugging Face (if using models from HF):
+### Admin Dashboard
 
 ```bash
-huggingface-cli login
+cd Admin
+npm install
+npm run dev
 ```
-or
-```bash
-hg login
-```
-but idk i forgor the exact huggingface login command, it differs between hg versions.
-
-Download required Python packages:
-
-```bash
-pip install scikit-learn pillow tensorflow huggingface_hub opencv-python fastapi uvicorn joblib numpy
-```
-
-### FOR OTHER DEVCICE THAT NEEDS TO BYPASS THEIR EXECUTION POLICY
-in windows-key button, search Powershell
-then copy and paste this command
-
-```bash
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-```
-
-**Note:** Use `pip install tensorflow-cpu` if you don't have a GPU.
 
 ---
 
-JasperBayot
+## Deployment
+
+| Service | Platform |
+|---|---|
+| Backend API | Railway |
+| AI Inference Server | Hugging Face Spaces (Docker) |
+| Admin Dashboard | Vercel |
+| APK Landing Page | Vercel |
+
+---
+
+## Known Limitations
+
+- Some class confusion between visually similar conditions
+- Dataset limitations due to data being sourced and aggregated from multiple platforms (Roboflow, ISIC, Kaggle, and others), resulting in inconsistent distribution across conditions
+- Psoriasis is excluded from scope per dermatologist consultation
+- Cold start on Hugging Face Spaces may cause initial delay on first inference request
+
+---
+
+## Developers
+
+Developed as a capstone project by students of the University of Cebu Lapu-lapu and Mandaue
+
+---
+
+## License
+
+For academic use only.
