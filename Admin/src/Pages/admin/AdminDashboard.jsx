@@ -118,6 +118,7 @@ export default function AdminDashboard() {
   const productImages = useSelector(
     (state) => state.products.getAllProductImages || []
   );
+  const [detectedConditions, setDetectedConditions] = useState([]);
 
   const [scanData, setScanData] = useState(0);
   const [noRecommendationData, setNoRecommendationData] = useState(0);
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
         const res = await Api.fetchScansPerDay();
         const total = res.data.reduce(
           (sum, item) => sum + Number(item.count),
-          0
+          0,
         );
         setScanData(total);
       } catch (error) {
@@ -160,12 +161,18 @@ export default function AdminDashboard() {
     fetchNoRecommendation();
   }, []);
 
+  useEffect(() => {
+    Api.getConditions()
+      .then((res) => setDetectedConditions(res.data))
+      .catch(console.error);
+  }, []);
+
   const uniqueProducts = useMemo(
     () =>
       Array.from(
-        new Map(productImages.map((item) => [item.productId, item])).values()
+        new Map(productImages.map((item) => [item.productId, item])).values(),
       ),
-    [productImages]
+    [productImages],
   );
 
   const popularProducts = useMemo(() => {
@@ -196,18 +203,19 @@ export default function AdminDashboard() {
 
   const selectedProductIds = useMemo(
     () => popularProducts.map((p) => p.productId),
-    [popularProducts]
+    [popularProducts],
   );
 
   const selectedProducts = useMemo(
-    () => uniqueProducts.filter((p) => selectedProductIds.includes(p.productId)),
-    [uniqueProducts, selectedProductIds]
+    () =>
+      uniqueProducts.filter((p) => selectedProductIds.includes(p.productId)),
+    [uniqueProducts, selectedProductIds],
   );
 
   const nonSelectedProducts = useMemo(
     () =>
       uniqueProducts.filter((p) => !selectedProductIds.includes(p.productId)),
-    [uniqueProducts, selectedProductIds]
+    [uniqueProducts, selectedProductIds],
   );
 
   const stats = [
@@ -240,7 +248,10 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <ProductColumn title="Selected" products={selectedProducts} />
-              <ProductColumn title="Non-Selected" products={nonSelectedProducts} />
+              <ProductColumn
+                title="Non-Selected"
+                products={nonSelectedProducts}
+              />
             </div>
           </CardContent>
         </Card>
@@ -255,9 +266,13 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="overflow-y-auto max-h-60 pr-1">
               <List
-                items={skinConditions}
+                items={detectedConditions}
                 renderItem={(item, i) => (
-                  <KeyValueItem key={i} left={item.conditon} right="-" />
+                  <KeyValueItem
+                    key={i}
+                    left={item.condition}
+                    right={item.count}
+                  />
                 )}
               />
             </div>

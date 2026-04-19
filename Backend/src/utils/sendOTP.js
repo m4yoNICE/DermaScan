@@ -1,13 +1,8 @@
-import nodemailer from "nodemailer";
+import { BrevoClient } from "@getbrevo/brevo";
 import { ENV } from "../config/env.js";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: ENV.OTP_USER,
-    pass: ENV.OTP_PASSWORD_OTP,
-  },
-});
+const brevo = new BrevoClient({ apiKey: ENV.BREVO_API_KEY });
+
 /**
  * Sends OTP email to user
  *
@@ -19,11 +14,11 @@ const transporter = nodemailer.createTransport({
 export const sendEmail = async (email, otp) => {
   try {
     console.log("Email and OTP: ", email, otp);
-    await transporter.sendMail({
-      from: `"DermaScan+" <${ENV.OTP_USER}>`,
-      to: email,
+    await brevo.transactionalEmails.sendTransacEmail({
+      sender: { name: "DermaScan+", email: ENV.BREVO_SENDER_EMAIL },
+      to: [{ email }],
       subject: `Your OTP is ${otp}`,
-      html: `<p>Your OTP code is <b>${otp}</b>. It expires in 5 minutes.</p>`,
+      htmlContent: `<p>Your OTP code is <b>${otp}</b>. It expires in 5 minutes.</p>`,
     });
     console.log("Email sent successfully.");
     return true;

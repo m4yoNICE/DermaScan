@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import BottomSheet, {
-  BottomSheetView,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 

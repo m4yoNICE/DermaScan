@@ -23,14 +23,13 @@ export async function getSkinData(user_id) {
 
 //centralized recommendation products
 export async function unionProductFilter(condition_id) {
-  //process all matching at once
   const [subProcessOne, subProcessTwo, subProcessThree] = await Promise.all([
     matchProductByCondition(condition_id),
     matchProductByTargetIngredient(condition_id),
     matchProductByHighlightIngredient(condition_id),
   ]);
 
-  //compiles from 3 processes and filters out duplicates
+  //compiles from 3 processes
   const combined = [...subProcessOne, ...subProcessTwo, ...subProcessThree];
   const isExist = {};
   const result = [];
@@ -106,6 +105,7 @@ async function matchProductByHighlightIngredient(condition_id) {
       skinType: skinCareProducts.skinType,
       dermaTested: skinCareProducts.dermaTested,
       timeRoutine: skinCareProducts.timeRoutine,
+      routine: skinCareProducts.routine,
     })
     .from(skinCareProducts);
 
@@ -153,6 +153,7 @@ async function matchProductByTargetIngredient(condition_id) {
       skinType: skinCareProducts.skinType,
       dermaTested: skinCareProducts.dermaTested,
       timeRoutine: skinCareProducts.timeRoutine,
+      routine: skinCareProducts.routine,
     })
     .from(skinCareProducts);
 
@@ -186,6 +187,7 @@ async function matchProductByCondition(condition_id) {
       skinType: skinCareProducts.skinType,
       dermaTested: skinCareProducts.dermaTested,
       timeRoutine: skinCareProducts.timeRoutine,
+      routine: skinCareProducts.routine,
     })
     .from(conditionProducts)
     .innerJoin(

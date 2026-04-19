@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, FlatList, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { formatConditionName } from "@/utils/formatConditionName";
 
