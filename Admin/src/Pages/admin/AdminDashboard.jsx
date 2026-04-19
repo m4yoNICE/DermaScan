@@ -69,25 +69,20 @@ function List({ items, renderItem }) {
 }
 
 function ProductColumn({ title, products }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-
-  const paginatedProducts = products.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   return (
     <div className="w-full">
       <h4 className="bg-emerald-500 text-white text-center py-1 rounded-lg mb-2 text-sm">
         {title}
       </h4>
-      <div className="flex flex-wrap gap-2 justify-start">
-        {paginatedProducts.length > 0 ? (
-          paginatedProducts.map((p) => (
-            <div key={p.productId} className="flex flex-col items-center w-20">
+
+      {/* horizontal scroll */}
+      <div className="flex gap-2 overflow-x-auto overflow-y-hidden pb-2 touch-pan-x scroll-smooth">
+        {products.length > 0 ? (
+          products.map((p) => (
+            <div
+              key={p.productId}
+              className="flex flex-col items-center min-w-[80px]"
+            >
               <img
                 src={p.image}
                 alt={p.name}
@@ -100,28 +95,6 @@ function ProductColumn({ title, products }) {
           <p className="text-sm text-gray-400">No products</p>
         )}
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-2">
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => p - 1)}
-            className="px-2 py-1 border rounded disabled:opacity-50"
-          >
-            Prev
-          </button>
-          <span>
-            {currentPage} / {totalPages}
-          </span>
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => p + 1)}
-            className="px-2 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -299,7 +272,7 @@ export default function AdminDashboard() {
           <CardHeader>
             <h3 className="font-semibold">Users</h3>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {status === "loading" ? (
               <p>Loading users...</p>
             ) : Users.length === 0 ? (
