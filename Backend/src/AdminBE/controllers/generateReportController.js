@@ -183,7 +183,6 @@ export async function generateUserReport(req, res) {
       const roleName = u.role?.roleName || "N/A";
       const createdDate = new Date(u.createdAt).toLocaleDateString();
 
-      // 🔥 FIX: include name properly in height calc
       const rowHeight = Math.max(
         getLineCount(doc, u.id, widths.id),
         getLineCount(doc, fullName, widths.name),
@@ -194,7 +193,6 @@ export async function generateUserReport(req, res) {
 
       const rowY = y + 8;
 
-      // 🧾 render row
       doc.text(u.id || "N/A", col.id, rowY, { width: widths.id });
       doc.text(fullName, col.name, rowY, { width: widths.name });
       doc.text(email, col.email, rowY, { width: widths.email });
