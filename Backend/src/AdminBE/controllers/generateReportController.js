@@ -83,7 +83,6 @@ export async function generateProductReport(req, res) {
       const derma = p.dermaTested ? "Yes" : "No";
       const routine = p.timeRoutine || "N/A";
 
-      // 🔥 calculate proper row height
       const dynamicRowHeight = Math.max(
         getLineCount(doc, product, widths.name),
         getLineCount(doc, type, widths.type),
@@ -95,9 +94,8 @@ export async function generateProductReport(req, res) {
 
       y += 8;
 
-      const rowY = y; // lock row start position
+      const rowY = y;
 
-      // 🧾 render row (ALL aligned to same baseline)
       doc.text(product, col.name, rowY, { width: widths.name });
       doc.text(type, col.type, rowY, { width: widths.type });
       doc.text(ingredient, col.ingredient, rowY, { width: widths.ingredient });
@@ -107,10 +105,8 @@ export async function generateProductReport(req, res) {
 
       y += dynamicRowHeight;
 
-      // row separator line
       doc.moveTo(startX, y).lineTo(555, y).stroke();
 
-      // page break safety
       if (y > 770) {
         doc.addPage();
         y = 50;
@@ -235,7 +231,6 @@ export async function generateAnalysisReport(req, res) {
 
     const rowHeight = 22;
 
-    // 🔧 FIXED COLUMN LAYOUT (more balanced spacing)
     const col = {
       name: startX,
       condition: startX + 170,
@@ -253,7 +248,6 @@ export async function generateAnalysisReport(req, res) {
     doc.text("Status", col.status, y, { width: 60 });
     doc.text("Score", col.score, y, { width: 50 });
 
-    // 🔥 FIX: full word + no breaking
     doc.text("Recommended", col.recommend, y, {
       width: 90,
       lineBreak: false,
