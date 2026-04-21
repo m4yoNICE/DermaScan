@@ -86,15 +86,32 @@ const Register = () => {
         "Please enter a valid email address",
       );
     }
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
+    if (password.length < 8)
       return ToastMessage(
         "error",
         "Weak Password",
-        "8+ chars, upper, lower, number & special char.",
+        "Password must be at least 8 characters.",
       );
-    }
+    if (!/[a-z]/.test(password))
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "Must include a lowercase letter.",
+      );
+    if (!/[A-Z]/.test(password))
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "Must include an uppercase letter.",
+      );
+    if (!/\d/.test(password))
+      return ToastMessage("error", "Weak Password", "Must include a number.");
+    if (!/[^a-zA-Z0-9]/.test(password))
+      return ToastMessage(
+        "error",
+        "Weak Password",
+        "Must include at least one special character.",
+      );
     if (dob > new Date()) {
       return ToastMessage(
         "error",
@@ -299,11 +316,11 @@ const Register = () => {
                 styles.input,
                 { color: "#333", fontFamily: "sans-serif" },
               ]}
-              placeholder="Password"
+              placeholder="Confirm Password"
               placeholderTextColor="#999"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPass}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry={!showConfirmPass}
             />
             <TouchableOpacity
               onPress={() => setShowConfirmPass(!showConfirmPass)}

@@ -99,6 +99,34 @@ const Profile = () => {
         "New passwords do not match.",
       );
     }
+    if (passwordData.new) {
+      if (passwordData.new.length < 8)
+        return ToastMessage(
+          "error",
+          "Weak Password",
+          "Password must be at least 8 characters.",
+        );
+      if (!/[a-z]/.test(passwordData.new))
+        return ToastMessage(
+          "error",
+          "Weak Password",
+          "Must include a lowercase letter.",
+        );
+      if (!/[A-Z]/.test(passwordData.new))
+        return ToastMessage(
+          "error",
+          "Weak Password",
+          "Must include an uppercase letter.",
+        );
+      if (!/\d/.test(passwordData.new))
+        return ToastMessage("error", "Weak Password", "Must include a number.");
+      if (!/[^a-zA-Z0-9]/.test(passwordData.new))
+        return ToastMessage(
+          "error",
+          "Weak Password",
+          "Must include at least one special character.",
+        );
+    }
     if (userData.dob && userData.dob > new Date()) {
       return ToastMessage(
         "error",

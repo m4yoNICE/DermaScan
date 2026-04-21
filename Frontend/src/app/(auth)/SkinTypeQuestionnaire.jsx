@@ -116,6 +116,13 @@ const SkinTypeQuestionnaire = () => {
 
   return (
     <View style={styles.root}>
+      <LoadingModal
+        visible={loading}
+        onTimeout={() => {
+          setLoading(false);
+          ToastMessage("error", "Request timed out", "Please try again.");
+        }}
+      />
       {/* Green top — question lives here */}
       <View style={styles.top}>
         <Text style={styles.sectionLabel}>

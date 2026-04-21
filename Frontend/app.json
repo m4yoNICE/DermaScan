@@ -51,7 +51,7 @@
     "updates": {
       "url": "https://u.expo.dev/213e8145-7b0f-4e80-99f8-39cab5899bb1",
       "requestHeaders": {
-        "expo-channel-name": "development"
+        "expo-channel-name": "preview"
       }
     },
     "ios": {
