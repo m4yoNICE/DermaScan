@@ -5,13 +5,14 @@ import { getAllProducts } from "../services/skinCareProductsService.js";
 import { getAllUsersProcess } from "../services/adminUserServices.js";
 import { getAllAnalysis } from "../services/analysisServices.js";
 
-const __filename = fileURLToPath(import.meta.url); // ✅ Fixed typo: fileUrlToPath → fileURLToPath
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const logoPath = path.join(
   __dirname,
   "../../../../Admin/src/assets/DermaScanLogo.png"
 );
+
 function drawHeader(doc, title) {
   try {
     doc.image(logoPath, 40, 30, { width: 60 });
@@ -28,26 +29,105 @@ function drawHeader(doc, title) {
   }
   doc.font("Helvetica").fontSize(10);
 
-  doc.moveDown(2);
+  const generatedDate = new Date().toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  doc.moveDown(0.5);
+  doc.fontSize(9).font("Helvetica").fillColor("gray")
+    .text(`Date Generated: ${generatedDate}`, { align: "center" });
+  doc.fillColor("black");
+
+  doc.moveDown(1.5);
 }
 
 function formatIngredients(text, limit = 6) {
   if (!text) return "N/A";
-  const str = Array.isArray(text) ? text.join(", ") : text;
-  const words = str.split(", ").map((i) => i.trim());
+  if (Array.isArray(text)) {
+    return text.length > limit
+      ? text.slice(0, limit).join(", ") + ", ..."
+      : text.join(", ");
+  }
+  const words = text.split(",").map((i) => i.trim()).filter(Boolean);
   return words.length > limit
     ? words.slice(0, limit).join(", ") + ", ..."
-    : str;
+    : words.join(", ");
 }
 
 function getLineCount(doc, text, width) {
   const lineHeight = 12;
-  return doc.heightOfString(text, { width }) / lineHeight;
+  return doc.heightOfString(String(text || ""), { width }) / lineHeight;
 }
+
+// ─── Table Header Drawers ─────────────────────────────────────────────────────
+
+function drawProductTableHeader(doc, col, widths, y, startX) {
+  doc.font("Helvetica-Bold").fontSize(10);
+  doc.text("Product",      col.name,       y, { width: widths.name });
+  doc.text("Brand",        col.brand,      y, { width: widths.brand });
+  doc.text("Type",         col.type,       y, { width: widths.type });
+  doc.text("Ingredient",   col.ingredient, y, { width: widths.ingredient });
+  doc.text("Skin Type",    col.skinType,   y, { width: widths.skinType });
+  doc.text("Derma Tested", col.derma,      y, { width: widths.derma });
+  doc.text("Routine",      col.routine,    y, { width: widths.routine });
+  doc.text("Freq.",        col.freq,       y, { width: widths.freq });
+  doc.text("Date Added",   col.date,       y, { width: widths.date });
+  doc.font("Helvetica").fontSize(10);
+  const lineY = y + 20;
+  doc.moveTo(startX, lineY).lineTo(555, lineY).stroke();
+  return lineY;
+}
+
+function drawUserTableHeader(doc, col, widths, y, startX) {
+  doc.font("Helvetica-Bold").fontSize(10);
+  doc.text("ID",         col.id,      y);
+  doc.text("Name",       col.name,    y);
+  doc.text("Email",      col.email,   y);
+  doc.text("Role",       col.role,    y);
+  doc.text("Created At", col.created, y);
+  doc.font("Helvetica").fontSize(10);
+  const lineY = y + 20;
+  doc.moveTo(startX, lineY).lineTo(555, lineY).stroke();
+  return lineY;
+}
+
+function drawAnalysisTableHeader(doc, col, rowHeight, startX, y) {
+  doc.font("Helvetica-Bold").fontSize(10);
+  doc.text("Email",       col.name,      y, { width: 145 });
+  doc.text("Condition",   col.condition, y, { width: 110 });
+  doc.text("Status",      col.status,    y, { width: 60 });
+  doc.text("Score",       col.score,     y, { width: 60 });
+  doc.text("Recommended", col.recommend, y, { width: 60 });
+  doc.text("Created At",  col.created,   y, { width: 80 });
+  doc.font("Helvetica").fontSize(10);
+  const lineY = y + rowHeight;
+  doc.moveTo(startX, lineY).lineTo(565, lineY).stroke();
+  return lineY;
+}
+
+// ─── Product Report ───────────────────────────────────────────────────────────
 
 export async function generateProductReport(req, res) {
   try {
     const products = await getAllProducts();
+
+    let statsMap = {};
+    try {
+      const statsRes = await fetch("http://localhost:3000/api/admin/products/getProductRecommendationStats");
+      const statsJson = await statsRes.json();
+      (statsJson.data || []).forEach((s) => {
+        statsMap[s.productId] = {
+          count: s.recommendationCount ?? 0,
+          selected: s.selected ?? false,
+        };
+      });
+    } catch (e) {
+      console.warn("Could not fetch recommendation stats:", e.message);
+    }
 
     const doc = new PDFDocument({ margin: 40, size: "A4" });
 
@@ -59,89 +139,90 @@ export async function generateProductReport(req, res) {
     drawHeader(doc, "Products Report");
 
     const startX = 40;
-    let y = doc.y + 10;
 
     const col = {
-      name:       40,
-      brand:      140,
-      type:       210,
-      ingredient: 280,
-      skinType:   380,
-      derma:      440,
-      routine:    490,
+      name: 40,
+      brand: 120,
+      type: 180,
+      ingredient: 238,
+      skinType: 325,
+      derma: 373,
+      routine: 413,
+      freq: 460,
+      date: 490,
     };
 
     const widths = {
-      name:       95,
-      brand:      65,
-      type:       65,
-      ingredient: 95,
-      skinType:   55,
-      derma:      45,
-      routine:    55,
+      name: 75,
+      brand: 55,
+      type: 53,
+      ingredient: 82,
+      skinType: 43,
+      derma: 35,
+      routine: 42,
+      freq: 25,
+      date: 60,
     };
 
-    doc.font("Helvetica-Bold").fontSize(10);
-
-    doc.text("Product", col.name, y, { width: widths.name });
-    doc.text("Brand", col.brand, y, { width: widths.brand });
-    doc.text("Type", col.type, y, { width: widths.type });
-    doc.text("Ingredient", col.ingredient, y, { width: widths.ingredient });
-    doc.text("Skin Type", col.skinType, y, { width: widths.skinType });
-    doc.text("Derma Tested",col.derma, y, { width: widths.derma });
-    doc.text("Routine", col.routine, y, { width: widths.routine });
-
-    y += 20;
-
-    doc.moveTo(startX, y).lineTo(555, y).stroke();
-
-    doc.font("Helvetica");
+    let y = drawProductTableHeader(doc, col, widths, doc.y + 10, startX);
 
     products.forEach((p) => {
-      const product = p.productName  || "N/A";
+      const product = p.productName || "N/A";
       const brand = p.productBrand || "N/A";
-      const type = p.productType  || "N/A";
+      const type = p.productType || "N/A";
       const ingredient = formatIngredients(p.ingredient, 6);
-
-      const skinTypes = p.skinType
-        ? p.skinType.split(",").map((t) => t.trim()).join("\n")
-        : "N/A";
-
-      const derma   = p.dermaTested ? "Yes" : "No";
+      const skinTypes = p.skinType ? p.skinType.split(",").map(t => t.trim()).join("\n") : "N/A";
+      const derma = p.dermaTested ? "Yes" : "No";
       const routine = p.timeRoutine || "N/A";
+      const dateAdded = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "N/A";
+
+      const stat = statsMap[p.productId] || statsMap[p.id];
+      const freq = stat?.selected ? String(stat.count) : "-";
 
       const dynamicRowHeight =
         Math.max(
-          getLineCount(doc, product,widths.name),
-          getLineCount(doc, brand,widths.brand),
-          getLineCount(doc, type,widths.type),
-          getLineCount(doc, ingredient,widths.ingredient),
-          getLineCount(doc, skinTypes,widths.skinType),
-          getLineCount(doc, derma,widths.derma),
-          getLineCount(doc, routine,widths.routine)
-        ) * 12 + 10;
+          getLineCount(doc, product, widths.name),
+          getLineCount(doc, brand, widths.brand),
+          getLineCount(doc, type, widths.type),
+          getLineCount(doc, ingredient, widths.ingredient),
+          getLineCount(doc, skinTypes, widths.skinType),
+          getLineCount(doc, derma, widths.derma),
+          getLineCount(doc, routine, widths.routine),
+          getLineCount(doc, freq, widths.freq),
+          getLineCount(doc, dateAdded, widths.date)
+        ) * 12 + 18;
 
-      y += 8;
-      const rowY = y;
-
-      doc.text(product,col.name, rowY, { width: widths.name });
-      doc.text(brand,col.brand, rowY, { width: widths.brand });
-      doc.text(type,col.type, rowY, { width: widths.type });
-      doc.text(ingredient, col.ingredient, rowY, { width: widths.ingredient });
-      doc.text(skinTypes, col.skinType, rowY, { width: widths.skinType });
-      doc.text(derma, col.derma,rowY, { width: widths.derma });
-      doc.text(routine, col.routine,rowY, { width: widths.routine });
-
-      y += dynamicRowHeight;
-
-      doc.moveTo(startX, y).lineTo(555, y).stroke();
-
-      if (y > 770) {
+      if (y + dynamicRowHeight > 770) {
         doc.addPage();
         drawHeader(doc, "Products Report");
-        y = doc.y + 10;
+        y = drawProductTableHeader(doc, col, widths, doc.y + 10, startX);
       }
+
+      const rowY = y + 8;
+
+      doc.text(product, col.name, rowY, { width: widths.name });
+      doc.text(brand, col.brand, rowY, { width: widths.brand });
+      doc.text(type, col.type, rowY, { width: widths.type });
+      doc.text(ingredient, col.ingredient, rowY, { width: widths.ingredient });
+      doc.text(skinTypes, col.skinType, rowY, { width: widths.skinType });
+      doc.text(derma, col.derma, rowY, { width: widths.derma });
+      doc.text(routine, col.routine, rowY, { width: widths.routine });
+      doc.text(freq, col.freq, rowY, { width: widths.freq });
+      doc.text(dateAdded, col.date, rowY, { width: widths.date });
+
+      y = rowY + dynamicRowHeight;
+      doc.moveTo(startX, y).lineTo(555, y).stroke();
     });
+
+    y += 15;
+
+    if (y + 30 > 770) {
+      doc.addPage();
+      y = 40;
+    }
+
+    doc.font("Helvetica-Bold").fontSize(10)
+      .text(`Total Products: ${products.length}`, startX, y);
 
     doc.end();
   } catch (err) {
@@ -149,6 +230,8 @@ export async function generateProductReport(req, res) {
     res.status(500).json({ error: "Failed to generate PDF" });
   }
 }
+
+// ─── User Report ──────────────────────────────────────────────────────────────
 
 export async function generateUserReport(req, res) {
   try {
@@ -164,7 +247,6 @@ export async function generateUserReport(req, res) {
     drawHeader(doc, "Users Report");
 
     const startX = 40;
-    let y = doc.y + 10;
 
     const col = {
       id: 40,
@@ -184,60 +266,51 @@ export async function generateUserReport(req, res) {
 
     const LINE_HEIGHT = 12;
 
-    const getLineCount = (doc, text, width) => {
-      return doc.heightOfString(text || "N/A", { width }) / LINE_HEIGHT;
-    };
-
-    doc.font("Helvetica-Bold").fontSize(10);
-
-    doc.text("ID", col.id, y);
-    doc.text("Name", col.name, y);
-    doc.text("Email", col.email, y);
-    doc.text("Role", col.role, y);
-    doc.text("Created At", col.created, y);
-
-    y += 20;
-
-    doc.moveTo(startX, y).lineTo(555, y).stroke();
-
-    doc.font("Helvetica");
+    let y = drawUserTableHeader(doc, col, widths, doc.y + 10, startX);
 
     users.forEach((u) => {
-      const fullName =
-        `${u.firstName || ""} ${u.lastName || ""}`.trim() || "N/A";
+      const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim() || "N/A";
       const email = u.email || "N/A";
       const roleName = u.role?.roleName || "N/A";
       const createdDate = new Date(u.createdAt).toLocaleDateString();
 
       const rowHeight =
         Math.max(
-          getLineCount(doc, u.id, widths.id),
+          getLineCount(doc, String(u.id ?? "N/A"), widths.id),
           getLineCount(doc, fullName, widths.name),
           getLineCount(doc, email, widths.email),
           getLineCount(doc, roleName, widths.role),
           getLineCount(doc, createdDate, widths.created)
-        ) *
-          LINE_HEIGHT +
-        10;
+        ) * LINE_HEIGHT + 10;
+
+      if (y + rowHeight > 750) {
+        doc.addPage();
+        drawHeader(doc, "Users Report");
+        y = drawUserTableHeader(doc, col, widths, doc.y + 10, startX);
+      }
 
       const rowY = y + 8;
 
-      doc.text(u.id || "N/A", col.id, rowY, { width: widths.id });
+      doc.text(String(u.id ?? "N/A"), col.id, rowY, { width: widths.id });
       doc.text(fullName, col.name, rowY, { width: widths.name });
       doc.text(email, col.email, rowY, { width: widths.email });
       doc.text(roleName, col.role, rowY, { width: widths.role });
       doc.text(createdDate, col.created, rowY, { width: widths.created });
 
       y += rowHeight;
-
       doc.moveTo(startX, y).lineTo(555, y).stroke();
-
-      if (y > 750) {
-        doc.addPage();
-        drawHeader(doc, "Users Report");
-        y = doc.y + 10;
-      }
     });
+
+    y += 15;
+
+    if (y + 30 > 770) {
+      doc.addPage();
+      y = 40;
+    }
+
+    doc.font("Helvetica-Bold")
+      .fontSize(10)
+      .text(`Total Users: ${users.length}`, startX, y);
 
     doc.end();
   } catch (error) {
@@ -246,6 +319,8 @@ export async function generateUserReport(req, res) {
   }
 }
 
+// ─── Analysis Report ──────────────────────────────────────────────────────────
+
 export async function generateAnalysisReport(req, res) {
   try {
     const analysisData = await getAllAnalysis();
@@ -253,83 +328,68 @@ export async function generateAnalysisReport(req, res) {
     const doc = new PDFDocument({ margin: 40, size: "A4" });
 
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=analysis.pdf"
-    );
+    res.setHeader("Content-Disposition", "attachment; filename=analysis.pdf");
 
     doc.pipe(res);
 
     drawHeader(doc, "Analysis Report");
 
     const startX = 40;
-    let y = doc.y + 10;
-
     const rowHeight = 22;
 
     const col = {
       name: startX,
-      condition: startX + 170,
-      status: startX + 290,
-      score: startX + 350,
-      recommend: startX + 400,
-      created: startX + 480,
+      condition: startX + 155,
+      status: startX + 275,
+      score: startX + 340,
+      recommend: startX + 405,
+      created: startX + 470,
     };
 
-    doc.font("Helvetica-Bold").fontSize(10);
-
-    doc.text("Email", col.name, y, { width: 150 });
-    doc.text("Condition", col.condition, y, { width: 110 });
-    doc.text("Status", col.status, y, { width: 60 });
-    doc.text("Score", col.score, y, { width: 50 });
-    doc.text("Recommended", col.recommend, y, { width: 90, lineBreak: false });
-    doc.text("Created At", col.created, y, { width: 80 });
-
-    y += rowHeight;
-
-    doc.moveTo(startX, y).lineTo(565, y).stroke();
-
-    doc.font("Helvetica");
+    let y = drawAnalysisTableHeader(doc, col, rowHeight, startX, doc.y + 10);
 
     analysisData.forEach((item) => {
-      y += 6;
-
-      doc.text(item.email || "N/A", col.name, y, {
-        width: 150,
-        ellipsis: true,
-      });
-
-      doc.text(item.conditionName || "N/A", col.condition, y, {
-        width: 110,
-        ellipsis: true,
-      });
-
-      doc.text(item.status || "N/A", col.status, y, { width: 60 });
-
-      doc.text(String(item.confidenceScores ?? "N/A"), col.score, y, {
-        width: 50,
-      });
-
-      doc.text(item.canRecommend ? "Yes" : "No", col.recommend, y, {
-        width: 90,
-      });
-
-      const createdDate = item.createdAt
-        ? new Date(item.createdAt).toLocaleDateString()
-        : "N/A";
-
-      doc.text(createdDate, col.created, y, { width: 80 });
-
-      y += rowHeight;
-
-      doc.moveTo(startX, y).lineTo(565, y).stroke();
-
-      if (y > 750) {
+      if (y + rowHeight > 750) {
         doc.addPage();
         drawHeader(doc, "Analysis Report");
-        y = doc.y + 10;
+        y = drawAnalysisTableHeader(doc, col, rowHeight, startX, doc.y + 10);
       }
+
+      y += 6;
+
+      const recommended = item.canRecommend === "Yes" ? "Yes" : "No";
+
+      doc.text(item.email || "N/A", col.name, y, { width: 145, ellipsis: true });
+      doc.text(item.conditionName || "N/A", col.condition, y, { width: 110, ellipsis: true });
+      doc.text(item.status || "N/A", col.status, y, { width: 60 });
+      doc.text(
+        item.confidenceScores != null ? Number(item.confidenceScores).toFixed(4) : "N/A",
+        col.score,
+        y,
+        { width: 60 }
+      );
+      doc.text(recommended, col.recommend, y, { width: 60 });
+      doc.text(
+        item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A",
+        col.created,
+        y,
+        { width: 80 }
+      );
+
+      y += rowHeight;
+      doc.moveTo(startX, y).lineTo(565, y).stroke();
     });
+
+    y += 15;
+
+    if (y + 30 > 770) {
+      doc.addPage();
+      y = 40;
+    }
+
+    doc.font("Helvetica-Bold")
+      .fontSize(10)
+      .text(`Total Scans: ${analysisData.length}`, startX, y);
 
     doc.end();
   } catch (err) {
