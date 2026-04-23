@@ -7,6 +7,7 @@ import {
   BottomSheetBackdrop,
   BottomSheetFooter,
 } from "@gorhom/bottom-sheet";
+import { formatPriceRange } from "@/utils/formatPrice";
 
 const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
   const bottomSheetRef = useRef(null);
@@ -99,6 +100,9 @@ const ProductSheet = ({ product, isVisible, onClose, onAdd }) => {
           <Text style={styles.brandName}>
             {product?.locality || "Dermatological Grade"}
           </Text>
+          {product?.price != null && (
+            <Text style={styles.price}>{formatPriceRange(product.price)}</Text>
+          )}
           <View style={styles.divider} />
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.description}>{product?.description}</Text>
@@ -191,4 +195,5 @@ const styles = StyleSheet.create({
     color: "#aaa",
     marginTop: 2,
   },
+  price: { fontSize: 18, fontWeight: "700", color: "#1A1A1A", marginTop: 4 },
 });

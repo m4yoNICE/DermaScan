@@ -1,5 +1,9 @@
 import { db } from "../../config/db.js";
-import { skinCareProducts, conditionProducts } from "../../drizzle/schema.js";
+import {
+  skinCareProducts,
+  conditionProducts,
+  productRecommendations,
+} from "../../drizzle/schema.js";
 import { eq, sql} from "drizzle-orm";
 
 export const getAllProducts = async () => {
@@ -19,6 +23,7 @@ export const getAllProducts = async () => {
       dermaTested: skinCareProducts.dermaTested,
       routine: skinCareProducts.routine,
       timeRoutine: skinCareProducts.timeRoutine,
+      price: skinCareProducts.price,
       createdAt: skinCareProducts.createdAt,
       updatedAt: skinCareProducts.updatedAt,
       conditionId: conditionProducts.conditionId,
@@ -47,6 +52,7 @@ export const getAllProducts = async () => {
         dermaTested: row.dermaTested,
         routine: row.routine,
         timeRoutine: row.timeRoutine,
+        price: row.price,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
         conditionIds: [],
@@ -171,3 +177,33 @@ export const getAllProductImages = async () => {
 
   return result;
 }
+
+export const getProductRecommendationStats = async () => {
+  const allProducts = await db
+    .select({
+      productId: skinCareProducts.id,
+      name: skinCareProducts.productName,
+      image: skinCareProducts.productImage,
+    })
+    .from(skinCareProducts);
+
+  const recommended = await db
+    .select({
+      productId: productRecommendations.productId,
+      count: sql`COUNT(*)`,
+    })
+    .from(productRecommendations)
+    .groupBy(productRecommendations.productId);
+
+  const recommendedMap = new Map(
+    recommended.map((r) => [r.productId, Number(r.count)])
+  );
+
+  return allProducts.map((p) => ({
+    productId: p.productId,
+    name: p.name,
+    image: p.image,
+    recommendationCount: recommendedMap.get(p.productId) ?? 0,
+    selected: recommendedMap.has(p.productId),
+  }));
+};

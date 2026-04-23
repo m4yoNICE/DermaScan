@@ -11,7 +11,7 @@ from sklearn.utils.class_weight import compute_class_weight
 
 # ── Config ────────────────────────────────────────────────────────────────────
 DATA_DIR   = "../training_data_new"
-CACHE_DIR  = "../trained_data/cache_new"
+CACHE_DIR  = "../trained_data/cache"
 EMB_PATH   = os.path.join(CACHE_DIR, "embeddings.npy")
 LABEL_PATH = os.path.join(CACHE_DIR, "labels.npy")
 LR_PATH    = "../trained_data/results_new/lr_classifier.pkl"

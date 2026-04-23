@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 const logoPath = path.join(
   __dirname,
-  "../../../../Admin/src/assets/DermaScanLogo.png"
+  "../../../../Admin/src/assets/DermaScanLogo.png",
 );
 function drawHeader(doc, title) {
   try {
@@ -62,23 +62,23 @@ export async function generateProductReport(req, res) {
     let y = doc.y + 10;
 
     const col = {
-      name:       40,
-      brand:      140,
-      type:       210,
+      name: 40,
+      brand: 140,
+      type: 210,
       ingredient: 280,
-      skinType:   380,
-      derma:      440,
-      routine:    490,
+      skinType: 380,
+      derma: 440,
+      routine: 490,
     };
 
     const widths = {
-      name:       95,
-      brand:      65,
-      type:       65,
+      name: 95,
+      brand: 65,
+      type: 65,
       ingredient: 95,
-      skinType:   55,
-      derma:      45,
-      routine:    55,
+      skinType: 55,
+      derma: 45,
+      routine: 55,
     };
 
     doc.font("Helvetica-Bold").fontSize(10);
@@ -88,7 +88,7 @@ export async function generateProductReport(req, res) {
     doc.text("Type", col.type, y, { width: widths.type });
     doc.text("Ingredient", col.ingredient, y, { width: widths.ingredient });
     doc.text("Skin Type", col.skinType, y, { width: widths.skinType });
-    doc.text("Derma Tested",col.derma, y, { width: widths.derma });
+    doc.text("Derma Tested", col.derma, y, { width: widths.derma });
     doc.text("Routine", col.routine, y, { width: widths.routine });
 
     y += 20;
@@ -98,39 +98,44 @@ export async function generateProductReport(req, res) {
     doc.font("Helvetica");
 
     products.forEach((p) => {
-      const product = p.productName  || "N/A";
+      const product = p.productName || "N/A";
       const brand = p.productBrand || "N/A";
-      const type = p.productType  || "N/A";
+      const type = p.productType || "N/A";
       const ingredient = formatIngredients(p.ingredient, 6);
 
       const skinTypes = p.skinType
-        ? p.skinType.split(",").map((t) => t.trim()).join("\n")
+        ? p.skinType
+            .split(",")
+            .map((t) => t.trim())
+            .join("\n")
         : "N/A";
 
-      const derma   = p.dermaTested ? "Yes" : "No";
+      const derma = p.dermaTested ? "Yes" : "No";
       const routine = p.timeRoutine || "N/A";
 
       const dynamicRowHeight =
         Math.max(
-          getLineCount(doc, product,widths.name),
-          getLineCount(doc, brand,widths.brand),
-          getLineCount(doc, type,widths.type),
-          getLineCount(doc, ingredient,widths.ingredient),
-          getLineCount(doc, skinTypes,widths.skinType),
-          getLineCount(doc, derma,widths.derma),
-          getLineCount(doc, routine,widths.routine)
-        ) * 12 + 10;
+          getLineCount(doc, product, widths.name),
+          getLineCount(doc, brand, widths.brand),
+          getLineCount(doc, type, widths.type),
+          getLineCount(doc, ingredient, widths.ingredient),
+          getLineCount(doc, skinTypes, widths.skinType),
+          getLineCount(doc, derma, widths.derma),
+          getLineCount(doc, routine, widths.routine),
+        ) *
+          12 +
+        10;
 
       y += 8;
       const rowY = y;
 
-      doc.text(product,col.name, rowY, { width: widths.name });
-      doc.text(brand,col.brand, rowY, { width: widths.brand });
-      doc.text(type,col.type, rowY, { width: widths.type });
+      doc.text(product, col.name, rowY, { width: widths.name });
+      doc.text(brand, col.brand, rowY, { width: widths.brand });
+      doc.text(type, col.type, rowY, { width: widths.type });
       doc.text(ingredient, col.ingredient, rowY, { width: widths.ingredient });
       doc.text(skinTypes, col.skinType, rowY, { width: widths.skinType });
-      doc.text(derma, col.derma,rowY, { width: widths.derma });
-      doc.text(routine, col.routine,rowY, { width: widths.routine });
+      doc.text(derma, col.derma, rowY, { width: widths.derma });
+      doc.text(routine, col.routine, rowY, { width: widths.routine });
 
       y += dynamicRowHeight;
 
@@ -215,7 +220,7 @@ export async function generateUserReport(req, res) {
           getLineCount(doc, fullName, widths.name),
           getLineCount(doc, email, widths.email),
           getLineCount(doc, roleName, widths.role),
-          getLineCount(doc, createdDate, widths.created)
+          getLineCount(doc, createdDate, widths.created),
         ) *
           LINE_HEIGHT +
         10;
@@ -253,10 +258,7 @@ export async function generateAnalysisReport(req, res) {
     const doc = new PDFDocument({ margin: 40, size: "A4" });
 
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=analysis.pdf"
-    );
+    res.setHeader("Content-Disposition", "attachment; filename=analysis.pdf");
 
     doc.pipe(res);
 
