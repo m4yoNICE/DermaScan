@@ -5,6 +5,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
 import Button from "@/components/designs/Button";
+import { formatPriceRange } from "@/utils/formatPrice";
 
 const ProductDetailSheet = ({
   sheetRef,
@@ -59,6 +60,7 @@ const ProductDetailSheet = ({
               />
               <View style={styles.productBody}>
                 <Text style={styles.productName}>{p.productName}</Text>
+                {p.price && <Text style={styles.priceText}>{formatPriceRange(p.price)}</Text>}
                 <View style={styles.typeBadge}>
                   <Text style={styles.typeText}>{p.productType}</Text>
                 </View>
@@ -178,4 +180,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: "#aaa",
   },
+  priceText: { fontSize: 13, fontWeight: "600", color: "#1a1a1a" },
 });

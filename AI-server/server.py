@@ -11,8 +11,11 @@ import uvicorn
 
 app = FastAPI()
 
-BASE = os.path.join(os.path.dirname(__file__), "trained_data_two_stage")
-CONFIDENCE_THRESHOLD = 0.6
+BASE = os.path.join(os.path.dirname(__file__), "trained_data_two_stage_new")
+CONFIDENCE_THRESHOLD = 0.3
+DEMOTION_THRESHOLDS = {
+    "eczema": 0.75,
+}
 
 print("Loading Stage 1 condition model...")
 clf_stage1, le_stage1 = joblib.load(os.path.join(BASE, "stage1_condition.pkl"))
@@ -24,11 +27,12 @@ SEVERITY_CONDITIONS = {
     "acne-papules":    "stage2_acne-papules.pkl",
     "acne-pustules":   "stage2_acne-pustules.pkl",
     "acne-whiteheads": "stage2_acne-whiteheads.pkl",
+    "eczema":          "stage2_eczema.pkl",
     "enlarged-pores":  "stage2_enlarged-pores.pkl",
     "melasma":         "stage2_melasma.pkl",
     "milia":           "stage2_milia.pkl",
-    "post-inflammatory-erythema":     "stage2_post-inflammatory-erythema.pkl",
-    "post-inflammatory-pigmentation": "stage2_post-inflammatory-pigmentation.pkl",
+    "post-inflammatory-erythema":         "stage2_post-inflammatory-erythema.pkl",
+    "post-inflammatory-hyperpigmentation": "stage2_post-inflammatory-hyperpigmentation.pkl",
 }
 
 print("Loading severity classifiers...")
@@ -74,6 +78,12 @@ async def analyze(request: Request):
             print(f"    {c['label']:<45} {c['score']:.2%}")
 
         # ------------------ CONFIDENCE GATE (STAGE 1 ONLY) -------------------
+        if top_label in DEMOTION_THRESHOLDS and top_score < DEMOTION_THRESHOLDS[top_label]:
+            candidates_filtered = [c for c in candidates if c["label"] != top_label]
+            top_label = candidates_filtered[0]["label"]
+            top_score = candidates_filtered[0]["score"]
+            print(f"  Demoted eczema, new top: {top_label} ({top_score:.2%})")
+            
         if top_score < CONFIDENCE_THRESHOLD:
             print(f"  >>> REJECTED: Low confidence ({top_score:.2%} < {CONFIDENCE_THRESHOLD:.0%})")
             return {

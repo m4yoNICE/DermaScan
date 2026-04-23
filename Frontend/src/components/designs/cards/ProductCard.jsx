@@ -32,7 +32,6 @@ const ProductCard = ({ item, isAdded = false }) => {
       <Text style={styles.productName} numberOfLines={2}>
         {item.productName}
       </Text>
-      <Text style={styles.productType}>{item.productType}</Text>
       {item.routine && (
         <View style={styles.routinePill}>
           <Text style={styles.routinePillText}>{item.routine}</Text>

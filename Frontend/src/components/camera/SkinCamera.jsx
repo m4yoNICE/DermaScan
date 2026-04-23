@@ -148,6 +148,16 @@ const SkinCamera = () => {
         router.push("/Results");
         return;
       }
+      if (analysis.result === "normal") {
+        setAnalysis({
+          status: "normal",
+          condition_name: analysis.data.condition_name,
+          confidenceScores: analysis.data.confidenceScores,
+          image_url: analysis.data.image_url,
+        });
+        router.push("/Results");
+        return;
+      }
       if (analysis.result === "success") {
         setAnalysis({
           id: analysis.data.id,

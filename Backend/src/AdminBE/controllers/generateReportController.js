@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 const logoPath = path.join(
   __dirname,
-  "../../../../Admin/src/assets/DermaScanLogo.png"
+  "../../../../Admin/src/assets/DermaScanLogo.png",
 );
 
 function drawHeader(doc, title) {

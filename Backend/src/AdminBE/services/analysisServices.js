@@ -27,6 +27,7 @@ export async function getAllAnalysis() {
       .leftJoin(storedImages, eq(skinAnalysis.imageId, storedImages.id))
       .orderBy(desc(skinAnalysis.createdAt));
 
+
     return result;
   } catch (err) {
     console.error("Get all analysis error:", err);

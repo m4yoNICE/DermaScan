@@ -82,6 +82,26 @@ function ConsultRecommendContent() {
   );
 }
 
+function NormalAnalysisContent() {
+  return (
+    <DermaAlert variant="default">
+      <Text style={getDermaAlertTextStyle("default")}>
+        Your skin looks healthy! No treatment needed at this time.
+      </Text>
+    </DermaAlert>
+  );
+}
+
+function NormalRecommendContent() {
+  return (
+    <DermaAlert variant="default">
+      <Text style={getDermaAlertTextStyle("default")}>
+        Keep up your current skincare routine.
+      </Text>
+    </DermaAlert>
+  );
+}
+
 export function getResultConfig(status) {
   if (status === "flagged") {
     return {
@@ -98,6 +118,14 @@ export function getResultConfig(status) {
         <ConsultAnalysisContent analysis={analysis} />
       ),
       recommendContent: () => <ConsultRecommendContent />,
+    };
+  }
+
+  if (status === "normal") {
+    return {
+      showImage: true,
+      analysisContent: () => <NormalAnalysisContent />,
+      recommendContent: () => <NormalRecommendContent />,
     };
   }
 
