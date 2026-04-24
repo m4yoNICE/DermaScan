@@ -8,6 +8,8 @@ import { getUserByIdProcess } from "../services/adminUserServices.js";
 import { getAnalysisByUserId } from "../services/analysisServices.js";
 import { getUserReportData } from  "../services/adminUserServices.js";
 import { getSkinProfileByUserId } from "../services/skinTypeFetchServices.js";
+import { getProductRecommendationStats } from "../services/skinCareProductsService.js"; 
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -121,16 +123,15 @@ export async function generateProductReport(req, res) {
 
     let statsMap = {};
     try {
-      const statsRes = await fetch("http://localhost:3000/api/admin/products/getProductRecommendationStats");
-      const statsJson = await statsRes.json();
-      (statsJson.data || []).forEach((s) => {
+      const stats = await getProductRecommendationStats();
+      stats.forEach((s) => {
         statsMap[s.productId] = {
           count: s.recommendationCount ?? 0,
           selected: s.selected ?? false,
         };
       });
     } catch (e) {
-      console.warn("Could not fetch recommendation stats:", e.message);
+      console.warn("Could not load recommendation stats:", e.message);
     }
 
     const doc = new PDFDocument({ margin: 40, size: "A4" });
@@ -181,7 +182,7 @@ export async function generateProductReport(req, res) {
       const dateAdded = p.createdAt ? new Date(p.createdAt).toLocaleDateString() : "N/A";
 
       const stat = statsMap[p.productId] || statsMap[p.id];
-      const freq = stat?.selected ? String(stat.count) : "-";
+      const freq = stat ? String(stat.count) : "0";
 
       const dynamicRowHeight =
         Math.max(
@@ -234,7 +235,6 @@ export async function generateProductReport(req, res) {
     res.status(500).json({ error: "Failed to generate PDF" });
   }
 }
-
 // ─── User Report ──────────────────────────────────────────────────────────────
 
 export const generateUserReport = async (req, res) => {
