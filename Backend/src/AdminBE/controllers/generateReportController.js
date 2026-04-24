@@ -4,6 +4,10 @@ import path from "path";
 import { getAllProducts } from "../services/skinCareProductsService.js";
 import { getAllUsersProcess } from "../services/adminUserServices.js";
 import { getAllAnalysis } from "../services/analysisServices.js";
+import { getUserByIdProcess } from "../services/adminUserServices.js";
+import { getAnalysisByUserId } from "../services/analysisServices.js";
+import { getUserReportData } from  "../services/adminUserServices.js";
+import { getSkinProfileByUserId } from "../services/skinTypeFetchServices.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -233,46 +237,63 @@ export async function generateProductReport(req, res) {
 
 // ─── User Report ──────────────────────────────────────────────────────────────
 
-export async function generateUserReport(req, res) {
+export const generateUserReport = async (req, res) => {
   try {
-    const users = await getAllUsersProcess();
+    const userId = Number(req.params.userId);
+
+    if (!userId || Number.isNaN(userId)) {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+
+    const { user, analysis, skinProfile } = await getUserReportData(userId);
 
     const doc = new PDFDocument({ margin: 40, size: "A4" });
 
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", "attachment; filename=users.pdf");
-
+    res.setHeader("Content-Disposition", `attachment; filename=user-${userId}-report.pdf`);
     doc.pipe(res);
 
-    drawHeader(doc, "Users Report");
+    drawHeader(doc, "User Report");
 
-    const startX = 40;
+    // ─── USER INFO SECTION ───────────────────────────────────────
+    doc.font("Helvetica-Bold").fontSize(12).text("User Information", { underline: true });
+    doc.moveDown(0.5);
+    doc.font("Helvetica").fontSize(10);
+    doc.text(`Name       : ${user.firstName ?? "N/A"} ${user.lastName ?? "N/A"}`);
+    doc.text(`Email      : ${user.email ?? "N/A"}`);
+    doc.text(`Skin Type  : ${skinProfile?.skinType ?? "N/A"}`);
+doc.text(`Sensitivity: ${skinProfile?.skinSensitivity ?? "N/A"}`);
+    doc.moveDown(1.5);
+    
+    // ─── ANALYSIS SUMMARY ────────────────────────────────────────
+    const successList = analysis.filter((a) => a.status === "success");
+    const failedList  = analysis.filter((a) => a.status !== "success");
 
-    const col = {
-      id: 40,
-      name: 80,
-      email: 240,
-      role: 410,
-      created: 480,
-    };
+    doc.font("Helvetica-Bold").fontSize(11)
+      .text(`Total Scans  : ${analysis.length}`);
+    doc.font("Helvetica").fontSize(10)
+      .text(`✓ Successful : ${successList.length}`)
+      .text(`✗ Failed     : ${failedList.length}`);
+    doc.moveDown(1.5);
 
-    const widths = {
-      id: 30,
-      name: 150,
-      email: 170,
-      role: 60,
-      created: 80,
-    };
+    // ─── TABLE HELPER ────────────────────────────────────────────
+    const drawAnalysisTable = (doc, title, items, startY) => {
+      let y = startY;
 
-    const LINE_HEIGHT = 12;
+      doc.font("Helvetica-Bold").fontSize(11).text(title, 40, y);
+      y += 20;
 
-    let y = drawUserTableHeader(doc, col, widths, doc.y + 10, startX);
+      // Table header
+      doc.font("Helvetica-Bold").fontSize(9);
+      doc.text("Date",       40,  y, { width: 90 });
+      doc.text("Condition",  140, y, { width: 130 });
+      doc.text("Score",      280, y, { width: 70 });
+      doc.text("Recommended",360, y, { width: 90 });
+      doc.text("Status",     455, y, { width: 60 });
+      y += 16;
+      doc.moveTo(40, y).lineTo(555, y).stroke();
 
-    users.forEach((u) => {
-      const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim() || "N/A";
-      const email = u.email || "N/A";
-      const roleName = u.role?.roleName || "N/A";
-      const createdDate = new Date(u.createdAt).toLocaleDateString();
+      doc.font("Helvetica").fontSize(9);
 
       const rowHeight =
         Math.max(
@@ -289,35 +310,64 @@ export async function generateUserReport(req, res) {
         y = drawUserTableHeader(doc, col, widths, doc.y + 10, startX);
       }
 
-      const rowY = y + 8;
+      items.forEach((a) => {
+        if (y + 20 > 770) {
+          doc.addPage();
+          drawHeader(doc, "User Report");
+          y = doc.y;
+        }
 
-      doc.text(String(u.id ?? "N/A"), col.id, rowY, { width: widths.id });
-      doc.text(fullName, col.name, rowY, { width: widths.name });
-      doc.text(email, col.email, rowY, { width: widths.email });
-      doc.text(roleName, col.role, rowY, { width: widths.role });
-      doc.text(createdDate, col.created, rowY, { width: widths.created });
+        y += 6;
+        doc.text(
+          a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "N/A",
+          40, y, { width: 90 }
+        );
+        doc.text(a.conditionName || "N/A", 140, y, { width: 130 });
+        doc.text(
+          a.confidenceScores != null
+            ? Number(a.confidenceScores).toFixed(4)
+            : "N/A",
+          280, y, { width: 70 }
+        );
+        doc.text(a.canRecommend === "Yes" ? "Yes" : "No", 360, y, { width: 90 });
+        doc.text(a.status || "N/A", 455, y, { width: 60 });
 
-      y += rowHeight;
-      doc.moveTo(startX, y).lineTo(555, y).stroke();
-    });
+        y += 18;
+        doc.moveTo(40, y).lineTo(555, y).stroke();
+      });
 
-    y += 15;
+      return y + 15;
+    };
 
-    if (y + 30 > 770) {
+    // ─── SUCCESS TABLE ────────────────────────────────────────────
+    let y = doc.y;
+    y = drawAnalysisTable(doc, "✓ Successful Scans", successList, y);
+
+    // ─── FAILED TABLE ─────────────────────────────────────────────
+    if (y + 60 > 770) {
       doc.addPage();
-      y = 40;
+      drawHeader(doc, "User Report");
+      y = doc.y;
+    } else {
+      y += 10;
     }
 
-    doc.font("Helvetica-Bold")
-      .fontSize(10)
-      .text(`Total Users: ${users.length}`, startX, y);
+    y = drawAnalysisTable(doc, "✗ Failed Scans", failedList, y);
 
     doc.end();
-  } catch (error) {
-    console.error("PDF generation error:", error);
+  } catch (err) {
+    console.error("User report error:", err.message, err.stack);
+
+    if (err.message === "INVALID_USER_ID") {
+      return res.status(400).json({ error: "Invalid user ID" });
+    }
+    if (err.message === "USER_NOT_FOUND") {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     res.status(500).json({ error: "Failed to generate user report" });
   }
-}
+};
 
 // ─── Analysis Report ──────────────────────────────────────────────────────────
 
