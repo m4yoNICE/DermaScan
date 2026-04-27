@@ -25,10 +25,7 @@ function FlaggedAnalysisContent() {
   return (
     <DermaAlert variant="danger">
       <Text style={getDermaAlertTextStyle("danger")}>
-        Our system cannot detect this as it may be outside of scope or it may need expert intervention.
-      </Text>
-      <Text style={[getDermaAlertTextStyle("danger"), { marginTop: 6 }]}>
-        Please see a dermatologist for proper care.
+        This condition has been flagged and may require dermatologist intervention. Please see a dermatologist for proper care.
       </Text>
     </DermaAlert>
   );
@@ -44,6 +41,7 @@ function FlaggedRecommendContent() {
   );
 }
 
+// this is for mild condition but severe
 function ConsultAnalysisContent({ analysis }) {
   const conditionName = formatConditionName(analysis.condition_name);
   const confidence = (analysis.confidenceScores * 100).toFixed(1);
